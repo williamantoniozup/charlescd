@@ -10,7 +10,7 @@ import (
 
 func GetQuestions() ([]types.Question, error) {
 	var data types.Questions
-	jsonFile, err := os.Open("assets/v1/questions.json")
+	jsonFile, err := os.Open("assets/v2/questions.json")
 	if err != nil {
 		fmt.Println(err)
 		return nil, err

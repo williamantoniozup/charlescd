@@ -13,5 +13,4 @@ type Question struct {
 type QuestionOption struct {
 	Id			string	`json:"id"`
 	Title		string	`json:"title"`
-	IsCorrect	bool	`json:"isCorrect"`
 }
