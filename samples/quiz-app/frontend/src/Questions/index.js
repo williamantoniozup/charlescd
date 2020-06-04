@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { ReactComponent as FinalIcon } from '../svg/final.svg';
 import { ReactComponent as Loading } from '../svg/loading.svg';
 import { useAnswer, useQuestions } from './hook';
 
 function Questions() {
+  const history = useHistory();
   const [questID, setQuestID] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState();
   const [listSelecteds, setListSelecteds] = useState([]);
@@ -36,11 +38,11 @@ function Questions() {
     return answerID === selectedAnswer ? 'selected' : '';
   }
 
+  const onRestart = () => history.push({ pathname: '/quiz-app' });
+
   const selectAnswer = (answer) => {
     setSelectedAnswer(answer.id);
   }
-
-  const onRestart = () => window.location.href = "/quiz-app";
 
   const renderFinish = () => (
     <>
