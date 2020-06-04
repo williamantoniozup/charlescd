@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
+import { ReactComponent as CorrectIcon } from '../svg/correct.svg';
+import { ReactComponent as IncorrectIcon } from '../svg/incorrect.svg';
 import { ReactComponent as FinalIcon } from '../svg/final.svg';
 import { ReactComponent as Loading } from '../svg/loading.svg';
 import { useQuestions } from './hook';
 
 function Questions() {
+  const history = useHistory();
   const [questID, setQuestID] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState();
   const [correctAnswer, setCorrectAnswer] = useState();
@@ -22,7 +26,7 @@ function Questions() {
     setSelectedAnswer();
   }
 
-  const onRestart = () => window.location.href = "/quiz-app";
+  const onRestart = () => history.push({ pathname: '/quiz-app' });
 
   const getAnswerClass = (answerID) => {
     if ((isCorrect && answerID === correctAnswer) || correctAnswer === answerID) {
@@ -46,6 +50,14 @@ function Questions() {
     setCorrectAnswer(correctAnswer.id);
   }
 
+
+  const renderIcon = () => {
+    if (!selectAnswer) {
+      return '';
+    }
+
+    return isCorrect ? <CorrectIcon /> : <IncorrectIcon />;
+  }
 
   const renderFinish = () => (
     <>
@@ -73,6 +85,7 @@ function Questions() {
               </li>
             )}
           </ul>
+          {renderIcon()}
           <button onClick={nextQuestion}>Next</button>
         </>
       )

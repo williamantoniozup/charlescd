@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { useIdentify } from './hook';
 
 function Identify() {
+  const history = useHistory();
   const [form, setForm] = useState({});
   const { getCircleID, status } = useIdentify();
 
   useEffect(() => {
     if (status === 'resolved' || status === 'rejected') {
-      window.location.href = "/quiz-app/questions";
+      history.push({ pathname: '/quiz-app/questions' });
     }
-  }, [status])
+  }, [history, status])
 
   const onSubmit = (event) => {
     event.preventDefault();
