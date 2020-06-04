@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { ReactComponent as CorrectIcon } from '../svg/correct.svg';
-import { ReactComponent as IncorrectIcon } from '../svg/incorrect.svg';
 import { ReactComponent as FinalIcon } from '../svg/final.svg';
 import { ReactComponent as Loading } from '../svg/loading.svg';
 import { useQuestions } from './hook';
@@ -24,6 +22,8 @@ function Questions() {
     setSelectedAnswer();
   }
 
+  const onRestart = () => window.location.href = "/quiz-app";
+
   const getAnswerClass = (answerID) => {
     if ((isCorrect && answerID === correctAnswer) || correctAnswer === answerID) {
       return 'correct';
@@ -46,15 +46,6 @@ function Questions() {
     setCorrectAnswer(correctAnswer.id);
   }
 
-  const renderIcon = () => {
-    if (!selectedAnswer) {
-      return '';
-    }
-
-    return isCorrect ? <CorrectIcon /> : <IncorrectIcon />;
-  }
-
-  const onRestart = () => window.location.href = "/quiz-app";
 
   const renderFinish = () => (
     <>
@@ -82,7 +73,6 @@ function Questions() {
               </li>
             )}
           </ul>
-          {renderIcon()}
           <button onClick={nextQuestion}>Next</button>
         </>
       )
