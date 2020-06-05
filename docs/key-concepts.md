@@ -32,3 +32,7 @@ This term was originated with Charles, and refers to a default segmentation that
 
 For example, if you add 300 users to your database and don't specify which segmentation you want to direct your hypothesis, Charles will redirect it to all, that is when your hypothesis will fall into the open sea.
 
+## Modules
+
+Module is a representation of your git repository. Besides that, a module can have one or more applications, which means one or more components.
+
