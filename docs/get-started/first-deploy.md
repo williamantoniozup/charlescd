@@ -1,8 +1,8 @@
 # First Deploy
 
-After you have created your first [**module**](https://docs.charlescd.io/v/v0.2.1-en/get-started/creating-your-first-module) and registered your [**cluster crendentials**](https://docs.charlescd.io/v/v0.2.1-en/get-started/defining-a-workspace/configuracoes-de-deploy), you have finished all the steps needed to make your first deploy. Now, it is necessary to create a [**release**](https://docs.charlescd.io/v/v0.2.1-en/reference/release) and provide it on the configured cluster.
+After you have created your first [**module**](https://docs.charlescd.io/v/v0.2.1-en/get-started/creating-your-first-module) and registered your [**cluster crendentials**,](https://docs.charlescd.io/get-started/defining-a-workspace/configuracoes-de-deploy) you have finished all the steps needed to make your first deploy. Now, it is necessary to create a [**release**](https://docs.charlescd.io/reference/release) and provide it on the configured cluster.
 
-Charles offers two alternatives to create a release: use the [**hypothesis**](https://docs.charlescd.io/v/v0.2.1-en/reference/hyphotesis) flow chart or create it with docker images already available on your configured [**registry**](https://docs.charlescd.io/v/v0.2.1-en/get-started/defining-a-workspace/docker-registry).
+Charles offers two alternatives to create a release: use the [**hypothesis**](https://docs.charlescd.io/reference/hyphotesis) flow chart or create it with docker images already available on your configured [**registry**](https://docs.charlescd.io/get-started/defining-a-workspace/docker-registry).
 
 Here, we will focus on the first approach with the following steps:
 
@@ -20,7 +20,7 @@ After you have done the whole process above, your release will be ready to deplo
 
 ![Example of release created and ready to deploy](../.gitbook/assets/primeiro_deploy-1-%20%282%29%20%282%29.png)
 
-Now, just follow the next steps to the [**Open Sea**](https://docs.charlescd.io/v/v0.2.1-en/key-concepts) deploy:
+Now, just follow the next steps to the [**Open Sea**](https://docs.charlescd.io/key-concepts) deploy:
 
 1. On Charles homepage, click on **Circles**; 
 2. Click on the Default circle \(it represents the open sea\) 

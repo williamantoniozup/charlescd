@@ -6,7 +6,7 @@ Circles are the main approach related to the **new deploy concept** brought by C
 
 Circles indicate clients segmentation and also support the version management created for a specific audience.
 
-Once the right people are chosen to have access to your release associated to a circle, Charles will generate a [**series of business or performance metrics**](https://docs.charlescd.io/v/v0.2.1-en/reference/metrics). This information will give you better hypothesis results or even a better view on a feature in analysis and that will enable more assertive tests.
+Once the right people are chosen to have access to your release associated to a circle, Charles will generate a [**series of business or performance metrics**](https://docs.charlescd.io/reference/metrics). This information will give you better hypothesis results or even a better view on a feature in analysis and that will enable more assertive tests.
 
 ## Active and inactive circles
 
@@ -101,7 +101,7 @@ So, the redirect logic using **`x-circle-id`** will be:
 
 ## How to route your circles with Kubernetes Clusters?
 
-**Charles** involves [**Kubernetes**](https://kubernetes.io/docs/home/) **\*\*and \[**Istio**\]\(**[https://istio.io/docs/](https://istio.io/docs/)**\) \*\***on traffic routing. Let's think about a scenario where there are two circles:
+**Charles** involves [**Kubernetes**](https://kubernetes.io/docs/home/) and ****[**Istio**](https://istio.io/docs/) ****on traffic routing. Let's think about a scenario where there are two circles:
 
 * Campinas residents \(identify by ID 1234\);
 * Belo Horizonte's residents \(identify by ID 8746\).

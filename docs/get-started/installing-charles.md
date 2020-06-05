@@ -13,7 +13,7 @@ The CharlesCD installation considers these components:
 1. Seven specific modules of **Charles' architecture;** 
 2. **Keycloak**, used for product authentication and authorization;
 3. A **PostgreSQL database** for backend modules \( `charles-application`, `charles-circle-matcher`, `deploy` and `villager`\) and Keycloak;
-4. A **Redis**, to be used by [**Circle Matcher**](https://docs.charlescd.io/referencia/circle-matcher). 
+4. A **Redis**, to be used by [**Circle Matcher**](https://docs.charlescd.io/reference/circle-matcher). 
 
 ### Continuous Delivery Platform
 
