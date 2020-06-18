@@ -9,9 +9,9 @@ function Identify() {
 
   useEffect(() => {
     if (status === 'resolved' || status === 'rejected') {
-      history.push({ pathname: '/quiz-app/questions' });
+      window.location = "/quiz-app/questions"
     }
-  }, [history, status])
+  }, [status])
 
   const onSubmit = (event) => {
     event.preventDefault();

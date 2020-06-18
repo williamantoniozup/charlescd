@@ -26,7 +26,7 @@ function Questions() {
     setSelectedAnswer();
   }
 
-  const onRestart = () => history.push({ pathname: '/quiz-app' });
+  const onRestart = () => window.location.href = '/quiz-app';
 
   const getAnswerClass = (answerID) => {
     if ((isCorrect && answerID === correctAnswer) || correctAnswer === answerID) {
