@@ -7,7 +7,7 @@ function Identify() {
 
   useEffect(() => {
     if (status === 'resolved' || status === 'rejected') {
-      window.location = "/quiz-app/questions"
+      window.location.href = "/quiz-app/questions"
     }
   }, [status])
 
