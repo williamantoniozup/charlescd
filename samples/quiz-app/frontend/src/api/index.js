@@ -1,8 +1,10 @@
 import axios from 'axios';
+import { getCircleId } from "../utils/cookie";
 
 const instance = axios.create({
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'x-circle-id': getCircleId()
   }
 });
 
