@@ -14,6 +14,26 @@
  * limitations under the License.
  */
 
+import map from 'lodash/map';
+
 const getQueryStrings = () => new URLSearchParams(window.location.search);
+
+type Params = {
+  [key: string]: unknown;
+};
+
+export const buildParams = (data: Params) => {
+  const params = new URLSearchParams();
+
+  map(data, (value, key) => {
+    if (Array.isArray(data[key])) {
+      map(value as [], item => params.append(key, item));
+    } else {
+      params.append(key, value as string);
+    }
+  });
+
+  return params;
+};
 
 export default getQueryStrings;
