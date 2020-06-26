@@ -57,8 +57,8 @@ spec:
             - name: KEYCLOCK_REALM
               value: "charlescd"
             - name: KEYCLOAK_SERVER_URL
-            {{- if .Values.moove.nginx.enabled }}
-              value: "http://nginx"
+            {{- if .Values.nginx.enabled }}
+              value: "http://nginx/keycloak/auth"
             {{- else }}
               value: "{{ .Values.moove.keycloakHost}}"
             {{- end }}

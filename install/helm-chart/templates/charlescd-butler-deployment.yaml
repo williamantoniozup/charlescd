@@ -64,6 +64,8 @@ spec:
               value: "http://charlescd-butler.{{ .Release.Namespace }}.svc.cluster.local:3000/notifications/undeployment"
             - name: DARWIN_DEPLOYMENT_CALLBACK
               value: "http://charlescd-butler.{{ .Release.Namespace }}.svc.cluster.local:3000/notifications/deployment"
+            - name: OCTOPIPE_URL
+              value: "https://charlescd-octopipe:8080/"
             - name: ENCRYPTION_KEY
               valueFrom:
                 secretKeyRef:

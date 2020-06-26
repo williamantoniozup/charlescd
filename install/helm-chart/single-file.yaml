@@ -579,7 +579,7 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: charlescd-octopipe-role
+  name: charlescd-role
 subjects:
 - kind: ServiceAccount
   name: charlescd-octopipe
@@ -1083,7 +1083,7 @@ spec:
           - name: APP_PORT
             value: "8080"
           - name: DB_URL
-            value: "mongodb://octopipe:octopipe@charlescd-mongo-mongodb:27017"
+            value: "mongodb://root:octopipe@charlescd-mongodb:27017"
           - name: KUBECONFIG
             value: "IN_CLUSTER"
           - name: TIMEOUT_RESOURCE_VERIFICATION
@@ -1172,6 +1172,8 @@ spec:
               value: "http://charlescd-butler.charles.svc.cluster.local:3000/notifications/undeployment"
             - name: DARWIN_DEPLOYMENT_CALLBACK
               value: "http://charlescd-butler.charles.svc.cluster.local:3000/notifications/deployment"
+            - name: OCTOPIPE_URL
+              value: "https://charlescd-octopipe:8080/"
             - name: ENCRYPTION_KEY
               valueFrom:
                 secretKeyRef:
