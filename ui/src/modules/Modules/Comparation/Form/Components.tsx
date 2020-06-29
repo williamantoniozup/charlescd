@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { ArrayField, FieldElement, ValidationOptions } from 'react-hook-form';
-import Icon from 'core/components/Icon';
-import { Component } from 'modules/Circles/interfaces/Circle';
-import { component } from './constants';
-import Styled from './styled';
+import React from "react";
+import { ArrayField, FieldElement, ValidationOptions } from "react-hook-form";
+import Icon from "core/components/Icon";
+import { Component } from "modules/Circles/interfaces/Circle";
+import { component } from "./constants";
+import Styled from "./styled";
 
 interface Props {
   fieldArray: {
@@ -69,13 +69,20 @@ const Components = ({ fieldArray, register }: Props) => {
           />
         </Styled.Components.Wrapper>
       ))}
-      <Styled.Components.Button
-        size="EXTRA_SMALL"
-        onClick={() => append(component)}
-      >
-        <Icon name="add" size="15px" />
-        Add component
-      </Styled.Components.Button>
+      <Styled.Components.Button.Wrapper>
+        <Styled.Components.Button
+          color="dark"
+          onClick={() => append(component)}
+        >
+          Follow or guide
+        </Styled.Components.Button>
+        <Styled.Components.Button
+          color="dark"
+          onClick={() => append(component)}
+        >
+          Create Manual
+        </Styled.Components.Button>
+      </Styled.Components.Button.Wrapper>
     </>
   );
 };

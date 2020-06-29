@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
-import FormComponent from 'core/components/Form';
-import PopoverComponent from 'core/components/Popover';
-import ButtonComponent from 'core/components/Button';
-import IconComponent from 'core/components/Icon';
-import Text from 'core/components/Text';
+import styled from "styled-components";
+import FormComponent from "core/components/Form";
+import PopoverComponent from "core/components/Popover";
+import ButtonComponent from "core/components/Button";
+import IconComponent from "core/components/Icon";
+import Text from "core/components/Text";
 
 const Title = styled(Text.h2)`
   display: flex;
@@ -85,7 +85,7 @@ const ComponentInput = styled(FormComponent.Input)`
 
 const ComponentNumber = styled(FormComponent.Number)`
   width: 155px;
-  margin-right: 20px;
+  margin-right: 30px;
 `;
 
 const ComponentTrash = styled(IconComponent)`
@@ -94,17 +94,15 @@ const ComponentTrash = styled(IconComponent)`
   left: -20px;
 `;
 
-const ComponentButton = styled(ButtonComponent.Default)`
-  display: flex;
-  align-items: center;
-  border: 2px solid ${({ theme }) => theme.button.default.outline.border};
-  color: ${({ theme }) => theme.button.default.outline.color};
-  box-sizing: content-box;
-  background: none;
-  margin-bottom: 40px;
+const ComponentButton = styled(ButtonComponent.Rounded)``;
 
-  > i {
-    margin-right: 5px;
+const ComponentButtonWrapper = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: row;
+
+  > last-child {
+    margin-left: 5px;
   }
 `;
 
@@ -123,7 +121,10 @@ export default {
     Wrapper: ComponentsWrapper,
     Input: ComponentInput,
     Number: ComponentNumber,
-    Button: ComponentButton,
+    Button: {
+      ComponentButton,
+      Wrapper: ComponentButtonWrapper
+    },
     Trash: ComponentTrash
   }
 };
