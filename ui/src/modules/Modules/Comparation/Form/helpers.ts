@@ -27,3 +27,14 @@ export const validFields = (fields: object) => {
   });
   return status;
 };
+
+export const fullScreenHandler = (fullScreenEnabled: boolean, setFullScreen: (fullScreenEnabled: boolean) => void) => {
+  if (fullScreenEnabled) {
+    document.exitFullscreen()
+      .then(() => setFullScreen(false))
+      .catch((err) => console.error(err))
+  } else {
+    setFullScreen(true)
+    document.documentElement.requestFullscreen()
+  }
+}

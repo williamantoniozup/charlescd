@@ -110,13 +110,13 @@ const FormModule = ({ module, onChange }: Props) => {
       </Styled.Subtitle>
       <Styled.Form onSubmit={handleSubmit(onSubmit)}>
         <Styled.Input
-          label="Name the module"
+          label="Organization name"
           name="name"
           defaultValue={module?.name}
           ref={register({ required: true })}
         />
         <Styled.Input
-          label="URL git"
+          label="Repository name"
           name="gitRepositoryAddress"
           defaultValue={module?.gitRepositoryAddress}
           ref={register({ required: true })}

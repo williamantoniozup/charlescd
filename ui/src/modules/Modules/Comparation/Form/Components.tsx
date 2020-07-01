@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import { ArrayField, FieldElement, ValidationOptions } from 'react-hook-form';
 import Icon from 'core/components/Icon';
 import { Component } from 'modules/Circles/interfaces/Circle';
-import { component } from './constants';
+import { component, radios, codeYaml } from './constants';
 import Styled from './styled';
+import RadioGroup from 'core/components/RadioGroup';
+import YamlEditor from './Editor';
 
 interface Props {
   fieldArray: {
@@ -35,39 +37,56 @@ interface Props {
 
 const Components = ({ fieldArray, register }: Props) => {
   const { fields, append, remove } = fieldArray;
+  const [editingHelm, setEditingHelm] = useState(false)
   const one = 1;
 
   return (
     <>
       <Styled.Subtitle color="dark">
-        Add components and enter SLO metrics:
+        Add components, enter SLO metrics and configure the HELM template:
       </Styled.Subtitle>
+      <Styled.NoMarginSubtitle color="dark" fontStyle="italic">
+        (The name of the component must be identical to the name of the image generated in your registry)
+      </Styled.NoMarginSubtitle>
       {fields.map((field: Component, index: number) => (
-        <Styled.Components.Wrapper key={field.id}>
-          {fields.length > one && (
-            <Styled.Components.Trash
-              name="trash"
-              size="15px"
-              color="light"
-              onClick={() => remove(index)}
+        <Styled.Components.ColumnWrapper key={field.id}>
+          <Styled.Components.RowWrapper>
+            {fields.length > one && (
+              <Styled.Components.Trash
+                name="trash"
+                size="15px"
+                color="light"
+                onClick={() => remove(index)}
+              />
+            )}
+            <Styled.Components.Input
+              label="Component Name"
+              name={`components[${index}].name`}
+              ref={register({ required: true })}
             />
-          )}
-          <Styled.Components.Input
-            label="Enter name"
-            name={`components[${index}].name`}
-            ref={register({ required: true })}
+            <Styled.Components.Number
+              name={`components[${index}].latencyThreshold`}
+              label="Latency Threshold (ms)"
+              ref={register({ required: true })}
+            />
+            <Styled.Components.Number
+              name={`components[${index}].errorThreshold`}
+              label="Http Error Threshold (%)"
+              ref={register({ required: true })}
+            />
+          </Styled.Components.RowWrapper>
+          <RadioGroup
+            name="helm_modes"
+            items={radios}
+            onChange={({ currentTarget }) => {
+              console.log(currentTarget)
+            }}
           />
-          <Styled.Components.Number
-            name={`components[${index}].latencyThreshold`}
-            label="Latency Threshold (ms)"
-            ref={register({ required: true })}
-          />
-          <Styled.Components.Number
-            name={`components[${index}].errorThreshold`}
-            label="Http Error Threshold (%)"
-            ref={register({ required: true })}
-          />
-        </Styled.Components.Wrapper>
+          <YamlEditor />
+          <Styled.Button size="SMALL">
+            OK
+          </Styled.Button>
+        </Styled.Components.ColumnWrapper>
       ))}
       <Styled.Components.Button
         size="EXTRA_SMALL"

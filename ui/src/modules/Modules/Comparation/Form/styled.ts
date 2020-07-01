@@ -34,6 +34,10 @@ const Subtitle = styled(Text.h5)`
   margin: 20px 0;
 `;
 
+const NoMarginSubtitle = styled(Text.h5)`
+  margin: -10px 0 0 0;
+`
+
 const Content = styled.div`
   display: flex;
   flex-direction: column;
@@ -72,11 +76,18 @@ const Icon = styled(IconComponent)`
   margin-bottom: 30px;
 `;
 
-const ComponentsWrapper = styled.div`
+const ComponentsColumnWrapper = styled.div`
   display: flex;
   position: relative;
   margin-bottom: 20px;
+  flex-direction: column;
 `;
+
+const ComponentsRowWrapper = styled.div`
+  display: flex;
+  position: relative;
+  margin-bottom: 20px;
+`
 
 const ComponentInput = styled(FormComponent.Input)`
   width: 155px;
@@ -108,10 +119,25 @@ const ComponentButton = styled(ButtonComponent.Default)`
   }
 `;
 
+const FullscreenButton = styled(ButtonComponent.Default)`
+  margin-bottom: -30px;
+  margin-top: 10px;
+  z-index: 10;
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: none;
+`
+
 export default {
   Content,
   Title,
   Subtitle,
+  NoMarginSubtitle,
   Form,
   Input,
   Number,
@@ -119,11 +145,15 @@ export default {
   Popover,
   Icon,
   Button,
+  Editor: {
+    FullscreenButton
+  },
   Components: {
-    Wrapper: ComponentsWrapper,
+    ColumnWrapper: ComponentsColumnWrapper,
     Input: ComponentInput,
     Number: ComponentNumber,
     Button: ComponentButton,
-    Trash: ComponentTrash
+    Trash: ComponentTrash,
+    RowWrapper: ComponentsRowWrapper
   }
 };
