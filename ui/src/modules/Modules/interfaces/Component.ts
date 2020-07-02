@@ -19,4 +19,7 @@ export interface Component {
   name?: string;
   latencyThreshold?: string;
   errorThreshold?: string;
+  templateMethod?: string;
+  helmLink?: string;
+  yamlValues?: string;
 }

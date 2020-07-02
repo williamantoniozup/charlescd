@@ -15,13 +15,14 @@
  */
 
 import React, {useState} from 'react';
-import { ArrayField, FieldElement, ValidationOptions } from 'react-hook-form';
+import { ArrayField, FieldElement, ValidationOptions, FormContext } from 'react-hook-form';
 import Icon from 'core/components/Icon';
 import { Component } from 'modules/Circles/interfaces/Circle';
 import { component, radios, codeYaml } from './constants';
 import Styled from './styled';
 import RadioGroup from 'core/components/RadioGroup';
 import YamlEditor from './Editor';
+import HelmInput from './HelmInput';
 
 interface Props {
   fieldArray: {
@@ -33,9 +34,10 @@ interface Props {
   register: <Element extends FieldElement = FieldElement>(
     validationOptions: ValidationOptions
   ) => (ref: Element | null) => void;
+  setValue: (name: string, value: string) => void;
 }
 
-const Components = ({ fieldArray, register }: Props) => {
+const Components = ({ fieldArray, register, setValue }: Props) => {
   const { fields, append, remove } = fieldArray;
   const [editingHelm, setEditingHelm] = useState(false)
   const one = 1;
@@ -76,13 +78,14 @@ const Components = ({ fieldArray, register }: Props) => {
             />
           </Styled.Components.RowWrapper>
           <RadioGroup
-            name="helm_modes"
+            name={`components[${index}].helmMethod`}
             items={radios}
             onChange={({ currentTarget }) => {
-              console.log(currentTarget)
+              setValue(`components[${index}].templateMethod`, currentTarget.value)
             }}
           />
           <YamlEditor />
+          <HelmInput />
           <Styled.Button size="SMALL">
             OK
           </Styled.Button>

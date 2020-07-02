@@ -30,6 +30,7 @@ import Components from './Components';
 import { component } from './constants';
 import { validFields } from './helpers';
 import Styled from './styled';
+import { components } from 'react-select';
 
 interface Props {
   module: Module;
@@ -44,7 +45,7 @@ const FormModule = ({ module, onChange }: Props) => {
   const [isDisabled, setIsDisabled] = useState(true);
   const history = useHistory();
 
-  const { register, control, getValues, handleSubmit, watch } = useForm<Module>(
+  const { register, control, getValues, handleSubmit, watch, setValue } = useForm<Module>(
     {
       defaultValues: { components: [component] }
     }
@@ -121,7 +122,8 @@ const FormModule = ({ module, onChange }: Props) => {
           defaultValue={module?.gitRepositoryAddress}
           ref={register({ required: true })}
         />
-        {!isEdit && <Components register={register} fieldArray={fieldArray} />}
+        {!isEdit && <Components setValue={setValue} register={register} fieldArray={fieldArray} />}
+        <button onClick={() => console.log(getValues())}>Teste</button>
         <Styled.FieldPopover>
           <Styled.Input
             label="Insert a helm repository link"

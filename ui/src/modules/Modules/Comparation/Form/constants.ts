@@ -19,12 +19,15 @@ import { Radio } from "core/components/RadioGroup";
 export const component = {
   name: '',
   latencyThreshold: '',
-  errorThreshold: ''
+  errorThreshold: '',
+  templateMethod: '',
+  helmLink: '',
+  yamlValues: ''
 };
 
 export const radios: Radio[] = [
-  { icon: '', value: 'Follow our guide' },
-  { icon: '', value: 'Advanced' }
+  { icon: '', name: 'Follow our guide', value: 'guide' },
+  { icon: '', name: 'Advanced', value: 'advanced' }
 ];
 
 
@@ -58,7 +61,7 @@ secretEnvVars:
     secretKey: "encryption-key"
 
 appname: charlescd-moove
-    
+
 image:
   repository: darwin-application
   tag: latest
@@ -71,19 +74,19 @@ service:
      port: 8080
 configmaps:
   enabled: false
-startcommand: 
+startcommand:
   enabled: false
   value: "[\"/bin/sh\",\"-c\",\"/usr/sbin/nginx -c /data/darwin-ui-nginx.conf\"]"
 ingress:
   enabled: false
-  annotations: 
+  annotations:
      kubernetes.io/ingress.class: nginx
      kubernetes.io/tls-acme: "true"
   path: /
   hosts:
     - name: zup.lab.realwave.zup.me
       port: http
-  tls: 
+  tls:
     - secretName: lab-realwave-zupme
       hosts:
         - zup.lab.realwave.zup.me
@@ -117,11 +120,11 @@ readinessProbe:
   httpGet:
     path: /actuator/health
     port: 8080
-    scheme: HTTP  
+    scheme: HTTP
   initialDelaySeconds: 120
   periodSeconds: 20
   successThreshold: 1
-  timeoutSeconds: 1   
+  timeoutSeconds: 1
 
 consulnode:
   enabled: false
