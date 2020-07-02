@@ -61,7 +61,7 @@ const SearchRelease = ({ circleId, onDeployed }: Props) => {
   const onSearchChange = (value: string) => {
     if (value !== lastTag) {
       setLastTag(value);
-      getBuilds({ tagName: value });
+      getBuilds({ tagName: value, status: 'BUILT' });
     }
   };
 
