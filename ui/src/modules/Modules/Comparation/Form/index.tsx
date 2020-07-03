@@ -122,24 +122,7 @@ const FormModule = ({ module, onChange }: Props) => {
           defaultValue={module?.gitRepositoryAddress}
           ref={register({ required: true })}
         />
-        {!isEdit && <Components setValue={setValue} register={register} fieldArray={fieldArray} />}
-        <button onClick={() => console.log(getValues())}>Teste</button>
-        <Styled.FieldPopover>
-          <Styled.Input
-            label="Insert a helm repository link"
-            name="helmRepository"
-            defaultValue={module?.helmRepository}
-            ref={register({ required: true })}
-          />
-          <Styled.Popover
-            title="Helm"
-            icon="info"
-            size="20px"
-            link="https://helm.sh/docs/"
-            linkLabel="View documentation"
-            description="Helm helps you manage Kubernetes applications"
-          />
-        </Styled.FieldPopover>
+        {!isEdit && <Components getValues={getValues} setValue={setValue} register={register} fieldArray={fieldArray} />}
         <Can I="write" a="modules" isDisabled={isDisabled} passThrough>
           <Styled.Button
             type="submit"

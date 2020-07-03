@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-import React, {useState} from 'react';
-import { ArrayField, FieldElement, ValidationOptions, FormContext } from 'react-hook-form';
-import Icon from 'core/components/Icon';
-import { Component } from 'modules/Circles/interfaces/Circle';
-import { component, radios, codeYaml } from './constants';
-import Styled from './styled';
-import RadioGroup from 'core/components/RadioGroup';
-import YamlEditor from './Editor';
-import HelmInput from './HelmInput';
+import React, { useEffect, useState } from "react";
+import {
+  ArrayField,
+  FieldElement,
+  ValidationOptions,
+  FormContextValues
+} from "react-hook-form";
+import Icon from "core/components/Icon";
+import { Component } from "modules/Circles/interfaces/Circle";
+import { component, radios, codeYaml } from "./constants";
+import ComponentForm from "./ComponentForm";
+import Styled from "./styled";
 
 interface Props {
   fieldArray: {
@@ -32,15 +35,17 @@ interface Props {
     fields: Partial<ArrayField>;
   };
   register: <Element extends FieldElement = FieldElement>(
-    validationOptions: ValidationOptions
+    name?: Partial<FieldElement>,
+    validationOptions?: ValidationOptions
   ) => (ref: Element | null) => void;
   setValue: (name: string, value: string) => void;
+  getValues: (name: string) => string;
 }
 
-const Components = ({ fieldArray, register, setValue }: Props) => {
+const Components = ({ fieldArray, register, setValue, getValues }: Props) => {
   const { fields, append, remove } = fieldArray;
-  const [editingHelm, setEditingHelm] = useState(false)
-  const one = 1;
+  const [finishedPreviousComponent, setFinishedPreviousComponent] = useState(false)
+
 
   return (
     <>
@@ -48,56 +53,33 @@ const Components = ({ fieldArray, register, setValue }: Props) => {
         Add components, enter SLO metrics and configure the HELM template:
       </Styled.Subtitle>
       <Styled.NoMarginSubtitle color="dark" fontStyle="italic">
-        (The name of the component must be identical to the name of the image generated in your registry)
+        (The name of the component must be identical to the name of the image
+        generated in your registry)
       </Styled.NoMarginSubtitle>
       {fields.map((field: Component, index: number) => (
-        <Styled.Components.ColumnWrapper key={field.id}>
-          <Styled.Components.RowWrapper>
-            {fields.length > one && (
-              <Styled.Components.Trash
-                name="trash"
-                size="15px"
-                color="light"
-                onClick={() => remove(index)}
-              />
-            )}
-            <Styled.Components.Input
-              label="Component Name"
-              name={`components[${index}].name`}
-              ref={register({ required: true })}
-            />
-            <Styled.Components.Number
-              name={`components[${index}].latencyThreshold`}
-              label="Latency Threshold (ms)"
-              ref={register({ required: true })}
-            />
-            <Styled.Components.Number
-              name={`components[${index}].errorThreshold`}
-              label="Http Error Threshold (%)"
-              ref={register({ required: true })}
-            />
-          </Styled.Components.RowWrapper>
-          <RadioGroup
-            name={`components[${index}].helmMethod`}
-            items={radios}
-            onChange={({ currentTarget }) => {
-              setValue(`components[${index}].templateMethod`, currentTarget.value)
-            }}
-          />
-          <YamlEditor />
-          <HelmInput />
-          <Styled.Button size="SMALL">
-            OK
-          </Styled.Button>
-        </Styled.Components.ColumnWrapper>
+        <ComponentForm
+          field={field}
+          fields={fields}
+          getValues={getValues}
+          setValue={setValue}
+          index={index}
+          register={register}
+          remove={remove}
+          setFinishedPreviousComponent={setFinishedPreviousComponent}
+        />
       ))}
-      <Styled.Components.Button
-        size="EXTRA_SMALL"
-        onClick={() => append(component)}
-      >
-        <Icon name="add" size="15px" />
-        Add component
-      </Styled.Components.Button>
+      {finishedPreviousComponent && (
+        <Styled.Components.Button
+          size="EXTRA_SMALL"
+          onClick={() => {
+            append(component)
+            setFinishedPreviousComponent(false)
+          }}
+        >
+          <Icon name="add" size="15px" />
+          Add component
+        </Styled.Components.Button>
+      )}
     </>
   );
 };
