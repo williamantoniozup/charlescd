@@ -1,15 +1,16 @@
 apiVersion: v1
 data:
   nginx.conf: |-
-    user       nginx;
-    worker_processes  5;
-    worker_rlimit_nofile 8192;
     events {
         worker_connections  4096;
     }
 
     http {
-        index    index.html index.htm index.php;
+
+        lua_package_path '~/lua/?.lua;;';
+
+        lua_shared_dict introspection 10m;
+
         default_type application/octet-stream;
         log_format main  '$remote_addr - $remote_user [$time_local] "$request" '
                         '$status $body_bytes_sent "$http_referer" '
@@ -17,46 +18,70 @@ data:
         sendfile on;
         tcp_nopush   on;
         server_names_hash_bucket_size 128;
-        # server {
-        #     listen 80;
-        #     server_name charles-prod.continuousplatform.com;
-        #     return 301 https://charles-prod.continuousplatform.com$request_uri;
-        # }
+
         server {
             listen 80;
+            server_name  _;
+            resolver kube-dns.kube-system.svc.cluster.local;
+
             {{ if .Values.ui.enabled}}
             location / {
                 proxy_http_version 1.1;
                 proxy_pass http://charlescd-ui:3000;
             }
             {{- end}}
+
             {{ if .Values.moove.enabled}}
-            location /moove/ {
-                proxy_http_version 1.1;
-                proxy_pass http://charlescd-moove:8080/;
+            location /moove/v2/users/ {
+              proxy_http_version 1.1;
+              proxy_pass http://charlescd-moove:8080/v2/users/;
+            }
+
+            location /moove {
+
+              access_by_lua '
+        
+                  local opts = {
+        
+                    discovery = "http://keycloak-http.{{.Release.Namespace}}.svc.cluster.local:8080/keycloak/auth/realms/charlescd/.well-known/openid-configuration",
+                    token_signing_alg_values_expected = { "RS256" }
+                  }
+        
+                  -- call bearer_jwt_verify for OAuth 2.0 JWT validation
+                  local res, err = require("resty.openidc").bearer_jwt_verify(opts)
+        
+                  if err or not res then
+                    ngx.status = 401
+                    ngx.say(err and err or "no access_token provided")
+                    ngx.exit(ngx.HTTP_UNAUTHORIZED)
+                  end
+              ';
+              proxy_http_version 1.1;
+              proxy_pass http://charlescd-moove:8080/;
+            }
+            {{- end}}
+
+            {{ if .Values.circlematcher.enabled}}
+            location /charlescd-circle-matcher {
+              proxy_http_version 1.1;
+              proxy_pass http://charlescd-circle-matcher:8080/;
             }
             {{- end}}
             {{ if .Values.octopipe.enabled}}
-            location /octopipe/ {
-                proxy_http_version 1.1;
-                proxy_pass http://charlescd-octopipe:8080/;
-            }
-            {{- end}}
-            {{ if .Values.circlematcher.enabled}}
-            location /charlescd-circle-matcher {
-                proxy_http_version 1.1;
-                proxy_pass http://charlescd-circle-matcher:8080/;
+            location /octopipe {
+              proxy_http_version 1.1;
+              proxy_pass http://octopipe:8080/;
             }
             {{- end}}
             {{ if .Values.keycloak.enabled}}
-            location ^~ /keycloak/ {
+            location ^~ /keycloak {
                 proxy_http_version 1.1;
                 proxy_set_header X-Forwarded-For $host;
                 proxy_set_header X-Forwarded-Proto $scheme;
                 proxy_set_header Upgrade $http_upgrade;
                 proxy_set_header Connection ‘upgrade’;
                 proxy_set_header Host $host;
-                proxy_pass      http://charlescd-keycloak-http:8080;
+                proxy_pass      http://keycloak-http:8080;
             }
             {{- end}}
         }
