@@ -58,6 +58,7 @@ const Components = ({ fieldArray, register, setValue, getValues }: Props) => {
       </Styled.NoMarginSubtitle>
       {fields.map((field: Component, index: number) => (
         <ComponentForm
+          key={field.id}
           field={field}
           fields={fields}
           getValues={getValues}

@@ -32,7 +32,6 @@ const ComponentForm = ({
   getValues,
   setFinishedPreviousComponent
 }: Props) => {
-
   useEffect(() => {
     register(
       { name: `components[${index}].templateMethod` },
@@ -44,74 +43,76 @@ const ComponentForm = ({
   const componentName = getValues(`components[${index}].name`);
   const componentLatency = getValues(`components[${index}].latencyThreshold`);
   const componentError = getValues(`components[${index}].errorThreshold`);
-  const componentTemplateMethod = getValues(`components[${index}].templateMethod`);
-  const [isEdit, setIsEdit] = useState(true);
+  const componentTemplateMethod = getValues(
+    `components[${index}].templateMethod`
+  );
+  const [isNotEditing, setIsNotEditing] = useState(false);
 
   return (
     <Styled.Components.ColumnWrapper key={field.id}>
-      {isEdit ? (
-        <>
-          <Styled.Components.RowWrapper>
-            <Styled.Components.Input
-              label="Component Name"
-              name={`components[${index}].name`}
-              ref={register({ required: true })}
-            />
-            <Styled.Components.Number
-              name={`components[${index}].latencyThreshold`}
-              label="Latency Threshold (ms)"
-              ref={register({ required: true })}
-            />
-            <Styled.Components.Number
-              name={`components[${index}].errorThreshold`}
-              label="Http Error Threshold (%)"
-              ref={register({ required: true })}
-            />
-          </Styled.Components.RowWrapper>
-          <RadioGroup
-            name={`components[${index}].templateMethod`}
-            items={radios}
-            onChange={({ currentTarget }) => {
-              setValue(
-                `components[${index}].templateMethod`,
-                currentTarget.value
-              );
-            }}
+      <Styled.Components.FormWrapper isNotEditing={isNotEditing}>
+        <Styled.Components.RowWrapper>
+          <Styled.Components.Input
+            label="Component Name"
+            name={`components[${index}].name`}
+            ref={register({ required: true })}
           />
-          {componentTemplateMethod ? (
-            componentTemplateMethod === "guide" ? (
-              <YamlEditor />
-            ) : (
-              <HelmInput />
-            )
-          ) : null}
-          <Styled.Button
-            onClick={() => {
-              setFinishedPreviousComponent(true);
-              setIsEdit(false);
-            }}
-            size="SMALL"
-          >
-            OK
-          </Styled.Button>
-        </>
-      ) : (
+          <Styled.Components.Number
+            name={`components[${index}].latencyThreshold`}
+            label="Latency Threshold (ms)"
+            ref={register({ required: true })}
+          />
+          <Styled.Components.Number
+            name={`components[${index}].errorThreshold`}
+            label="Http Error Threshold (%)"
+            ref={register({ required: true })}
+          />
+        </Styled.Components.RowWrapper>
+        <RadioGroup
+          name={`components[${index}].templateMethod`}
+          items={radios}
+          onChange={({ currentTarget }) => {
+            setValue(
+              `components[${index}].templateMethod`,
+              currentTarget.value
+            );
+          }}
+        />
+        {componentTemplateMethod ? (
+          componentTemplateMethod === "guide" ? (
+            <YamlEditor />
+          ) : (
+            <HelmInput />
+          )
+        ) : null}
+        <Styled.Button
+          onClick={() => {
+            setFinishedPreviousComponent(true);
+            setIsNotEditing(true);
+          }}
+          size="SMALL"
+        >
+          OK
+        </Styled.Button>
+      </Styled.Components.FormWrapper>
+      <Styled.Components.CardWrapper isNotEditing={!isNotEditing}>
         <Card.Component
           description={componentName}
           latencyThreshold={componentLatency}
           errorThreshold={componentError}
           icon="close"
+          onClick={() => setIsNotEditing(false)}
           canClose={true}
           onClose={() => {
-            if(index < one) {
-              setIsEdit(true)
+            console.log(fields)
+            if (fields.length <= one) {
+              setIsNotEditing(false);
             } else {
-              remove(index)
+              remove(index);
             }
           }}
-
         />
-      )}
+      </Styled.Components.CardWrapper>
     </Styled.Components.ColumnWrapper>
   );
 };

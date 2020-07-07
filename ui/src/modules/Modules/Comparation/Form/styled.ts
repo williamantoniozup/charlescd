@@ -133,6 +133,18 @@ const FullscreenButton = styled(ButtonComponent.Default)`
   background: none;
 `
 
+interface EditingWrappers {
+  isNotEditing: boolean;
+}
+
+const ComponentFormWrapper = styled('div')<EditingWrappers>`
+  display: ${({ isNotEditing }) => isNotEditing ? "none": "initial"};
+`
+
+const ComponentCardWrapper = styled('div')<EditingWrappers>`
+  display: ${({ isNotEditing }) => isNotEditing ? "none": "initial"};
+`
+
 export default {
   Content,
   Title,
@@ -154,6 +166,8 @@ export default {
     Number: ComponentNumber,
     Button: ComponentButton,
     Trash: ComponentTrash,
-    RowWrapper: ComponentsRowWrapper
+    RowWrapper: ComponentsRowWrapper,
+    FormWrapper: ComponentFormWrapper,
+    CardWrapper: ComponentCardWrapper,
   }
 };
