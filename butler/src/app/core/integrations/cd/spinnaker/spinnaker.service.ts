@@ -30,6 +30,9 @@ import { PipelineTypeEnum } from './connector/pipelines/enums/pipeline-type.enum
 @Injectable()
 export class SpinnakerService implements ICdServiceStrategy {
 
+  private readonly MAXIMUM_RETRY_ATTEMPTS = 5
+  private readonly MILLISECONDS_RETRY_DELAY = 1000
+
   constructor(
     private readonly spinnakerApiService: SpinnakerApiService,
     private readonly consoleLoggerService: ConsoleLoggerService
@@ -97,7 +100,7 @@ export class SpinnakerService implements ICdServiceStrategy {
 
     return deployError.pipe(
       concatMap((error, attempts) => {
-        return attempts >= AppConstants.CD_CONNECTION_MAXIMUM_RETRY_ATTEMPTS ?
+        return attempts >= this.MAXIMUM_RETRY_ATTEMPTS ?
           throwError('Reached maximum attemps.') :
           this.getDeployRetryPipe(error, attempts)
       })
@@ -109,7 +112,7 @@ export class SpinnakerService implements ICdServiceStrategy {
 
     return of(error).pipe(
       tap(() => this.consoleLoggerService.log(`Deploy attempt #${attempts + 1}. Retrying deployment: ${error}`)),
-      delay(AppConstants.CD_CONNECTION_MILLISECONDS_RETRY_DELAY)
+      delay(this.MILLISECONDS_RETRY_DELAY)
     )
   }
 
