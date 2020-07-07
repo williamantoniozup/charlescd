@@ -15,7 +15,7 @@
  */
 
 import { Inject, Injectable } from '@nestjs/common'
-import { Connection } from 'typeorm'
+import { Connection, InsertResult } from 'typeorm'
 import * as Path from 'path'
 import * as fs from 'fs'
 
@@ -64,6 +64,15 @@ export class FixtureUtilsService {
         .values(items)
         .execute()
     }
+  }
+
+  async insertSingleFixture(entity: DatabaseEntity, params: Record<string, unknown>) : Promise<InsertResult> {
+    const repository = await this.connection.getRepository(entity.name)
+    return await repository
+      .createQueryBuilder(entity.name)
+      .insert()
+      .values(params)
+      .execute()
   }
 
   private getOrderedLoadDbEntities(): DatabaseEntity[] {
