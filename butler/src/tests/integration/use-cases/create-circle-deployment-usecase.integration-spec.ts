@@ -65,7 +65,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
   beforeEach(async() => {
     await fixtureUtilsService.clearDatabase()
-    await fixtureUtilsService.loadDatabase()
+    // await fixtureUtilsService.loadDatabase()
   })
 
   it('/POST deployments in circle should create deployment, module deployment and component deployment entities', async() => {
@@ -415,54 +415,33 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     )
   })
 
+
   it('/POST /deployments in circle  should call octopipe for each RUNNING component deployment', async() => {
-    const createDeploymentRequest = {
-      deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
-      applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
-      modules: [
-        {
-          moduleId: 'e2c937cb-d77e-48db-b1ea-7d3df16fd02c',
-          helmRepository: 'helm-repository.com',
-          components: [
-            {
-              componentId: 'c41f029d-186c-4097-ad43-1b344b2e8041',
-              componentName: 'component-name',
-              buildImageUrl: 'image-url',
-              buildImageTag: 'image-tag'
-            },
-            {
-              componentId: 'f4c4bcbe-58a9-41cc-ad8b-7177121905de',
-              componentName: 'component-name2',
-              buildImageUrl: 'image-url2',
-              buildImageTag: 'image-tag2'
-            }
-          ]
-        },
-        {
-          moduleId: '23776617-7840-4819-b356-30e165b7ebb9',
-          helmRepository: 'helm-repository.com',
-          components: [
-            {
-              componentId: '68335d19-ce03-4cf8-84b4-5574257c982e',
-              componentName: 'component-name',
-              buildImageUrl: 'image-url',
-              buildImageTag: 'image-tag'
-            }
-          ]
-        }
-      ],
-      authorId: 'author-id',
-      description: 'Deployment from Charles C.D.',
-      callbackUrl: 'http://localhost:8883/moove',
-      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
-      circle: {
-        headerValue: 'circle-header'
+
+    const cdConfiguration = await fixtureUtilsService.insertSingleFixture({ name: 'CdConfigurationEntity', tableName: 'cd_configurations' }, {
+      'id': '4046f193-9479-48b5-ac29-01f419b64cb5',
+      'workspaceId': '7af831f6-2206-4ab0-866b-f47bc7f91e7e',
+      'type': 'OCTOPIPE',
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
+    const deployment = await fixtureUtilsService.insertSingleFixture({ name: 'DeploymentEntity', tableName: 'deployments' }, {
+      'id': '2adc7ac1-61ff-4630-8ba9-eba33c00ad24',
+      'applicationName': 'application-name',
+      'authorId': 'author-id',
+      'description': 'fake deployment #1',
+      'callbackUrl': 'callback-url',
+      'status': 'CREATED',
+      'defaultCircle': false,
+      'circleId': '12345',
+      'cdConfigurationId': '4046f193-9479-48b5-ac29-01f419b64cb5',
+      'circle' : {
+        'headerValue': 'header-value'
       }
-    }
-
+    })
     const httpSpy = jest.spyOn(httpService, 'post')
-
-    await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).set('x-circle-id', '12345')
+    await request(app.getHttpServer()).post('/deployments').send(deployment).set('x-circle-id', '12345').expect(201)
 
     expect(httpSpy).toHaveBeenCalledTimes(2)
 
