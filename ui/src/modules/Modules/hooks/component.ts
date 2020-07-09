@@ -20,10 +20,40 @@ import { useFetch } from 'core/providers/base/hooks';
 import {
   createComponent,
   updateComponent,
-  deleteComponent
+  deleteComponent,
+  getYamlValues
 } from 'core/providers/modules';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { Module } from 'modules/Modules/interfaces/Module';
+import { YamlValues } from '../interfaces/Component';
+
+
+export const useYamlValues = () => {
+  const [data, getData] = useFetch<YamlValues>(getYamlValues);
+  const { response: yamlValues, loading: loadingYaml, error } = data;
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (error) {
+      dispatch(
+        toogleNotification({
+          text: `github error: ${error}`,
+          status: 'error'
+        })
+      );
+    }
+  }, [dispatch, error]);
+
+  const loadYamlValues = useCallback(
+    () => {
+      getData();
+    },
+    [getData]
+  );
+
+  return { loadingYaml, yamlValues, loadYamlValues}
+  ;
+};
 
 export const useSaveComponent = (): {
   saveComponent: Function;

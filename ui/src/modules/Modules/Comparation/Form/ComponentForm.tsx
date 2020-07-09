@@ -1,24 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { FieldElement, ArrayField, ValidationOptions } from "react-hook-form";
+import { FieldElement, ArrayField, ValidationOptions, useFormContext } from "react-hook-form";
 import Styled from "./styled";
 import YamlEditor from "./Editor";
-import HelmInput from "./HelmInput";
 import RadioGroup from "core/components/RadioGroup";
-import { radios } from "./constants";
+import { radios, component } from "./constants";
 import Card from "core/components/Card";
 import { Component } from "modules/Modules/interfaces/Component";
+import { validFields } from "./helpers";
+import { Module } from "modules/Modules/interfaces/Module";
+
 
 interface Props {
   index: number;
   field: Component;
   fields: Partial<ArrayField>;
-  getValues: (name: string) => string;
-  register: <Element extends FieldElement = FieldElement>(
-    name?: Partial<FieldElement>,
-    validationOptions?: ValidationOptions
-  ) => (ref: Element | null) => void;
   remove: (index?: number | number[] | undefined) => void;
-  setValue: (name: string, value: string) => void;
   setFinishedPreviousComponent: (finishedPreviousComponent: boolean) => void;
 }
 
@@ -27,25 +23,48 @@ const ComponentForm = ({
   field,
   index,
   remove,
-  register,
-  setValue,
-  getValues,
   setFinishedPreviousComponent
 }: Props) => {
+  const { getValues, register, unregister, setValue, watch } = useFormContext()
+  const one = 1;
+  const watchComponent = watch(`components[${index}]`) || component
+  const { templateMethod, name, latencyThreshold, errorThreshold } = watchComponent
+
+
   useEffect(() => {
+    console.log('to aqui', index)
     register(
       { name: `components[${index}].templateMethod` },
       { required: true }
     );
-  }, []);
+  }, [field]);
 
-  const one = 1;
-  const componentName = getValues(`components[${index}].name`);
-  const componentLatency = getValues(`components[${index}].latencyThreshold`);
-  const componentError = getValues(`components[${index}].errorThreshold`);
-  const componentTemplateMethod = getValues(
-    `components[${index}].templateMethod`
-  );
+
+  const handleRadioButton = (helmMethod: string) => {
+    setValue(
+      `components[${index}].templateMethod`,
+      helmMethod,
+    );
+    if (helmMethod === 'guide') {
+      register(
+        { name: `components[${index}].yamlValues` },
+        { required: true }
+      );
+      unregister(`components[${index}].helmLink`)
+    } else {
+      register(
+        { name: `components[${index}].helmLink` },
+        { required: true }
+      );
+      unregister(`components[${index}].yamlValues`)
+    }
+  }
+
+  const validateModule = () => {
+    const isValid = validFields(watchComponent);
+    return isValid
+  }
+
   const [isNotEditing, setIsNotEditing] = useState(false);
 
   return (
@@ -71,21 +90,21 @@ const ComponentForm = ({
         <RadioGroup
           name={`components[${index}].templateMethod`}
           items={radios}
-          onChange={({ currentTarget }) => {
-            setValue(
-              `components[${index}].templateMethod`,
-              currentTarget.value
-            );
-          }}
+          onChange={({ currentTarget }) => handleRadioButton(currentTarget.value)}
         />
-        {componentTemplateMethod ? (
-          componentTemplateMethod === "guide" ? (
-            <YamlEditor />
+        {templateMethod ? (
+          templateMethod === "guide" ? (
+            <YamlEditor onChange={(code) => setValue(`components[${index}].yamlValues`, code)} />
           ) : (
-            <HelmInput />
+            <Styled.Input
+              label="Insert a helm repository link"
+              name={`components[${index}].helmLink`}
+              ref={register({ required: true })}
+            />
           )
         ) : null}
         <Styled.Button
+          isDisabled={!validateModule()}
           onClick={() => {
             setFinishedPreviousComponent(true);
             setIsNotEditing(true);
@@ -97,14 +116,13 @@ const ComponentForm = ({
       </Styled.Components.FormWrapper>
       <Styled.Components.CardWrapper isNotEditing={!isNotEditing}>
         <Card.Component
-          description={componentName}
-          latencyThreshold={componentLatency}
-          errorThreshold={componentError}
+          description={name}
+          latencyThreshold={latencyThreshold}
+          errorThreshold={errorThreshold}
           icon="close"
           onClick={() => setIsNotEditing(false)}
           canClose={true}
           onClose={() => {
-            console.log(fields)
             if (fields.length <= one) {
               setIsNotEditing(false);
             } else {

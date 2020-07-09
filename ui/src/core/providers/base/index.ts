@@ -38,6 +38,7 @@ export interface EnvVariables {
   REACT_APP_AUTH_URI: string;
   REACT_APP_AUTH_CLIENT_ID: string;
   REACT_APP_AUTH_REALM: string;
+  REACT_APP_YAML_VALUES_URI: string;
 }
 
 declare global {
@@ -84,6 +85,29 @@ export const unauthenticatedRequest = (
 
   return (options?: RequestInit) =>
     fetch(`${basePath}${url}`, defaultsDeep(mergedOptions, options)).then(
+      (response: Response) => {
+        if (!response.ok) {
+          return Promise.reject(response);
+        } else {
+          return response;
+        }
+      }
+    );
+};
+
+export const unauthenticatedExternalRequest = (
+  url: string,
+  body: object | string | undefined = undefined,
+  options?: RequestInit
+): ((options: RequestInit) => Promise<Response>) => {
+  const defaultOptions = {
+    headers,
+    body: isString(body) ? body : JSON.stringify(body)
+  };
+  const mergedOptions = defaultsDeep(options, defaultOptions);
+
+  return (options?: RequestInit) =>
+    fetch(`${url}`, defaultsDeep(mergedOptions, options)).then(
       (response: Response) => {
         if (!response.ok) {
           return Promise.reject(response);

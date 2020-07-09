@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { baseRequest, postRequest } from './base';
+import { baseRequest, postRequest, unauthenticatedExternalRequest } from './base';
 
 export interface Component {
   name: string;
@@ -31,6 +31,8 @@ export interface ModuleSave {
 }
 
 const endpoint = '/moove/v2/modules';
+
+const yamlApi = window.ENVIRONMENT?.REACT_APP_YAML_VALUES_URI || 'https://raw.githubusercontent.com/ZupIT/charlescd/master/install/helm-chart/values.yaml';
 
 export const findAll = (name: string) => {
   const page = 'page=0&size=200';
@@ -73,3 +75,8 @@ export const deleteComponent = (moduleId: string, componentId: string) =>
 
 export const findComponentTags = (moduleId: string, componentId: string) =>
   baseRequest(`${endpoint}/${moduleId}/components/${componentId}/tags`);
+
+
+
+
+export const getYamlValues = () => unauthenticatedExternalRequest(`${yamlApi}`)

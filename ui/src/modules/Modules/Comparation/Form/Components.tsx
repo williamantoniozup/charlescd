@@ -26,6 +26,7 @@ import { Component } from "modules/Circles/interfaces/Circle";
 import { component, radios, codeYaml } from "./constants";
 import ComponentForm from "./ComponentForm";
 import Styled from "./styled";
+import { Module } from "modules/Modules/interfaces/Module";
 
 interface Props {
   fieldArray: {
@@ -34,15 +35,9 @@ interface Props {
     remove: (index?: number | number[] | undefined) => void;
     fields: Partial<ArrayField>;
   };
-  register: <Element extends FieldElement = FieldElement>(
-    name?: Partial<FieldElement>,
-    validationOptions?: ValidationOptions
-  ) => (ref: Element | null) => void;
-  setValue: (name: string, value: string) => void;
-  getValues: (name: string) => string;
 }
 
-const Components = ({ fieldArray, register, setValue, getValues }: Props) => {
+const Components = ({ fieldArray }: Props) => {
   const { fields, append, remove } = fieldArray;
   const [finishedPreviousComponent, setFinishedPreviousComponent] = useState(false)
 
@@ -61,10 +56,7 @@ const Components = ({ fieldArray, register, setValue, getValues }: Props) => {
           key={field.id}
           field={field}
           fields={fields}
-          getValues={getValues}
-          setValue={setValue}
           index={index}
-          register={register}
           remove={remove}
           setFinishedPreviousComponent={setFinishedPreviousComponent}
         />

@@ -19,7 +19,7 @@ import forEach from 'lodash/forEach';
 export const validFields = (fields: object) => {
   let status = true;
   forEach(fields, (value: string) => {
-    if (value === '') {
+    if (value === '' || value === undefined) {
       status = false;
 
       return status;

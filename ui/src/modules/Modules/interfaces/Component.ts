@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-export interface Component {
+export interface YamlValues {
+  yamlValues?: string;
+}
+
+export interface Component extends YamlValues {
   id?: string;
   name?: string;
   latencyThreshold?: string;
   errorThreshold?: string;
   templateMethod?: string;
   helmLink?: string;
-  yamlValues?: string;
 }

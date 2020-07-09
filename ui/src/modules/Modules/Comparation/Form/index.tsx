@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import isEqual from 'lodash/isEqual';
-import { useForm, useFieldArray } from 'react-hook-form';
-import { useSaveModule, useUpdateModule } from 'modules/Modules/hooks/module';
-import { Module } from 'modules/Modules/interfaces/Module';
-import { getProfileByKey } from 'core/utils/profile';
-import Can from 'core/components/Can';
-import { updateParam } from 'core/utils/path';
-import Popover, { CHARLES_DOC } from 'core/components/Popover';
-import routes from 'core/constants/routes';
-import isEmpty from 'lodash/isEmpty';
-import Components from './Components';
-import { component } from './constants';
-import { validFields } from './helpers';
-import Styled from './styled';
-import { components } from 'react-select';
+import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
+import isEqual from "lodash/isEqual";
+import { useForm, useFieldArray, FormContext } from "react-hook-form";
+import { useSaveModule, useUpdateModule } from "modules/Modules/hooks/module";
+import { Module } from "modules/Modules/interfaces/Module";
+import { getProfileByKey } from "core/utils/profile";
+import Can from "core/components/Can";
+import { updateParam } from "core/utils/path";
+import Popover, { CHARLES_DOC } from "core/components/Popover";
+import routes from "core/constants/routes";
+import isEmpty from "lodash/isEmpty";
+import Components from "./Components";
+import { component } from "./constants";
+import { validFields } from "./helpers";
+import Styled from "./styled";
+import { components } from "react-select";
 
 interface Props {
   module: Module;
@@ -40,17 +40,23 @@ interface Props {
 const FormModule = ({ module, onChange }: Props) => {
   const { loading: saveLoading, saveModule } = useSaveModule();
   const { status: updateStatus, updateModule } = useUpdateModule();
-  const authorId = getProfileByKey('id');
+  const authorId = getProfileByKey("id");
   const isEdit = !isEmpty(module);
   const [isDisabled, setIsDisabled] = useState(true);
   const history = useHistory();
 
-  const { register, control, getValues, handleSubmit, watch, setValue } = useForm<Module>(
-    {
-      defaultValues: { components: [component] }
-    }
-  );
-  const fieldArray = useFieldArray({ control, name: 'components' });
+  const form = useForm<Module>({
+    defaultValues: { components: [component] }
+  });
+  const {
+    register,
+    control,
+    getValues,
+    handleSubmit,
+    watch,
+  } = form;
+
+  const fieldArray = useFieldArray({ control, name: "components" });
   const watchFields = watch();
 
   useEffect(() => {
@@ -66,7 +72,7 @@ const FormModule = ({ module, onChange }: Props) => {
   }, [watchFields, getValues, module]);
 
   useEffect(() => {
-    if (updateStatus === 'resolved') {
+    if (updateStatus === "resolved") {
       onChange();
     }
   }, [updateStatus, onChange]);
@@ -87,7 +93,7 @@ const FormModule = ({ module, onChange }: Props) => {
           color="dark"
           onClick={() =>
             updateParam(
-              'module',
+              "module",
               routes.modulesComparation,
               history,
               module?.id,
@@ -97,7 +103,7 @@ const FormModule = ({ module, onChange }: Props) => {
         />
       )}
       <Styled.Title color="light">
-        {isEdit ? 'Edit module' : 'Create module'}
+        {isEdit ? "Edit module" : "Create module"}
         <Popover
           title="How to create a module?"
           icon="info"
@@ -109,30 +115,32 @@ const FormModule = ({ module, onChange }: Props) => {
       <Styled.Subtitle color="dark">
         Enter the requested information below:
       </Styled.Subtitle>
-      <Styled.Form onSubmit={handleSubmit(onSubmit)}>
-        <Styled.Input
-          label="Organization name"
-          name="name"
-          defaultValue={module?.name}
-          ref={register({ required: true })}
-        />
-        <Styled.Input
-          label="Repository name"
-          name="gitRepositoryAddress"
-          defaultValue={module?.gitRepositoryAddress}
-          ref={register({ required: true })}
-        />
-        {!isEdit && <Components getValues={getValues} setValue={setValue} register={register} fieldArray={fieldArray} />}
-        <Can I="write" a="modules" isDisabled={isDisabled} passThrough>
-          <Styled.Button
-            type="submit"
-            size="EXTRA_SMALL"
-            isLoading={saveLoading || updateStatus === 'pending'}
-          >
-            {isEdit ? 'Edit module' : 'Create module'}
-          </Styled.Button>
-        </Can>
-      </Styled.Form>
+      <FormContext {...form}>
+        <Styled.Form onSubmit={handleSubmit(onSubmit)}>
+          <Styled.Input
+            label="Organization name"
+            name="name"
+            defaultValue={module?.name}
+            ref={register({ required: true })}
+          />
+          <Styled.Input
+            label="Repository name"
+            name="gitRepositoryAddress"
+            defaultValue={module?.gitRepositoryAddress}
+            ref={register({ required: true })}
+          />
+          {!isEdit && <Components fieldArray={fieldArray} />}
+          <Can I="write" a="modules" isDisabled={isDisabled} passThrough>
+            <Styled.Button
+              type="submit"
+              size="EXTRA_SMALL"
+              isLoading={saveLoading || updateStatus === "pending"}
+            >
+              {isEdit ? "Edit module" : "Create module"}
+            </Styled.Button>
+          </Can>
+        </Styled.Form>
+      </FormContext>
     </Styled.Content>
   );
 };

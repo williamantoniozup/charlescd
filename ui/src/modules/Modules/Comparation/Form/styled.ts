@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
-import FormComponent from 'core/components/Form';
-import PopoverComponent from 'core/components/Popover';
-import ButtonComponent from 'core/components/Button';
-import IconComponent from 'core/components/Icon';
-import Text from 'core/components/Text';
+import styled, { css } from "styled-components";
+import FormComponent from "core/components/Form";
+import PopoverComponent from "core/components/Popover";
+import ButtonComponent from "core/components/Button";
+import IconComponent from "core/components/Icon";
+import Text from "core/components/Text";
 
 const Title = styled(Text.h2)`
   display: flex;
@@ -36,7 +36,7 @@ const Subtitle = styled(Text.h5)`
 
 const NoMarginSubtitle = styled(Text.h5)`
   margin: -10px 0 0 0;
-`
+`;
 
 const Content = styled.div`
   display: flex;
@@ -87,7 +87,7 @@ const ComponentsRowWrapper = styled.div`
   display: flex;
   position: relative;
   margin-bottom: 20px;
-`
+`;
 
 const ComponentInput = styled(FormComponent.Input)`
   width: 155px;
@@ -122,7 +122,7 @@ const ComponentButton = styled(ButtonComponent.Default)`
 const FullscreenButton = styled(ButtonComponent.Default)`
   margin-bottom: -30px;
   margin-top: 10px;
-  z-index: 10;
+  z-index: ${({ theme }) => theme.zIndex.OVER_4};
   width: 30px;
   height: 30px;
   margin-right: 10px;
@@ -131,19 +131,48 @@ const FullscreenButton = styled(ButtonComponent.Default)`
   justify-content: center;
   padding: 0;
   background: none;
-`
+`;
 
 interface EditingWrappers {
   isNotEditing: boolean;
 }
 
-const ComponentFormWrapper = styled('div')<EditingWrappers>`
-  display: ${({ isNotEditing }) => isNotEditing ? "none": "initial"};
-`
+const ComponentFormWrapper = styled("div")<EditingWrappers>`
+  margin-top: 20px;
+  display: ${({ isNotEditing }) => (isNotEditing ? "none" : "initial")};
+`;
 
-const ComponentCardWrapper = styled('div')<EditingWrappers>`
-  display: ${({ isNotEditing }) => isNotEditing ? "none": "initial"};
-`
+const ComponentCardWrapper = styled("div")<EditingWrappers>`
+  margin-top: 20px;
+  display: ${({ isNotEditing }) => (isNotEditing ? "none" : "initial")};
+`;
+
+interface YamlWrappers {
+  fullScreen: boolean;
+}
+
+const YamlEditorWrapper = styled("div")<YamlWrappers>`
+  ${({ fullScreen }) =>
+    fullScreen
+      ? css`
+          position: fixed;
+          z-index: ${({ theme }) => theme.zIndex.OVER_4};
+          top: 0;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+        `
+      : css`
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          margin-top: 20px;
+          height: 400px;
+        `}
+`;
 
 export default {
   Content,
@@ -158,7 +187,8 @@ export default {
   Icon,
   Button,
   Editor: {
-    FullscreenButton
+    FullscreenButton,
+    YamlEditorWrapper
   },
   Components: {
     ColumnWrapper: ComponentsColumnWrapper,
@@ -168,6 +198,6 @@ export default {
     Trash: ComponentTrash,
     RowWrapper: ComponentsRowWrapper,
     FormWrapper: ComponentFormWrapper,
-    CardWrapper: ComponentCardWrapper,
+    CardWrapper: ComponentCardWrapper
   }
 };

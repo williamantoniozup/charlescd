@@ -14,49 +14,42 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
-import Editor from 'react-simple-code-editor';
-import { highlight, languages } from 'prismjs';
-import 'prismjs/components/prism-yaml';
-import 'prismjs/themes/prism.css'
-import { codeYaml } from './constants';
-import Styled from './styled'
-import Icon from 'core/components/Icon';
+import React, { useEffect, useState } from "react";
+import Editor from "react-simple-code-editor";
+import { highlight, languages } from "prismjs";
+import "prismjs/components/prism-yaml";
+import "prismjs/themes/prism.css";
+import Styled from "./styled";
+import Icon from "core/components/Icon";
+import { useYamlValues } from "modules/Modules/hooks/component";
+import { codeYaml } from "./constants";
 
-const YamlEditor = () => {
-  const [fullScreen, setFullScreen] = useState(false)
-  const [code, setCode] = useState(codeYaml)
+interface Props {
+  onChange: (code: string) => void;
+}
+
+const YamlEditor = ({ onChange }: Props) => {
+  const [fullScreen, setFullScreen] = useState(false);
+  const [code, setCode] = useState(codeYaml);
+  // const { yamlValues, loadYamlValues, loadingYaml} = useYamlValues()
+
+  // useEffect(() => {
+  //   loadYamlValues()
+  // }, [])
 
   return (
-    <div style={fullScreen
-      ? {
-        position: "fixed",
-        zIndex: 10,
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-end",
-      }
-      : {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-end",
-        marginTop: "20px",
-        height: "400px",
-      }}>
+    <Styled.Editor.YamlEditorWrapper fullScreen={fullScreen}>
       <Styled.Editor.FullscreenButton
-        onClick={() => {
-          setFullScreen(!fullScreen)
-        }}
-        >
-          <Icon name="maximize"/>
-        </Styled.Editor.FullscreenButton>
+        onClick={() => setFullScreen(!fullScreen)}
+      >
+        <Icon name="maximize" />
+      </Styled.Editor.FullscreenButton>
       <Editor
         value={code}
-        onValueChange={code => setCode(code)}
+        onValueChange={code => {
+          setCode(code)
+          onChange(code)
+        }}
         highlight={code => highlight(code, languages.yaml, "language-yaml")}
         padding={10}
         style={{
@@ -67,11 +60,10 @@ const YamlEditor = () => {
           backgroundColor: "#2C2C2E",
           width: "100%",
           overflow: "scroll"
-
         }}
       />
-    </ div>
-  )
-}
+    </Styled.Editor.YamlEditorWrapper>
+  );
+};
 
-export default YamlEditor
+export default YamlEditor;
