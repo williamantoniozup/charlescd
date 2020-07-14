@@ -26,7 +26,6 @@ import {
 import { ApiProperty } from '@nestjs/swagger'
 import {  DeploymentEntity } from '../../entity'
 
-
 export  class CreateDeploymentRequestDto {
 
   constructor(
