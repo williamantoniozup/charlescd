@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   ArrayField,
-  FieldElement,
-  ValidationOptions,
-  FormContextValues
 } from "react-hook-form";
 import Icon from "core/components/Icon";
 import { Component } from "modules/Circles/interfaces/Circle";
-import { component, radios, codeYaml } from "./constants";
+import { component } from "./constants";
 import ComponentForm from "./ComponentForm";
 import Styled from "./styled";
-import { Module } from "modules/Modules/interfaces/Module";
 
 interface Props {
   fieldArray: {

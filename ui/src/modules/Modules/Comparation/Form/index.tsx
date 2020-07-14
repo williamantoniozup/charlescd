@@ -30,7 +30,6 @@ import Components from "./Components";
 import { component } from "./constants";
 import { validFields } from "./helpers";
 import Styled from "./styled";
-import { components } from "react-select";
 
 interface Props {
   module: Module;

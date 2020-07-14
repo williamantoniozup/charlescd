@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Editor from "react-simple-code-editor";
 import { highlight, languages } from "prismjs";
 import "prismjs/components/prism-yaml";
 import "prismjs/themes/prism.css";
 import Styled from "./styled";
 import Icon from "core/components/Icon";
-import { useYamlValues } from "modules/Modules/hooks/component";
+// import { useYamlValues } from "modules/Modules/hooks/component";
 import { codeYaml } from "./constants";
 
 interface Props {
@@ -59,6 +59,7 @@ const YamlEditor = ({ onChange }: Props) => {
           opacity: 1,
           backgroundColor: "#2C2C2E",
           width: "100%",
+          height:"100%",
           overflow: "scroll"
         }}
       />

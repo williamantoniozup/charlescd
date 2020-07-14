@@ -27,6 +27,7 @@ export const component = {
 
 export const radios: Radio[] = [
   { icon: '', name: 'Follow our guide', value: 'guide' },
+  { icon: '', name: 'Custom', value: 'custom' },
   { icon: '', name: 'Advanced', value: 'advanced' }
 ];
 
@@ -55,17 +56,8 @@ envVars:
   - name: MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE
     value: '*'
 
-secretEnvVars:
-  - name: ENCRYPTION_KEY
-    secretName: "application-aes256-key"
-    secretKey: "encryption-key"
-
-appname: charlescd-moove
-
 image:
-  repository: darwin-application
   tag: latest
-  blueTag: latest
 service:
   name: darwin-application
   type: ClusterIP
@@ -79,17 +71,6 @@ startcommand:
   value: "[\"/bin/sh\",\"-c\",\"/usr/sbin/nginx -c /data/darwin-ui-nginx.conf\"]"
 ingress:
   enabled: false
-  annotations:
-     kubernetes.io/ingress.class: nginx
-     kubernetes.io/tls-acme: "true"
-  path: /
-  hosts:
-    - name: zup.lab.realwave.zup.me
-      port: http
-  tls:
-    - secretName: lab-realwave-zupme
-      hosts:
-        - zup.lab.realwave.zup.me
 resources:
    limits:
     cpu: 1
@@ -101,9 +82,6 @@ nodeSelector: {}
 tolerations: []
 affinity: {}
 imageCredentials:
-  registry: realwavelab.azurecr.io
-  username: realwavelab
-  password: ***REMOVED***
 livenessProbe:
   enabled: true
   failureThreshold: 3
@@ -128,8 +106,6 @@ readinessProbe:
 
 consulnode:
   enabled: false
-  repository: realwave-node-consul
-  path: /opt/darwin-ui/config
 
 istio:
   enabled: true

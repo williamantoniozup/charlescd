@@ -19,7 +19,6 @@ import Card from "core/components/Card";
 import Icon from "core/components/Icon";
 import Text from "core/components/Text";
 import Styled from "./styled";
-import { Component } from "modules/Modules/interfaces/Component";
 
 export interface Props {
   isLoading?: boolean;

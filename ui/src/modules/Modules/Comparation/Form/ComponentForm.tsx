@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FieldElement, ArrayField, ValidationOptions, useFormContext } from "react-hook-form";
+import { ArrayField, useFormContext } from "react-hook-form";
 import Styled from "./styled";
 import YamlEditor from "./Editor";
 import RadioGroup from "core/components/RadioGroup";
@@ -7,7 +7,6 @@ import { radios, component } from "./constants";
 import Card from "core/components/Card";
 import { Component } from "modules/Modules/interfaces/Component";
 import { validFields } from "./helpers";
-import { Module } from "modules/Modules/interfaces/Module";
 
 
 interface Props {
@@ -25,19 +24,18 @@ const ComponentForm = ({
   remove,
   setFinishedPreviousComponent
 }: Props) => {
-  const { getValues, register, unregister, setValue, watch } = useFormContext()
+  const { register, unregister, setValue, watch } = useFormContext()
   const one = 1;
   const watchComponent = watch(`components[${index}]`) || component
   const { templateMethod, name, latencyThreshold, errorThreshold } = watchComponent
 
 
   useEffect(() => {
-    console.log('to aqui', index)
     register(
       { name: `components[${index}].templateMethod` },
       { required: true }
     );
-  }, [field]);
+  }, [field, index, register]);
 
 
   const handleRadioButton = (helmMethod: string) => {
