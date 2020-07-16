@@ -18,9 +18,8 @@
 
 package io.charlescd.moove.domain.repository
 
-import io.charlescd.moove.domain.Circle
-import io.charlescd.moove.domain.Page
-import io.charlescd.moove.domain.PageRequest
+import io.charlescd.moove.domain.*
+import java.time.Duration
 import java.util.*
 
 interface CircleRepository {
@@ -38,4 +37,14 @@ interface CircleRepository {
     fun find(name: String?, active: Boolean, workspaceId: String, pageRequest: PageRequest): Page<Circle>
 
     fun findDefaultByWorkspaceId(workspaceId: String): Optional<Circle>
+
+    fun countByWorkspaceGroupedByStatus(workspaceId: String): List<CircleCount>
+
+    fun countByWorkspaceGroupedByStatus(workspaceId: String, name: String?): List<CircleCount>
+
+    fun getCircleAverageLifeTime(workspaceId: String): Duration
+
+    fun findCirclesHistory(workspaceId: String, name: String?, pageRequest: PageRequest): Page<CircleHistory>
+
+    fun count(workspaceId: String, name: String?): Int
 }

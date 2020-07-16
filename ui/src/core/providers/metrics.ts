@@ -26,3 +26,11 @@ export const findCircleMetrics = (data: CircleMetrics) => {
 
 export const findDeployMetrics = (params: URLSearchParams) =>
   baseRequest(`${endpoint}/deployments?${params}`);
+
+export const findAllCirclesMetrics = () => baseRequest(`${endpoint}/circles`);
+
+export const findAllCirclesHistory = (params: URLSearchParams) =>
+  baseRequest(`${endpoint}/circles/history?${params}`);
+
+export const findAllCirclesReleases = (circleId: string) =>
+  baseRequest(`${endpoint}/circles/${circleId}/releases`);

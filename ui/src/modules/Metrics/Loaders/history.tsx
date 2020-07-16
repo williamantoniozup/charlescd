@@ -14,28 +14,20 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.application
+import React, { FunctionComponent } from 'react';
+import ContentLoader from 'react-content-loader';
 
-data class ResourcePageResponse<T>(
-    val content: List<T>,
-    val page: Int,
-    val size: Int,
-    val isLast: Boolean,
-    val totalPages: Int
-) {
-    companion object {
-        fun <T> from(
-            content: List<T>,
-            page: Int,
-            size: Int,
-            isLast: Boolean,
-            totalPages: Int
-        ) = ResourcePageResponse(
-            content,
-            page,
-            size,
-            isLast,
-            totalPages
-        )
-    }
-}
+export const Loader: FunctionComponent = () => (
+  <ContentLoader
+    speed={1}
+    width="100%"
+    height="100%"
+    viewBox="0 0 1100 190"
+    backgroundColor="#3a3a3c"
+    foregroundColor="#2c2c2e"
+  >
+    <rect x="0" y="0" rx="0" ry="0" width="100%" height="35" />
+    <rect x="0" y="40" rx="0" ry="0" width="100%" height="35" />
+    <rect x="0" y="80" rx="0" ry="0" width="100%" height="35" />
+  </ContentLoader>
+);

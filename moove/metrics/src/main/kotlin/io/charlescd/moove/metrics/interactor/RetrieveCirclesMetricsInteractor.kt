@@ -14,28 +14,11 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.application
+package io.charlescd.moove.metrics.interactor
 
-data class ResourcePageResponse<T>(
-    val content: List<T>,
-    val page: Int,
-    val size: Int,
-    val isLast: Boolean,
-    val totalPages: Int
-) {
-    companion object {
-        fun <T> from(
-            content: List<T>,
-            page: Int,
-            size: Int,
-            isLast: Boolean,
-            totalPages: Int
-        ) = ResourcePageResponse(
-            content,
-            page,
-            size,
-            isLast,
-            totalPages
-        )
-    }
+import io.charlescd.moove.metrics.api.response.CirclesMetricsRepresentation
+
+interface RetrieveCirclesMetricsInteractor {
+
+    fun execute(workspaceId: String): CirclesMetricsRepresentation
 }
