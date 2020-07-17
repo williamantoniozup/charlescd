@@ -15,10 +15,7 @@
  */
 
 import styled from 'styled-components';
-import {
-  AreaChart as AreaChartComponent,
-  ColumnChart as ColumnChartComponent
-} from 'core/components/Charts';
+import { MixedChart as MixedChartComponent } from 'core/components/Charts';
 import ComponentButton from 'core/components/Button';
 import SelectComponent from 'core/components/Form/Select';
 
@@ -66,16 +63,7 @@ const Card = styled.div<Card>`
   box-sizing: border-box;
 `;
 
-const AreaChart = styled(AreaChartComponent)`
-  margin-top: 20px;
-  margin-left: -15px;
-
-  .apexcharts-gridlines-horizontal > .apexcharts-gridline {
-    opacity: 0.2;
-  }
-`;
-
-const ColumnChart = styled(ColumnChartComponent)`
+const MixedChart = styled(MixedChartComponent)`
   margin-top: 20px;
   margin-left: -15px;
 
@@ -124,8 +112,7 @@ export default {
   Content,
   Card,
   Plates,
-  AreaChart,
-  ColumnChart,
+  MixedChart,
   SingleSelect,
   MultiSelect,
   Button,
