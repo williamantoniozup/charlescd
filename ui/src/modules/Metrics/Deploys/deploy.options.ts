@@ -33,7 +33,8 @@ export default {
     theme.metrics.dashboard.chart.averageTime
   ],
   stroke: {
-    curve: 'smooth'
+    curve: 'smooth',
+    dashArray: [0, 0, 5]
   },
   fill: {
     opacity: [1, 1, 1],
@@ -79,14 +80,15 @@ export default {
     toggleDataSeries: true
   },
   tooltip: {
-    x: {
-      formatter
-    },
-    y: {
-      formatter: function(value: number) {
-        return humanizeDateFromSeconds(value);
+    y: [
+      '',
+      '',
+      {
+        formatter: function(value: number) {
+          return humanizeDateFromSeconds(value);
+        }
       }
-    }
+    ]
   },
   yaxis: {
     show: true,

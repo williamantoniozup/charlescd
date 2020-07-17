@@ -36,7 +36,7 @@ export const getDeploySeries = (data: DeployMetricData) => [
     data: buildSeriesData(data?.failedDeploymentsInPeriod)
   },
   {
-    name: 'Elapse time',
+    name: 'Avarege time',
     type: 'area',
     data: map(data?.deploymentsAverageTimeInPeriod, DeploymentAverageTime => ({
       x: DeploymentAverageTime.period,
