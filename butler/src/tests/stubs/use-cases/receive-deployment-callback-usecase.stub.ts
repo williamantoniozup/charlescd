@@ -14,31 +14,8 @@
  * limitations under the License.
  */
 
-import { NotificationStatusEnum } from '../enums'
-import { Allow, IsDefined } from 'class-validator'
-import { ApiProperty } from '@nestjs/swagger'
-import { CallbackTypeEnum } from '../enums/callback-type.enum'
-
-export class FinishDeploymentDto {
-
-  @ApiProperty()
-  @Allow()
-  public readonly status: string
-
-  @ApiProperty()
-  @Allow()
-  @IsDefined()
-  public readonly callbackType: CallbackTypeEnum
-
-  constructor(
-    status: string,
-    type: CallbackTypeEnum
-  ) {
-    this.status = status
-    this.callbackType = type
-  }
-
-  public isSuccessful(): boolean {
-    return this.status === NotificationStatusEnum.SUCCEEDED
+export class ReceiveDeploymentCallbackUseCaseStub {
+  public execute(): Promise<void> {
+    return Promise.resolve()
   }
 }

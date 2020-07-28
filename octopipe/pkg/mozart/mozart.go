@@ -43,6 +43,11 @@ type Mozart struct {
 	//TODO: Add pipeline to struct
 }
 
+type Payload struct {
+	Status string `json:"status"`
+	CallbackType string `json:"callbackType"`
+}
+
 // TODO: Change deployment to pipeline
 func NewMozart(mozartManager *MozartManager, deployment *deployment.Deployment) *Mozart {
 	return &Mozart{
@@ -236,15 +241,14 @@ func (mozart *Mozart) getManifestsByTemplateStep(step *pipeline.Step) (map[strin
 }
 
 func (mozart *Mozart) triggerWebhook(pipeline *deployment.Deployment, pipelineError error) error {
-	var payload map[string]string
+	var payload Payload
 	client := http.Client{}
 
 	if pipelineError != nil {
-		payload = map[string]string{"status": "FAILED"}
+		payload = Payload{Status: "FAILED", CallbackType: pipeline.CallbackType}
 	} else {
-		payload = map[string]string{"status": "SUCCEEDED"}
+		payload = Payload{Status: "SUCCEEDED", CallbackType: pipeline.CallbackType}
 	}
-
 	data, err := json.Marshal(payload)
 	if err != nil {
 		return err
