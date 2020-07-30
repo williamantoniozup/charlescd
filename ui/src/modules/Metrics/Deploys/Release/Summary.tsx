@@ -17,37 +17,39 @@
 import React from 'react';
 import Text from 'core/components/Text';
 import Loader from '../../Loaders/index';
+import { ReleaseHistorySummary } from '../interfaces';
 import Styled from './styled';
 
 type Props = {
+  legend: ReleaseHistorySummary;
   isLoading: boolean;
-  onSearch: (name: string) => void;
 };
 
-const Summary = ({ isLoading, onSearch }: Props) => {
+const Summary = ({ legend, isLoading }: Props) => {
   return (
     <>
-      <Styled.HistoryHeader>
+      <Styled.ReleaseHistoryHeader>
         <Text.h2 color="light" weight="bold">
-          History
+          Release
         </Text.h2>
-        <Styled.HistorySearchInput
-          resume
-          onSearch={onSearch}
-          placeholder={'Search circle'}
-        />
-      </Styled.HistoryHeader>
+      </Styled.ReleaseHistoryHeader>
       {isLoading ? (
         <div data-testid="loader-legend">
           <Loader.Legend />
         </div>
       ) : (
-        <Styled.HistoryLegend>
-          <Styled.Dot active={true} />
-          <Text.h5 color="dark">Active</Text.h5>
-          <Styled.Dot active={false} />
-          <Text.h5 color="dark">Inactive</Text.h5>
-        </Styled.HistoryLegend>
+        <Styled.ReleaseHistoryLegend>
+          <Styled.Dot status={'deployed'} />
+          <Text.h5 color="dark">Deployed: {legend?.deployed}</Text.h5>
+          <Styled.Dot status={'deploying'} />
+          <Text.h5 color="dark">Deploying: {legend?.deploying}</Text.h5>
+          <Styled.Dot status={'error'} />
+          <Text.h5 color="dark">Error: {legend?.failed}</Text.h5>
+          <Styled.Dot status={'notDeployed'} />
+          <Text.h5 color="dark">Undeployed: {legend?.notDeployed}</Text.h5>
+          <Styled.Dot status={'undeploying'} />
+          <Text.h5 color="dark">Undeploying: {legend?.undeploying}</Text.h5>
+        </Styled.ReleaseHistoryLegend>
       )}
     </>
   );
