@@ -18,23 +18,29 @@ package main
 
 import (
 	"log"
+	"octopipe/pkg/logger"
 	"octopipe/pkg/manager"
 	v1 "octopipe/web/api/v1"
+	"os"
 
 	"github.com/RichardKnop/machinery/v1"
 	"github.com/RichardKnop/machinery/v1/config"
 	"github.com/joho/godotenv"
+	"go.uber.org/zap"
 )
 
 func main() {
-
-	config := config.Config{
-		Broker:        "redis://root:octopipe@127.0.0.1:6379",
-		ResultBackend: "redis://root:octopipe@127.0.0.1:6379",
-	}
+	zap, _ := zap.NewProduction()
+	defer zap.Sync()
+	sugar := zap.Sugar()
 
 	if err := godotenv.Load(); err != nil {
 		log.Fatalln("No .env file found")
+	}
+
+	config := config.Config{
+		Broker:        os.Getenv("REDIS_URL"),
+		ResultBackend: os.Getenv("REDIS_URL"),
 	}
 
 	server, err := machinery.NewServer(&config)
@@ -42,7 +48,8 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	managerMain := manager.NewManagerMain(server)
+	logger := logger.NewLoggerMain(sugar).NewLogger()
+	managerMain := manager.NewManagerMain(logger, server)
 
 	api := v1.NewAPI()
 	api.NewPipelineAPI(managerMain)

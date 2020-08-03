@@ -14,26 +14,18 @@
  * limitations under the License.
  */
 
-package manager
+package logger
 
-import (
-	"octopipe/pkg/logger"
-
-	"github.com/RichardKnop/machinery/v1"
-)
+import "go.uber.org/zap"
 
 type MainUseCases interface {
-	NewManager() UseCases
+	NewLogger() UseCases
 }
 
-type ManagerMain struct {
-	loggerMain  logger.UseCases
-	queueClient *machinery.Server
+type LoggerMain struct {
+	logProvider *zap.SugaredLogger
 }
 
-func NewManagerMain(
-	loggerMain logger.UseCases,
-	queueClient *machinery.Server,
-) MainUseCases {
-	return &ManagerMain{loggerMain, queueClient}
+func NewLoggerMain(zap *zap.SugaredLogger) MainUseCases {
+	return LoggerMain{zap}
 }

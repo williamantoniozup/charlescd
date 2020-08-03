@@ -24,7 +24,6 @@ import (
 	"time"
 
 	"github.com/RichardKnop/machinery/v1/tasks"
-	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -41,6 +40,7 @@ func (main ManagerMain) NewManager() UseCases {
 }
 
 func (manager Manager) Start(pipeline pipelinePKG.Pipeline) {
+	manager.loggerMain.Info("START:PIPELINE", "executeStages", pipeline)
 	go manager.executeStages(pipeline)
 }
 
@@ -48,8 +48,10 @@ func (manager Manager) executeStages(pipeline pipelinePKG.Pipeline) {
 	var err error
 
 	for _, stage := range pipeline.Stages {
+		manager.loggerMain.Info("START:STAGE", "executeStages", stage)
 		err = manager.executeSteps(pipeline, stage)
 		if err != nil {
+			manager.loggerMain.Info("START:STAGE_FAILURE", "executeStages", stage)
 			break
 		}
 	}
@@ -112,16 +114,15 @@ func (manager Manager) executeStep(pipeline pipelinePKG.Pipeline, step pipelineP
 	ctx := context.Background()
 	asyncResult, err := manager.ManagerMain.queueClient.SendTaskWithContext(ctx, &getManifestsTask)
 	if err != nil {
+		manager.loggerMain.Error("STEP:FAILED_SEND_TASK", "executeStep", err, step)
 		return err
 	}
 
-	results, err := asyncResult.GetWithTimeout(time.Duration(time.Second*10), 1*time.Second)
+	_, err = asyncResult.GetWithTimeout(time.Duration(time.Second*10), 1*time.Second)
 	if err != nil {
-		log.Println(err)
+		manager.loggerMain.Error("STEP:TASK_TIMEOUT", "executeStep", err, step)
 		return err
 	}
-
-	log.Println("RESULTS", results)
 
 	return nil
 }

@@ -17,6 +17,7 @@ require (
 	github.com/sirupsen/logrus v1.6.0
 	github.com/stretchr/testify v1.6.1
 	github.com/tidwall/sjson v1.1.1
+	go.uber.org/zap v1.15.0
 	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	helm.sh/helm/v3 v3.2.4

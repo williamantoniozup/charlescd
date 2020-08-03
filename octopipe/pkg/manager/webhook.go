@@ -21,8 +21,6 @@ import (
 	"encoding/json"
 	"net/http"
 	pipelinePKG "octopipe/pkg/pipeline"
-
-	log "github.com/sirupsen/logrus"
 )
 
 func (manager Manager) mountWebhookRequest(pipeline pipelinePKG.Pipeline, payload map[string]string) (*http.Request, error) {
@@ -47,22 +45,23 @@ func (manager Manager) triggerWebhook(pipeline pipelinePKG.Pipeline, payload map
 	client := http.Client{}
 
 	if pipeline.Webhook.Url == "" {
-		log.WithFields(log.Fields{"function": "triggerWebhook", "url": pipeline.Webhook.Url}).Info("Not found url for trigger Webhook")
+		manager.loggerMain.Info("WEBHOOK:EMPTY_URL", "triggerWebhook", payload)
 		return
 	}
+
+	manager.loggerMain.Info("WEBHOOK:START_TRIGGER", "triggerWebhook", payload, "url", pipeline.Webhook.Url)
 
 	request, err := manager.mountWebhookRequest(pipeline, payload)
 	if err != nil {
-		log.WithFields(log.Fields{"function": "triggerWebhookeStep", "error": err}).Error("Create request failed")
+		manager.loggerMain.Error("WEBHOOK:ERROR_MOUNT__REQUEST", "triggerWebhook", err, payload, "url", pipeline.Webhook.Url)
 		return
 	}
 
-	log.WithFields(log.Fields{"function": "triggerWebhook", "url": pipeline.Webhook.Url}).Info("Start trigger webhook...")
 	_, err = client.Do(request)
 	if err != nil {
-		log.WithFields(log.Fields{"function": "triggerWebhook", "error": err}).Error("Trigger webhook error!")
+		manager.loggerMain.Error("WEBHOOK:ERROR__REQUEST", "triggerWebhook", err, payload, "url", pipeline.Webhook.Url)
 		return
 	}
 
-	log.WithFields(log.Fields{"function": "triggerWebhook", "url": pipeline.Webhook.Url}).Info("Trigger webhook success!")
+	manager.loggerMain.Info("WEBHOOK:TRIGGER_SUCCESS", "triggerWebhook", payload, "url", pipeline.Webhook.Url)
 }

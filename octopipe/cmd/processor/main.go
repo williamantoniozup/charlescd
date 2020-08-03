@@ -23,6 +23,7 @@ import (
 	"octopipe/pkg/processor"
 	"octopipe/pkg/repository"
 	"octopipe/pkg/template"
+	"os"
 	"runtime"
 
 	"github.com/RichardKnop/machinery/v1"
@@ -31,13 +32,13 @@ import (
 )
 
 func main() {
-	config := config.Config{
-		Broker:        "redis://root:octopipe@127.0.0.1:6379",
-		ResultBackend: "redis://root:octopipe@127.0.0.1:6379",
-	}
-
 	if err := godotenv.Load(); err != nil {
 		log.Fatalln("No .env file found")
+	}
+
+	config := config.Config{
+		Broker:        os.Getenv("REDIS_URL"),
+		ResultBackend: os.Getenv("REDIS_URL"),
 	}
 
 	server, err := machinery.NewServer(&config)
@@ -49,9 +50,18 @@ func main() {
 	templateMain := template.NewTemplateMain(repositoryMain)
 	cloudproviderMain := cloudprovider.NewCloudproviderMain()
 	deploymentMain := deployment.NewDeploymentMain()
-	processorMain := processor.NewProcessorMain(templateMain, deploymentMain, cloudproviderMain, repositoryMain, server)
+	processorMain := processor.NewProcessorMain(
+		templateMain,
+		deploymentMain,
+		cloudproviderMain,
+		repositoryMain,
+		server,
+	)
 
-	server.RegisterTask(processor.TaskName, processorMain.NewProcessor().Process)
+	err = server.RegisterTask(processor.TaskName, processorMain.NewProcessor().Process)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	worker := server.NewWorker(processor.WorkerName, runtime.NumCPU())
 	err = worker.Launch()
