@@ -14,22 +14,37 @@
  * limitations under the License.
  */
 
-package manager
+package main
 
 import (
+	"log"
+	"octopipe/pkg/manager"
+	v1 "octopipe/web/api/v1"
+
 	"github.com/RichardKnop/machinery/v1"
+	"github.com/RichardKnop/machinery/v1/config"
+	"github.com/joho/godotenv"
 )
 
-type MainUseCases interface {
-	NewManager() UseCases
-}
+func main() {
 
-type ManagerMain struct {
-	queueClient *machinery.Server
-}
+	config := config.Config{
+		Broker:        "redis://root:octopipe@127.0.0.1:6379",
+		ResultBackend: "redis://root:octopipe@127.0.0.1:6379",
+	}
 
-func NewManagerMain(
-	queueClient *machinery.Server,
-) MainUseCases {
-	return &ManagerMain{queueClient}
+	if err := godotenv.Load(); err != nil {
+		log.Fatalln("No .env file found")
+	}
+
+	server, err := machinery.NewServer(&config)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	managerMain := manager.NewManagerMain(server)
+
+	api := v1.NewAPI()
+	api.NewPipelineAPI(managerMain)
+	api.Start()
 }

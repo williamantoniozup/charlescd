@@ -20,27 +20,42 @@ import (
 	"log"
 	"octopipe/pkg/cloudprovider"
 	"octopipe/pkg/deployment"
-	"octopipe/pkg/manager"
+	"octopipe/pkg/processor"
 	"octopipe/pkg/repository"
 	"octopipe/pkg/template"
-	v1 "octopipe/web/api/v1"
+	"runtime"
 
+	"github.com/RichardKnop/machinery/v1"
+	"github.com/RichardKnop/machinery/v1/config"
 	"github.com/joho/godotenv"
 )
 
 func main() {
+	config := config.Config{
+		Broker:        "redis://root:octopipe@127.0.0.1:6379",
+		ResultBackend: "redis://root:octopipe@127.0.0.1:6379",
+	}
 
 	if err := godotenv.Load(); err != nil {
-		log.Print("No .env file found")
+		log.Fatalln("No .env file found")
+	}
+
+	server, err := machinery.NewServer(&config)
+	if err != nil {
+		log.Fatalln(err)
 	}
 
 	repositoryMain := repository.NewRepositoryMain()
 	templateMain := template.NewTemplateMain(repositoryMain)
 	cloudproviderMain := cloudprovider.NewCloudproviderMain()
 	deploymentMain := deployment.NewDeploymentMain()
-	managerMain := manager.NewManagerMain(templateMain, deploymentMain, cloudproviderMain, repositoryMain)
+	processorMain := processor.NewProcessorMain(templateMain, deploymentMain, cloudproviderMain, repositoryMain, server)
 
-	api := v1.NewAPI()
-	api.NewPipelineAPI(managerMain)
-	api.Start()
+	server.RegisterTask(processor.TaskName, processorMain.NewProcessor().Process)
+
+	worker := server.NewWorker(processor.WorkerName, runtime.NumCPU())
+	err = worker.Launch()
+	if err != nil {
+		log.Fatalln(err)
+	}
 }

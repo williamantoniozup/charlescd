@@ -14,22 +14,35 @@
  * limitations under the License.
  */
 
-package manager
+package processor
 
 import (
+	"octopipe/pkg/cloudprovider"
+	"octopipe/pkg/deployment"
+	"octopipe/pkg/repository"
+	"octopipe/pkg/template"
+
 	"github.com/RichardKnop/machinery/v1"
 )
 
 type MainUseCases interface {
-	NewManager() UseCases
+	NewProcessor() UseCases
 }
 
-type ManagerMain struct {
-	queueClient *machinery.Server
+type ProcessorMain struct {
+	templateMain      template.MainUseCases
+	deploymentMain    deployment.MainUseCases
+	cloudproviderMain cloudprovider.MainUseCases
+	repositoryMain    repository.MainUseCases
+	queueClient       *machinery.Server
 }
 
-func NewManagerMain(
+func NewProcessorMain(
+	templateMain template.MainUseCases,
+	deploymentMain deployment.MainUseCases,
+	cloudprovider cloudprovider.MainUseCases,
+	repositoryMain repository.MainUseCases,
 	queueClient *machinery.Server,
 ) MainUseCases {
-	return &ManagerMain{queueClient}
+	return &ProcessorMain{templateMain, deploymentMain, cloudprovider, repositoryMain, queueClient}
 }

@@ -18,10 +18,12 @@ package manager
 
 import (
 	"context"
-	"errors"
-	"fmt"
+	"encoding/json"
 	pipelinePKG "octopipe/pkg/pipeline"
+	"octopipe/pkg/processor"
+	"time"
 
+	"github.com/RichardKnop/machinery/v1/tasks"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 )
@@ -88,122 +90,38 @@ func (manager Manager) executeSteps(pipeline pipelinePKG.Pipeline, stage []pipel
 	return errs.Wait()
 }
 
-func (manager Manager) getManifestsFromPipeline(pipeline pipelinePKG.Pipeline, step pipelinePKG.Step) (map[string]interface{}, error) {
-	defaultManifestKey := "default"
-	manifests := map[string]interface{}{}
-
-	if step.Repository.Url != "" {
-		var err error
-		log.WithFields(log.Fields{"function": "executeStep"}).Info("Step has a template")
-		manifests, err = manager.getManifestsbyTemplate(pipeline.Name, step)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	if step.Manifest != nil {
-		log.WithFields(log.Fields{"function": "executeStep"}).Info("Step has a manifest")
-		manifests[defaultManifestKey] = step.Manifest
-	}
-
-	if len(manifests) <= 0 {
-		log.WithFields(log.Fields{"function": "executeStep"}).Error("Not found manifests for execution")
-		return nil, errors.New("Not found manifests for execution")
-	}
-
-	return manifests, nil
-}
-
 func (manager Manager) executeStep(pipeline pipelinePKG.Pipeline, step pipelinePKG.Step) error {
-	var err error
 
-	manifests, err := manager.getManifestsFromPipeline(pipeline, step)
-	if err != nil {
-		log.WithFields(log.Fields{"function": "executeStep", "error": err}).Error("Error to get manifests from pipeline")
-		return err
+	parsedPipeline, _ := json.Marshal(pipeline)
+	parsedStep, _ := json.Marshal(step)
+
+	getManifestsTask := tasks.Signature{
+		Name: processor.TaskName,
+		Args: []tasks.Arg{
+			{
+				Type:  "string",
+				Value: string(parsedPipeline),
+			},
+			{
+				Type:  "string",
+				Value: string(parsedStep),
+			},
+		},
 	}
 
-	if err := manager.executeManifests(pipeline, step, manifests); err != nil {
-		log.WithFields(log.Fields{"function": "executeStep", "error": err.Error()}).Error("Error execute manifests")
-		return err
-	}
-
-	log.WithFields(log.Fields{"function": "executeStep"}).Info(fmt.Sprintf("Executed %d manifest(s)", len(manifests)))
-	log.WithFields(log.Fields{"function": "executeStep"}).Info("Step successfully executed")
-	return nil
-}
-
-func (manager Manager) executeManifests(pipeline pipelinePKG.Pipeline, step pipelinePKG.Step, manifests map[string]interface{}) error {
-	errs, _ := errgroup.WithContext(context.Background())
-	for _, manifest := range manifests {
-		currentManifest := manifest
-		errs.Go(func() error {
-			return manager.executeManifest(pipeline, step, currentManifest.(map[string]interface{}))
-		})
-	}
-
-	return errs.Wait()
-}
-
-func (manager Manager) executeManifest(pipeline pipelinePKG.Pipeline, step pipelinePKG.Step, manifest map[string]interface{}) error {
-	cloudprovider := manager.cloudproviderMain.NewCloudProvider(pipeline.Config)
-	config, err := cloudprovider.GetClient()
+	ctx := context.Background()
+	asyncResult, err := manager.ManagerMain.queueClient.SendTaskWithContext(ctx, &getManifestsTask)
 	if err != nil {
 		return err
 	}
 
-	deployment := manager.deploymentMain.NewDeployment(
-		step.Action,
-		step.Update,
-		pipeline.Namespace,
-		manifest,
-		config,
-	)
+	results, err := asyncResult.GetWithTimeout(time.Duration(time.Second*10), 1*time.Second)
 	if err != nil {
-		log.WithFields(log.Fields{"function": "executeManifest", "error": err.Error()}).Error("Failed in deployment creation")
+		log.Println(err)
 		return err
 	}
 
-	if err := deployment.Do(); err != nil {
-		return err
-	}
+	log.Println("RESULTS", results)
 
 	return nil
-}
-
-func (manager Manager) getFilesFromRepository(name string, step pipelinePKG.Step) (string, string, error) {
-	repository, err := manager.repositoryMain.NewRepository(step.Repository)
-	if err != nil {
-		log.WithFields(log.Fields{"function": "executeStep"}).Error("Cannot create repository main. Error: " + err.Error())
-		return "", "", err
-	}
-
-	templateContent, valueContent, err := repository.GetTemplateAndValueByName(name)
-	if err != nil {
-		log.WithFields(log.Fields{"function": "executeStep"}).Error("Cannot get content by repository. Error: " + err.Error())
-		return "", "", err
-	}
-
-	return templateContent, valueContent, nil
-}
-
-func (manager *Manager) getManifestsbyTemplate(name string, step pipelinePKG.Step) (map[string]interface{}, error) {
-	templateContent, valueContent, err := manager.getFilesFromRepository(name, step)
-	if err != nil {
-		return nil, err
-	}
-
-	template, err := manager.templateMain.NewTemplate(step.Template)
-	if err != nil {
-		log.WithFields(log.Fields{"function": "executeStep"}).Error("Cannot create template main. Error: " + err.Error())
-		return nil, err
-	}
-
-	manifests, err := template.GetManifests(templateContent, valueContent)
-	if err != nil {
-		log.WithFields(log.Fields{"function": "executeStep"}).Error("Cannot render manifest by template. Error: " + err.Error())
-		return nil, err
-	}
-
-	return manifests, nil
 }

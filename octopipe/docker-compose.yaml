@@ -1,11 +1,9 @@
-version: "3"
+version: '3'
+
 services:
-  mongo:
-    image: mongo
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: octopipe
-      MONGO_INITDB_ROOT_PASSWORD: octopipe
+  octopipe-redis:
+    image: 'bitnami/redis:3.2.9-r3'
     ports:
-      - "27017:27017"
-    volumes:
-      - "./data/mongo:/var/lib/mongo/data"
+      - '6379:6379'
+    environment:
+      - REDIS_PASSWORD=octopipe
