@@ -16,7 +16,11 @@
 
 package deployment
 
-import "k8s.io/client-go/dynamic"
+import (
+	"octopipe/pkg/logger"
+
+	"k8s.io/client-go/dynamic"
+)
 
 type MainUseCases interface {
 	NewDeployment(
@@ -28,8 +32,10 @@ type MainUseCases interface {
 	) UseCases
 }
 
-type DeploymentMain struct{}
+type DeploymentMain struct {
+	logger logger.UseCases
+}
 
-func NewDeploymentMain() MainUseCases {
-	return &DeploymentMain{}
+func NewDeploymentMain(logger logger.UseCases) MainUseCases {
+	return &DeploymentMain{logger}
 }

@@ -20,6 +20,7 @@ import (
 	"log"
 	"octopipe/pkg/cloudprovider"
 	"octopipe/pkg/deployment"
+	"octopipe/pkg/logger"
 	"octopipe/pkg/processor"
 	"octopipe/pkg/repository"
 	"octopipe/pkg/template"
@@ -29,9 +30,14 @@ import (
 	"github.com/RichardKnop/machinery/v1"
 	"github.com/RichardKnop/machinery/v1/config"
 	"github.com/joho/godotenv"
+	"go.uber.org/zap"
 )
 
 func main() {
+	zap, _ := zap.NewProduction()
+	defer zap.Sync()
+	sugar := zap.Sugar()
+
 	if err := godotenv.Load(); err != nil {
 		log.Fatalln("No .env file found")
 	}
@@ -46,15 +52,17 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	repositoryMain := repository.NewRepositoryMain()
-	templateMain := template.NewTemplateMain(repositoryMain)
+	logger := logger.NewLoggerMain(sugar).NewLogger()
+	repositoryMain := repository.NewRepositoryMain(logger)
+	templateMain := template.NewTemplateMain(repositoryMain, logger)
 	cloudproviderMain := cloudprovider.NewCloudproviderMain()
-	deploymentMain := deployment.NewDeploymentMain()
+	deploymentMain := deployment.NewDeploymentMain(logger)
 	processorMain := processor.NewProcessorMain(
 		templateMain,
 		deploymentMain,
 		cloudproviderMain,
 		repositoryMain,
+		logger,
 		server,
 	)
 

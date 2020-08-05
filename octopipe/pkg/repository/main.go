@@ -16,12 +16,16 @@
 
 package repository
 
+import "octopipe/pkg/logger"
+
 type MainUseCases interface {
 	NewRepository(repository Repository) (UseCases, error)
 }
 
-type RepositoryMain struct{}
+type RepositoryMain struct {
+	logger logger.UseCases
+}
 
-func NewRepositoryMain() MainUseCases {
-	return RepositoryMain{}
+func NewRepositoryMain(logger logger.UseCases) MainUseCases {
+	return RepositoryMain{logger}
 }

@@ -11,14 +11,14 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o ./out/octopipe cmd/*.go
+RUN go build -o ./out/manager/*.go
 
 # -----------------------------------------------
 
 FROM alpine:3.12.0
 
-COPY --from=builder /app/octopipe/out/octopipe .
+COPY --from=builder /app/octopipe/out/manager .
 
 EXPOSE 8080
 
-ENTRYPOINT ["./octopipe"]
+ENTRYPOINT ["./manager"]

@@ -44,12 +44,15 @@ func (processor Processor) Process(pipeline, step string) error {
 	_ = json.Unmarshal([]byte(pipeline), &newPipeline)
 	_ = json.Unmarshal([]byte(step), &newStep)
 
+	processor.loggerMain.Info("PROCESS:GET_MANIFESTS", "Process", newStep)
 	manifests, err := processor.getManifestsbyTemplate(newPipeline.Name, newStep)
 	if err != nil {
+		processor.loggerMain.Error("PROCESS:GET_MANIFESTS_FAILED", "Process", err, newStep)
 		return err
 	}
 
 	if err := processor.executeManifests(newPipeline, newStep, manifests); err != nil {
+		processor.loggerMain.Error("PROCESS:EXECUTE_MANIFESTS", "Process", err, newStep)
 		return err
 	}
 
@@ -81,6 +84,7 @@ func (processor Processor) getFilesFromRepository(name string, step pipelinePKG.
 		return "", "", err
 	}
 
+	processor.loggerMain.Info("PROCESS:START_GET_TEMPLATE_AND_VALUE", "Process", step)
 	templateContent, valueContent, err := repository.GetTemplateAndValueByName(name)
 	if err != nil {
 		return "", "", err

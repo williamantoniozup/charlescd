@@ -43,6 +43,7 @@ type UseCases interface {
 }
 
 type Deployment struct {
+	*DeploymentMain
 	action    string
 	update    bool
 	namespace string
@@ -57,7 +58,7 @@ func (main *DeploymentMain) NewDeployment(
 	manifest map[string]interface{},
 	config dynamic.Interface,
 ) UseCases {
-	return &Deployment{action, update, namespace, manifest, config}
+	return &Deployment{main, action, update, namespace, manifest, config}
 }
 
 func (deployment *Deployment) Do() error {

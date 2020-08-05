@@ -7,3 +7,36 @@ services:
       - '6379:6379'
     environment:
       - REDIS_PASSWORD=octopipe
+
+  k3s:
+    image: "rancher/k3s:latest"
+    command: server
+    tmpfs:
+    - /run
+    - /var/run
+    privileged: true
+    environment:
+    - K3S_TOKEN=${K3S_TOKEN:?err}
+    - K3S_KUBECONFIG_OUTPUT=/output/kubeconfig.yaml
+    - K3S_KUBECONFIG_MODE=666
+    volumes:
+    - k3s-server:/var/lib/rancher/k3s
+    # This is just so that we get the kubeconfig file out
+    - .:/output
+    ports:
+    - 6443:6443
+
+  manager:
+    build:
+      context: .
+      dockerfile: ./cmd/manager/Dockerfile
+    ports:
+      - "8080:8080"
+  
+  processor:
+    build:
+      context: .
+      dockerfile: ./cmd/processor/Dockerfile
+
+volumes:
+  k3s-server: {}

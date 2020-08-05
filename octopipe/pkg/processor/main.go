@@ -19,6 +19,7 @@ package processor
 import (
 	"octopipe/pkg/cloudprovider"
 	"octopipe/pkg/deployment"
+	"octopipe/pkg/logger"
 	"octopipe/pkg/repository"
 	"octopipe/pkg/template"
 
@@ -34,6 +35,7 @@ type ProcessorMain struct {
 	deploymentMain    deployment.MainUseCases
 	cloudproviderMain cloudprovider.MainUseCases
 	repositoryMain    repository.MainUseCases
+	loggerMain        logger.UseCases
 	queueClient       *machinery.Server
 }
 
@@ -42,7 +44,8 @@ func NewProcessorMain(
 	deploymentMain deployment.MainUseCases,
 	cloudprovider cloudprovider.MainUseCases,
 	repositoryMain repository.MainUseCases,
+	loggerMain logger.UseCases,
 	queueClient *machinery.Server,
 ) MainUseCases {
-	return &ProcessorMain{templateMain, deploymentMain, cloudprovider, repositoryMain, queueClient}
+	return &ProcessorMain{templateMain, deploymentMain, cloudprovider, repositoryMain, loggerMain, queueClient}
 }

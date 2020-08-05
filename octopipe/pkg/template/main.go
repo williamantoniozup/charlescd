@@ -16,7 +16,10 @@
 
 package template
 
-import "octopipe/pkg/repository"
+import (
+	"octopipe/pkg/logger"
+	"octopipe/pkg/repository"
+)
 
 type MainUseCases interface {
 	NewTemplate(template Template) (UseCases, error)
@@ -24,8 +27,9 @@ type MainUseCases interface {
 
 type TemplateMain struct {
 	repositoryMain repository.MainUseCases
+	logger         logger.UseCases
 }
 
-func NewTemplateMain(repositoryMain repository.MainUseCases) MainUseCases {
-	return TemplateMain{repositoryMain}
+func NewTemplateMain(repositoryMain repository.MainUseCases, logger logger.UseCases) MainUseCases {
+	return TemplateMain{repositoryMain, logger}
 }
