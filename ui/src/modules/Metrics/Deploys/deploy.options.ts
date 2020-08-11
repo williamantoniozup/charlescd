@@ -14,156 +14,36 @@
  * limitations under the License.
  */
 
-import { chartDateFormatter as formatter } from './helpers';
-import { humanizeDateFromSeconds } from 'core/utils/date';
 import { getTheme } from 'core/utils/themes';
 
 const theme = getTheme();
 
 export default {
-  chart: {
-    id: 'chartDeploy',
-    background: 'transparent',
-    type: 'line',
-    stacked: false
+  title: 'Deploy',
+  titleTextStyle: {
+    color: theme.metrics.dashboard.chart.label,
+    fontName: 'Arial',
+    fontSize: 20,
+    position: 'Top',
+    alignment: 'start'
   },
-  title: {
-    text: 'Deploy',
-    offsetY: -5,
-    offsetX: 10,
-    style: {
-      fontSize: '18px',
-      fontWeight: 'bold',
-      color: theme.metrics.dashboard.chart.label
-    }
-  },
+  backgroundColor: 'transparent',
+  seriesType: 'bars',
   colors: [
     theme.metrics.dashboard.chart.deploy,
-    theme.metrics.dashboard.chart.error,
-    theme.metrics.dashboard.chart.averageTime
+    theme.metrics.dashboard.chart.error
+    // theme.metrics.dashboard.chart.averageTime,
   ],
-  stroke: {
-    width: [5, 5, 2],
-    curve: 'smooth',
-    dashArray: [0, 0, 5],
-    colors: ['00', '00', theme.metrics.dashboard.chart.averageTime]
+  vAxis: {
+    textStyle: { color: '#FFF' },
+    gridlines: { color: '#FFF' },
+    baselineColor: '#FFF'
   },
-  fill: {
-    opacity: 1,
-    type: ['fill', 'fill', 'gradient'],
-    gradient: {
-      inverseColors: false,
-      shade: 'dark',
-      type: 'vertical',
-      opacityFrom: 0.4,
-      opacityTo: 0.35,
-      stops: [0, 80]
-    }
+  hAxis: {
+    textStyle: { color: '#FFF' }
   },
-  theme: {
-    mode: 'dark'
-  },
-  grid: {
-    show: true,
-    yaxis: {
-      lines: {
-        show: true
-      }
-    },
-    padding: {
-      left: 8,
-      right: 14
-    }
-  },
-  legend: {
-    show: true,
-    showForNullSeries: true,
-    showForSingleSeries: true,
-    showForZeroSeries: true,
-    offsetY: -10,
-    position: 'top',
-    horizontalAlign: 'left',
-    markers: {
-      radius: 50
-    },
-    itemMargin: {
-      horizontal: 10
-    }
-  },
-  onItemClick: {
-    toggleDataSeries: true
-  },
-  tooltip: {
-    y: [
-      '',
-      '',
-      {
-        formatter: function(value: number) {
-          return humanizeDateFromSeconds(value);
-        }
-      }
-    ]
-  },
-  yaxis: [
-    {
-      seriesName: 'Deploy',
-      showAlways: true,
-      tickAmount: 6,
-      min: 0,
-      axisTicks: {
-        show: false
-      },
-      axisBorder: {
-        show: true,
-        color: theme.metrics.dashboard.chart.border
-      },
-      labels: {
-        style: {
-          colors: theme.metrics.dashboard.chart.label
-        }
-      }
-    },
-    {
-      seriesName: 'Deploy',
-      show: false
-    },
-    {
-      seriesName: 'Avagere Time',
-      showAlways: true,
-      tickAmount: 6,
-      min: 0,
-      opposite: true,
-      axisTicks: {
-        show: false
-      },
-      axisBorder: {
-        show: true,
-        color: theme.metrics.dashboard.chart.border
-      },
-      labels: {
-        style: {
-          colors: theme.metrics.dashboard.chart.label
-        },
-        formatter: function(value: number) {
-          return humanizeDateFromSeconds(value);
-        }
-      }
-    }
-  ],
-  xaxis: {
-    type: 'category',
-    tickAmount: 'dataPoints',
-    axisBorder: {
-      show: false,
-      offsetY: -10
-    },
-    labels: {
-      hideOverlappingLabels: false,
-      style: {
-        color: theme.metrics.dashboard.chart.labels,
-        fontSize: '10px'
-      },
-      formatter
-    }
-  }
+  bar: { groupWidth: '90%' },
+  legend: { position: 'top', textStyle: { color: '#FFF' } },
+  tooltip: { isHtml: true },
+  chartArea: { width: '95%', height: '80%' }
 };

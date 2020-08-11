@@ -24,22 +24,19 @@ import deployOptions from './deploy.options';
 import { periodFilterItems } from './constants';
 import Styled from './styled';
 import CircleFilter from './CircleFilter';
-import ChartMenu from './ChartMenu';
-import { getDeploySeries, getPlotOption } from './helpers';
+// import ChartMenu from './ChartMenu';
+import { getDeploySeries } from './helpers';
 import { humanizeDateFromSeconds } from 'core/utils/date';
-import isUndefined from 'lodash/isUndefined';
 import ReleasesHistoryComponent from './Release';
 import { ReleaseHistoryRequest } from './interfaces';
+import Chart from 'react-google-charts';
 
 const Deploys = () => {
   const { searchDeployMetrics, response, loading } = useDeployMetric();
   const { control, handleSubmit, getValues, setValue } = useForm();
   const deploySeries = getDeploySeries(response);
 
-  const plotOptions = getPlotOption(deploySeries);
-  const deployChartOption = isUndefined(plotOptions)
-    ? deployOptions
-    : { ...deployOptions, plotOptions };
+  console.log(deploySeries); // remove log
 
   useEffect(() => {
     searchDeployMetrics({ period: periodFilterItems[0].value });
@@ -57,9 +54,9 @@ const Deploys = () => {
     searchDeployMetrics({ period, circles: circleIds });
   };
 
-  const resetChart = (chartId: string) => {
-    window.ApexCharts.exec(chartId, 'resetSeries');
-  };
+  // const resetChart = (chartId: string) => {
+  //   window.ApexCharts.exec(chartId, 'resetSeries');
+  // };
 
   return (
     <Styled.Content data-testid="metrics-deploy">
@@ -116,12 +113,21 @@ const Deploys = () => {
         </Styled.Card>
       </Styled.Plates>
       <Styled.Card width="1220px" height="521px" data-testid="apexchart-deploy">
-        <ChartMenu onReset={() => resetChart('chartDeploy')} />
+        {/* <ChartMenu onReset={() => resetChart('chartDeploy')} />
         <Styled.MixedChart
           options={deployChartOption}
           series={deploySeries}
           width={1180}
           height={495}
+        /> */}
+        <Chart
+          width={1180}
+          height={495}
+          chartType="ComboChart"
+          loader={<div>Loading Chart</div>}
+          data={deploySeries}
+          options={deployOptions}
+          rootProps={{ 'data-testid': '1' }}
         />
       </Styled.Card>
       <ReleasesHistoryComponent filter={filter} />

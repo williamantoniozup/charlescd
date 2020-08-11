@@ -14,47 +14,31 @@
  * limitations under the License.
  */
 
-import { DeployMetricData, MetricDataInPeriod } from './interfaces';
-import map from 'lodash/map';
+import { DeployMetricData } from './interfaces';
 import dayjs from 'dayjs';
-
-const buildSeriesData = (metricData: MetricDataInPeriod[]) =>
-  map(metricData, item => ({
-    x: item.period,
-    y: item.total
-  }));
-
-export const getDeploySeries = (data: DeployMetricData) => [
-  {
-    name: 'Deploy',
-    type: 'column',
-    data: buildSeriesData(data?.successfulDeploymentsInPeriod)
-  },
-  {
-    name: 'Error',
-    type: 'column',
-    data: buildSeriesData(data?.failedDeploymentsInPeriod)
-  },
-  {
-    name: 'Avarege time',
-    type: 'area',
-    data: map(data?.deploymentsAverageTimeInPeriod, DeploymentAverageTime => ({
-      x: DeploymentAverageTime.period,
-      y: DeploymentAverageTime.averageTime
-    }))
-  }
-];
 
 export const chartDateFormatter = (date: string) => {
   return dayjs(date, 'YYYY-MM-DD').format('DDMMM');
 };
 
-export const getPlotOption = (deploySeries: Array<any>) => {
-  const plotOptionsMin = { bar: { columnWidth: '25%' } };
-  const plotOptionsMax = { bar: { columnWidth: '50%' } };
+const buildSeriesData = (data: DeployMetricData, row: number) => {
+  return [
+    chartDateFormatter(data?.successfulDeploymentsInPeriod[row]?.period),
+    data?.successfulDeploymentsInPeriod[row]?.total,
+    data?.failedDeploymentsInPeriod[row]?.total
+  ];
+};
 
-  const deploy = deploySeries[0].data[2];
-  const error = deploySeries[1].data[2];
+export const getDeploySeries = (data: DeployMetricData) => {
+  let newSeries: any[][] = [['Day', 'Deploy', 'Error']];
 
-  return !(deploy || error) ? plotOptionsMin : plotOptionsMax;
+  for (
+    let index = 0;
+    index < data?.successfulDeploymentsInPeriod.length;
+    index++
+  ) {
+    const rowData = buildSeriesData(data, index);
+    newSeries = newSeries.concat([rowData]);
+  }
+  return newSeries;
 };

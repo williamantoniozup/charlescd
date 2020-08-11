@@ -16,6 +16,7 @@
 
 import styled from 'styled-components';
 import { MixedChart as MixedChartComponent } from 'core/components/Charts';
+import Chart from 'react-google-charts';
 import ComponentButton from 'core/components/Button';
 import SelectComponent from 'core/components/Form/Select';
 
@@ -66,6 +67,11 @@ const MixedChart = styled(MixedChartComponent)`
   }
 `;
 
+const GoogleChart = styled(Chart)`
+  width: 100%;
+  min-height: 450px;
+`;
+
 const StyledSelect = `
   width: 200px;
   padding-right: 30px;
@@ -114,5 +120,6 @@ export default {
   Button,
   FilterForm,
   ChartControls,
-  ChartMenu
+  ChartMenu,
+  GoogleChart
 };
