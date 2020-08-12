@@ -19,31 +19,45 @@ import { getTheme } from 'core/utils/themes';
 const theme = getTheme();
 
 export default {
-  title: 'Deploy',
-  titleTextStyle: {
-    color: theme.metrics.dashboard.chart.label,
-    fontName: 'Arial',
-    fontSize: 20,
-    position: 'Top',
-    alignment: 'start'
-  },
-  backgroundColor: 'transparent',
-  seriesType: 'bars',
-  colors: [
-    theme.metrics.dashboard.chart.deploy,
-    theme.metrics.dashboard.chart.error
-    // theme.metrics.dashboard.chart.averageTime,
-  ],
   vAxis: {
-    textStyle: { color: '#FFF' },
-    gridlines: { color: '#FFF' },
-    baselineColor: '#FFF'
+    gridlines: {
+      color: theme.metrics.dashboard.chart.line
+    },
+    minorGridlines: {
+      color: 'transparent'
+    },
+    baseline: {
+      color: theme.metrics.dashboard.chart.line
+    },
+    textStyle: {
+      color: theme.metrics.dashboard.chart.label
+    }
   },
   hAxis: {
-    textStyle: { color: '#FFF' }
+    textStyle: {
+      color: theme.metrics.dashboard.chart.line
+    }
   },
-  bar: { groupWidth: '90%' },
-  legend: { position: 'top', textStyle: { color: '#FFF' } },
-  tooltip: { isHtml: true },
-  chartArea: { width: '95%', height: '80%' }
+  series: {
+    0: {
+      type: 'bars',
+      targetAxisIndex: 0,
+      color: theme.metrics.dashboard.chart.deploy
+    },
+    1: {
+      type: 'bars',
+      targetAxisIndex: 0,
+      color: theme.metrics.dashboard.chart.error
+    },
+    2: {
+      type: 'area',
+      targetAxisIndex: 0,
+      color: theme.metrics.dashboard.chart.averageTime
+    }
+  },
+  backgroundColor: 'transparent',
+  chartArea: { width: '95%', height: '70%' },
+  bar: { groupWidth: '80%' },
+  legend: 'none',
+  tooltip: { isHtml: true, color: 'red' }
 };

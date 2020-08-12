@@ -25,12 +25,13 @@ const buildSeriesData = (data: DeployMetricData, row: number) => {
   return [
     chartDateFormatter(data?.successfulDeploymentsInPeriod[row]?.period),
     data?.successfulDeploymentsInPeriod[row]?.total,
-    data?.failedDeploymentsInPeriod[row]?.total
+    data?.failedDeploymentsInPeriod[row]?.total,
+    data?.deploymentsAverageTimeInPeriod[row]?.averageTime
   ];
 };
 
 export const getDeploySeries = (data: DeployMetricData) => {
-  let newSeries: any[][] = [['Day', 'Deploy', 'Error']];
+  let newSeries: unknown[][] = [['Day', 'Deploy', 'Error', 'Avarege Time']];
 
   for (
     let index = 0;

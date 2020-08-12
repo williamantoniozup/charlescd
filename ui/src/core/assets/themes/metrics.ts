@@ -76,7 +76,8 @@ export const dark = {
       deploy: COLOR_MOUNTAIN_MEADOW,
       error: COLOR_RED_ORANGE,
       labels: COLOR_WHITE,
-      border: COLOR_PAYNES_GREY
+      border: COLOR_PAYNES_GREY,
+      line: COLOR_PAYNES_GREY
     }
   },
   circles: {

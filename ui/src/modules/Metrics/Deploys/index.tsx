@@ -24,7 +24,7 @@ import deployOptions from './deploy.options';
 import { periodFilterItems } from './constants';
 import Styled from './styled';
 import CircleFilter from './CircleFilter';
-// import ChartMenu from './ChartMenu';
+import ChartMenu from './ChartMenu';
 import { getDeploySeries } from './helpers';
 import { humanizeDateFromSeconds } from 'core/utils/date';
 import ReleasesHistoryComponent from './Release';
@@ -53,10 +53,6 @@ const Deploys = () => {
     setFilter({ period, circles: circleIds });
     searchDeployMetrics({ period, circles: circleIds });
   };
-
-  // const resetChart = (chartId: string) => {
-  //   window.ApexCharts.exec(chartId, 'resetSeries');
-  // };
 
   return (
     <Styled.Content data-testid="metrics-deploy">
@@ -113,13 +109,13 @@ const Deploys = () => {
         </Styled.Card>
       </Styled.Plates>
       <Styled.Card width="1220px" height="521px" data-testid="apexchart-deploy">
-        {/* <ChartMenu onReset={() => resetChart('chartDeploy')} />
-        <Styled.MixedChart
-          options={deployChartOption}
-          series={deploySeries}
-          width={1180}
-          height={495}
-        /> */}
+        <Styled.ChartHeader>
+          <div>
+            <Text.h1 color="light">Deploy</Text.h1>
+            <Text.h5 color="dark">One Week</Text.h5>
+          </div>
+          <ChartMenu onReset={() => console.log('reset')} />
+        </Styled.ChartHeader>
         <Chart
           width={1180}
           height={495}
