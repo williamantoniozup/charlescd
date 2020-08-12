@@ -109,10 +109,26 @@ interface Dot {
 const Dot = styled.div<Dot>`
   height: 15px;
   width: 15px;
-  background-color: ${({ theme, status }) => theme.metrics.deploy[status]};
+  background-color: ${({ theme, status }) =>
+    theme.metrics.dashboard.chart[status]};
   border-radius: 50%;
   display: inline-block;
   margin-right: 5px;
+`;
+
+const ChartTitle = styled.div`
+  span {
+    margin-bottom: 5px;
+  }
+`;
+
+const ChartLengend = styled.div`
+  display: flex;
+  padding-top: 10px;
+
+  span {
+    margin-right: 15px;
+  }
 `;
 
 export default {
@@ -126,5 +142,7 @@ export default {
   ChartControls,
   ChartMenu,
   ChartHeader,
+  ChartLengend,
+  ChartTitle,
   Dot
 };

@@ -110,21 +110,25 @@ const Deploys = () => {
       </Styled.Plates>
       <Styled.Card width="1220px" height="521px" data-testid="apexchart-deploy">
         <Styled.ChartHeader>
-          <div>
+          <Styled.ChartTitle>
             <Text.h2 color="light" weight="bold">
               Deploy
             </Text.h2>
             <Text.h6 color="dark">One Week</Text.h6>
             <ChartMenu onReset={() => console.log('reset')} />
-          </div>
-          <Styled.Dot status="deployed" />
-          <Text.h5 color="dark">Deployed</Text.h5>
-          <Styled.Dot status="deploying" />
-          <Text.h5 color="dark">Deploying</Text.h5>
+          </Styled.ChartTitle>
+          <Styled.ChartLengend>
+            <Styled.Dot status="deploy" />
+            <Text.h5 color="dark">Deployed</Text.h5>
+            <Styled.Dot status="error" />
+            <Text.h5 color="dark">Error</Text.h5>
+            <Styled.Dot status="averageTime" />
+            <Text.h5 color="dark">Avarege Time</Text.h5>
+          </Styled.ChartLengend>
         </Styled.ChartHeader>
         <Chart
           width={1180}
-          height={495}
+          height={425}
           chartType="ComboChart"
           loader={<div>Loading Chart</div>}
           data={deploySeries}
