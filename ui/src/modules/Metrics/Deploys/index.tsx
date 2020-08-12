@@ -111,10 +111,16 @@ const Deploys = () => {
       <Styled.Card width="1220px" height="521px" data-testid="apexchart-deploy">
         <Styled.ChartHeader>
           <div>
-            <Text.h1 color="light">Deploy</Text.h1>
-            <Text.h5 color="dark">One Week</Text.h5>
+            <Text.h2 color="light" weight="bold">
+              Deploy
+            </Text.h2>
+            <Text.h6 color="dark">One Week</Text.h6>
+            <ChartMenu onReset={() => console.log('reset')} />
           </div>
-          <ChartMenu onReset={() => console.log('reset')} />
+          <Styled.Dot status="deployed" />
+          <Text.h5 color="dark">Deployed</Text.h5>
+          <Styled.Dot status="deploying" />
+          <Text.h5 color="dark">Deploying</Text.h5>
         </Styled.ChartHeader>
         <Chart
           width={1180}

@@ -15,7 +15,6 @@
  */
 
 import styled from 'styled-components';
-import Chart from 'react-google-charts';
 import ComponentButton from 'core/components/Button';
 import SelectComponent from 'core/components/Form/Select';
 
@@ -103,6 +102,19 @@ const ChartMenu = styled.div`
   z-index: 999;
 `;
 
+interface Dot {
+  status: string;
+}
+
+const Dot = styled.div<Dot>`
+  height: 15px;
+  width: 15px;
+  background-color: ${({ theme, status }) => theme.metrics.deploy[status]};
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 5px;
+`;
+
 export default {
   Content,
   Card,
@@ -113,5 +125,6 @@ export default {
   FilterForm,
   ChartControls,
   ChartMenu,
-  ChartHeader
+  ChartHeader,
+  Dot
 };
