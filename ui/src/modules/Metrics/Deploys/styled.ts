@@ -32,23 +32,6 @@ interface Card {
   width?: string;
 }
 
-const Plates = styled.div`
-  display: flex;
-  flex-direction: row;
-  > * {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
-    > :not(:first-child) {
-      margin-top: 12px;
-    }
-  }
-  > :not(:first-child) {
-    margin-left: 20px;
-  }
-`;
-
 const Card = styled.div<Card>`
   background: ${({ theme }) => theme.metrics.dashboard.card};
   height: ${({ height }) => height || '94px'};
@@ -59,7 +42,13 @@ const Card = styled.div<Card>`
   position: relative;
 
   div.google-visualization-tooltip {
-    background: transparent !important;
+    background: rgb(28, 28, 30, 0.7) !important;
+    border: none !important;
+    box-shadow: none !important;
+
+    > ul > li > span {
+      color: #98989E !important;
+    }
 `;
 
 const ChartHeader = styled.div``;
@@ -134,7 +123,6 @@ const ChartLengend = styled.div`
 export default {
   Content,
   Card,
-  Plates,
   SingleSelect,
   MultiSelect,
   Button,

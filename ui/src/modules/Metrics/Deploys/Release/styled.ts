@@ -15,6 +15,7 @@
  */
 
 import styled, { css } from 'styled-components';
+import Text from 'core/components/Text';
 
 type ColumnProps = {
   width?: number;
@@ -84,7 +85,7 @@ const ReleaseHistoryWrapper = styled.div`
 const ReleaseHistoryHeader = styled.div`
   display: flex;
   justify-content: space-between;
-  padding: 20px 20px 0 20px;
+  padding: 20px 20px 0 20px;s
 `;
 
 const ReleaseHistoryLegend = styled.div`
@@ -124,6 +125,10 @@ const StatusLine = styled.div<Line>`
   border-radius: 10px;
 `;
 
+const PeriodLabel = styled(Text.h5)`
+  margin-left: 20px;
+`;
+
 export default {
   Table,
   TableRow,
@@ -136,5 +141,6 @@ export default {
   ReleaseHistoryHeader,
   ReleaseHistoryLegend,
   Dot,
-  StatusLine
+  StatusLine,
+  PeriodLabel
 };

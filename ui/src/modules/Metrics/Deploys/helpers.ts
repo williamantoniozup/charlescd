@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { DeployMetricData } from './interfaces';
+import { DeployMetricData, PERIOD_PARAM } from './interfaces';
 import dayjs from 'dayjs';
 
 export const chartDateFormatter = (date: string) => {
@@ -42,4 +42,24 @@ export const getDeploySeries = (data: DeployMetricData) => {
     newSeries = newSeries.concat([rowData]);
   }
   return newSeries;
+};
+
+export const getLabel = (period: string) => {
+  switch (period) {
+    case PERIOD_PARAM.ONE_WEEK: {
+      return 'One Week';
+    }
+    case PERIOD_PARAM.TWO_WEEKS: {
+      return 'Two Week';
+    }
+    case PERIOD_PARAM.ONE_MONTH: {
+      return 'One Month';
+    }
+    case PERIOD_PARAM.THREE_MONTHS: {
+      return 'Tree Months';
+    }
+    default: {
+      return '';
+    }
+  }
 };

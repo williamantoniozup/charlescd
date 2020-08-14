@@ -21,7 +21,8 @@ const theme = getTheme();
 export default {
   vAxis: {
     gridlines: {
-      color: theme.metrics.dashboard.chart.line
+      color: theme.metrics.dashboard.chart.line,
+      count: -1
     },
     minorGridlines: {
       color: 'transparent'
@@ -31,9 +32,11 @@ export default {
     },
     textStyle: {
       color: theme.metrics.dashboard.chart.label
-    }
+    },
+    viewWindow: { min: 0 }
   },
   hAxis: {
+    viewWindowMode: 'explicit',
     textStyle: {
       color: theme.metrics.dashboard.chart.line
     }
@@ -50,14 +53,23 @@ export default {
       color: theme.metrics.dashboard.chart.error
     },
     2: {
-      type: 'area',
-      targetAxisIndex: 0,
+      type: 'line',
+      targetAxisIndex: 1,
+      lineWidth: 4,
+      pointSize: 10,
       color: theme.metrics.dashboard.chart.averageTime
     }
   },
   backgroundColor: 'transparent',
-  chartArea: { width: '95%', height: '70%' },
+  chartArea: { width: '90%', height: '70%' },
   bar: { groupWidth: '80%' },
+  curveType: 'function',
   legend: 'none',
-  tooltip: { isHtml: true, color: 'red' }
+  tooltip: { 
+    isHtml: true,
+    showColorCode: true,
+    ignoreBounds: true
+  },
+  selectionMode: 'multiple',
+  aggregationTarget: 'none'
 };

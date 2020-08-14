@@ -18,14 +18,16 @@ import React from 'react';
 import Text from 'core/components/Text';
 import Loader from '../../Loaders/index';
 import { ReleaseHistorySummary } from '../interfaces';
+import { getLabel } from '../helpers';
 import Styled from './styled';
 
 type Props = {
   legend: ReleaseHistorySummary;
   isLoading: boolean;
+  filterPeriod: string;
 };
 
-const Summary = ({ legend, isLoading }: Props) => {
+const Summary = ({ legend, filterPeriod, isLoading }: Props) => {
   return (
     <>
       <Styled.ReleaseHistoryHeader>
@@ -33,6 +35,9 @@ const Summary = ({ legend, isLoading }: Props) => {
           Release
         </Text.h2>
       </Styled.ReleaseHistoryHeader>
+      <Styled.PeriodLabel color="dark">
+        {getLabel(filterPeriod)}
+      </Styled.PeriodLabel>
       {isLoading ? (
         <div data-testid="loader-legend">
           <Loader.Legend />

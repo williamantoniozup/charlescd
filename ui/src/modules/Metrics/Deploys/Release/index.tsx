@@ -60,7 +60,11 @@ const ReleasesHistoryComponent = ({ filter }: Props) => {
 
   return (
     <Styled.ReleaseHistoryWrapper data-testid="release-history">
-      <Summary legend={response?.summary} isLoading={loading} />
+      <Summary
+        legend={response?.summary}
+        filterPeriod={filter.period}
+        isLoading={loading}
+      />
       <Styled.Table>
         <Styled.TableHead>
           <Styled.TableColumn>

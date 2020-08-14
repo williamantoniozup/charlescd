@@ -24,8 +24,7 @@ import deployOptions from './deploy.options';
 import { periodFilterItems } from './constants';
 import Styled from './styled';
 import CircleFilter from './CircleFilter';
-import ChartMenu from './ChartMenu';
-import { getDeploySeries } from './helpers';
+import { getDeploySeries, getLabel } from './helpers';
 import { humanizeDateFromSeconds } from 'core/utils/date';
 import ReleasesHistoryComponent from './Release';
 import { ReleaseHistoryRequest } from './interfaces';
@@ -35,8 +34,6 @@ const Deploys = () => {
   const { searchDeployMetrics, response, loading } = useDeployMetric();
   const { control, handleSubmit, getValues, setValue } = useForm();
   const deploySeries = getDeploySeries(response);
-
-  console.log(deploySeries); // remove log
 
   useEffect(() => {
     searchDeployMetrics({ period: periodFilterItems[0].value });
@@ -82,49 +79,37 @@ const Deploys = () => {
         </Styled.FilterForm>
       </Styled.Card>
 
-      <Styled.Plates>
-        <Styled.Card width="175px" height="94px">
-          <Text.h4 color="dark">Deploy</Text.h4>
-          <Text.h1 color="light">
-            {loading ? <Loader.Card /> : response?.successfulDeployments}
-          </Text.h1>
-        </Styled.Card>
-        <Styled.Card width="175px" height="94px">
-          <Text.h4 color="dark">Error</Text.h4>
-          <Text.h1 color="light">
-            {loading ? <Loader.Card /> : response?.failedDeployments}
-          </Text.h1>
-        </Styled.Card>
-        <Styled.Card width="175px" height="94px">
-          <Text.h4 color="dark">Average time</Text.h4>
-          <Text.h1 color="light">
-            {loading ? (
-              <Loader.Card />
-            ) : (
-              humanizeDateFromSeconds(
-                response?.successfulDeploymentsAverageTime
-              )
-            )}
-          </Text.h1>
-        </Styled.Card>
-      </Styled.Plates>
       <Styled.Card width="1220px" height="521px" data-testid="apexchart-deploy">
         <Styled.ChartHeader>
           <Styled.ChartTitle>
             <Text.h2 color="light" weight="bold">
               Deploy
             </Text.h2>
-            <Text.h6 color="dark">One Week</Text.h6>
-            <ChartMenu onReset={() => console.log('reset')} />
+            <Text.h5 color="dark">{getLabel(filter.period)}</Text.h5>
           </Styled.ChartTitle>
-          <Styled.ChartLengend>
-            <Styled.Dot status="deploy" />
-            <Text.h5 color="dark">Deployed</Text.h5>
-            <Styled.Dot status="error" />
-            <Text.h5 color="dark">Error</Text.h5>
-            <Styled.Dot status="averageTime" />
-            <Text.h5 color="dark">Avarege Time</Text.h5>
-          </Styled.ChartLengend>
+          {loading ? (
+            <div data-testid="loader-legend">
+              <Loader.Legend />
+            </div>
+          ) : (
+            <Styled.ChartLengend>
+              <Styled.Dot status="deploy" />
+              <Text.h5 color="dark">
+                Deployed: {response?.successfulDeployments}
+              </Text.h5>
+              <Styled.Dot status="error" />
+              <Text.h5 color="dark">
+                Error: {response?.failedDeployments}
+              </Text.h5>
+              <Styled.Dot status="averageTime" />
+              <Text.h5 color="dark">
+                Avarege Time:{' '}
+                {humanizeDateFromSeconds(
+                  response?.successfulDeploymentsAverageTime
+                )}
+              </Text.h5>
+            </Styled.ChartLengend>
+          )}
         </Styled.ChartHeader>
         <Chart
           width={1180}
