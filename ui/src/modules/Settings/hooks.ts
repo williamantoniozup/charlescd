@@ -18,7 +18,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useFetch } from 'core/providers/base/hooks';
 import { findAll, findById, updateName } from 'core/providers/workspace';
 import { useDispatch } from 'core/state/hooks';
-import { loadedWorkspacesAction } from './state/actions';
+import { loadedWorkspacesAction } from 'modules/Workspaces/state/actions';
 import { WorkspacePagination } from './Workspaces/interfaces/WorkspacePagination';
 import { Workspace } from './Workspaces/interfaces/Workspace';
 import { toogleNotification } from 'core/components/Notification/state/actions';

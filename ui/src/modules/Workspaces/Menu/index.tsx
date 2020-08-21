@@ -33,17 +33,11 @@ import Loader from './Loaders';
 
 interface Props {
   items: Workspace[];
-  onSearch: (name: string) => void;
   isLoading?: boolean;
-  selectedWorkspace: (name: string) => void;
+  onSearch: (name: string) => void;
 }
 
-const WorkspaceMenu = ({
-  items,
-  onSearch,
-  isLoading,
-  selectedWorkspace
-}: Props) => {
+const WorkspaceMenu = ({ items, isLoading, onSearch }: Props) => {
   const MAX_LENGTH_NAME = 50;
   const history = useHistory();
   const [isDisabled, setIsDisabled] = useState(true);
@@ -63,17 +57,9 @@ const WorkspaceMenu = ({
   }, [name, setIsDisabled]);
 
   const renderWorkspaces = () =>
-    map(items, ({ id, name, status }: Workspace) => (
-      <MenuItem
-        key={id}
-        id={id}
-        name={name}
-        status={status}
-        selectedWorkspace={(name: string) => selectedWorkspace(name)}
-      />
+    map(items, (workspace: Workspace) => (
+      <MenuItem key={workspace?.id} workspace={workspace} />
     ));
-
-  const openWorkspaceModal = () => setToggleModal(true);
 
   const onSubmit = ({ name }: Record<string, string>) => {
     const authorId = getProfileByKey('id');
@@ -117,7 +103,7 @@ const WorkspaceMenu = ({
       <Styled.Actions>
         <Styled.Button
           id="workspaceModal"
-          onClick={openWorkspaceModal}
+          onClick={() => setToggleModal(true)}
           isDisabled={!isRoot()}
         >
           <LabeledIcon icon="plus-circle" marginContent="5px">

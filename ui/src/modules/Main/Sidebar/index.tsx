@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Fragment } from 'react';
 import { useHistory } from 'react-router-dom';
 import find from 'lodash/find';
 import map from 'lodash/map';
@@ -30,29 +30,26 @@ import {
   getWorkspaceId,
   clearWorkspace
 } from 'core/utils/workspace';
-import { Workspace } from 'modules/Users/interfaces/User';
+import { Workspace } from 'modules/Workspaces/interfaces/Workspace';
 import { ExpandClick } from './Types';
 import MenuItems from './MenuItems';
 import Styled from './styled';
 import { useWorkspaces } from 'modules/Settings/hooks';
+import { useDispatch, useGlobalState } from 'core/state/hooks';
+import { loadedWorkspaceAction } from 'modules/Workspaces/state/actions';
 
 interface Props {
   isExpanded: boolean;
   onClickExpand: (state: ExpandClick) => void;
-  selectedWorkspace?: string;
 }
 
-const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
+const Sidebar = ({ isExpanded, onClickExpand }: Props) => {
+  const dispatch = useDispatch();
+  const { item: selectedWorkspace } = useGlobalState(state => state.workspaces);
   const [workspace, setWorkspace] = useState<Workspace>();
   const [, loadWorkspaces, loadWorkspacesResponse] = useWorkspaces();
   const [workspaces, setWorkspaces] = useState<Workspace[]>();
   const navigate = useHistory();
-  const pathname = navigate.location.pathname;
-  const menu =
-    pathname === routes.workspaces ||
-    pathname === routes.users ||
-    pathname === routes.account ||
-    pathname === routes.groups;
 
   useEffect(() => {
     loadWorkspaces();
@@ -60,22 +57,26 @@ const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
 
   useEffect(() => {
     isRoot()
-      ? setWorkspaces(loadWorkspacesResponse?.content)
+      ? setWorkspaces(loadWorkspacesResponse?.content as Workspace[])
       : setWorkspaces(getProfileByKey('workspaces'));
   }, [loadWorkspacesResponse]);
 
   useEffect(() => {
-    setWorkspace(find(workspaces, ['id', getWorkspaceId()]));
+    const selected = find(workspaces, ['id', getWorkspaceId()]);
+    dispatch(loadedWorkspaceAction(selected));
   }, [workspaces]);
 
   const handleClick = () => {
     clearWorkspace();
+    dispatch(loadedWorkspaceAction(null));
     setWorkspace(null);
     navigate.push(routes.main);
   };
 
   const onSelect = (name: string) => {
-    saveWorkspace(find(workspaces, ['name', name]));
+    const selected = find(workspaces, ['name', name]);
+    saveWorkspace(selected);
+    dispatch(loadedWorkspaceAction(selected));
     setUserAbilities();
     navigate.push({
       pathname: isRoot() ? routes.credentials : routes.circles
@@ -86,19 +87,27 @@ const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
   const getIcon = (workspaceId: string) =>
     getWorkspaceId() === workspaceId && 'checkmark';
 
-  const renderDropdown = () =>
-    !menu && (
-      <Styled.Dropdown icon="workspace">
-        {map(workspaces, workspace => (
-          <Styled.DropdownItem
-            key={workspace.name}
-            name={workspace.name}
-            icon={getIcon(workspace.id)}
-            onSelect={onSelect}
-          />
-        ))}
-      </Styled.Dropdown>
-    );
+  const renderDropdown = () => (
+    <Styled.Dropdown icon="workspace">
+      {map(workspaces, workspace => (
+        <Styled.DropdownItem
+          key={workspace.name}
+          name={workspace.name}
+          icon={getIcon(workspace.id)}
+          onSelect={onSelect}
+        />
+      ))}
+    </Styled.Dropdown>
+  );
+
+  const renderSwitchWorkspace = () => {
+    <Fragment>
+      {!isEmpty(workspaces) && renderDropdown()}
+      {isExpanded && (
+        <Text.h5 color="light">{workspace?.name || selectedWorkspace}</Text.h5>
+      )}
+    </Fragment>;
+  };
 
   return (
     <Styled.Nav data-testid="sidebar">
@@ -110,14 +119,7 @@ const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
       />
 
       <Styled.Bottom>
-        <Styled.Item>
-          {!isEmpty(workspaces) && renderDropdown()}
-          {isExpanded && (
-            <Text.h5 color="light">
-              {!menu && (workspace?.name || selectedWorkspace)}
-            </Text.h5>
-          )}
-        </Styled.Item>
+        <Styled.Item>{renderSwitchWorkspace()}</Styled.Item>
         <Styled.Item>
           <Icon name="logout" color="dark" size="15px" onClick={logout} />
         </Styled.Item>

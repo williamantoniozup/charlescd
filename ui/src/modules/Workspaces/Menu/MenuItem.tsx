@@ -16,28 +16,30 @@
 
 import React, { memo } from 'react';
 import { useHistory } from 'react-router-dom';
+import pick from 'lodash/pick';
 import { saveWorkspace } from 'core/utils/workspace';
 import routes from 'core/constants/routes';
 import { setUserAbilities } from 'core/utils/abilities';
 import { WORKSPACE_STATUS } from '../enums';
 import Styled from './styled';
+import { useDispatch } from 'core/state/hooks';
+import { loadedWorkspaceAction } from 'modules/Workspaces/state/actions';
+import { Workspace } from 'modules/Workspaces/interfaces/Workspace';
 
 interface Props {
-  id: string;
-  name: string;
-  status: string;
-  selectedWorkspace: (name: string) => void;
+  workspace: Workspace;
 }
 
-const MenuItem = ({ id, name, status, selectedWorkspace }: Props) => {
+const MenuItem = ({ workspace }: Props) => {
   const history = useHistory();
+  const dispatch = useDispatch();
   const handleClick = () => {
-    saveWorkspace({ id, name });
-    selectedWorkspace(name);
+    saveWorkspace(pick(workspace, ['id', 'name']));
+    dispatch(loadedWorkspaceAction(workspace));
     setUserAbilities();
     history.push({
       pathname:
-        status === WORKSPACE_STATUS.COMPLETE
+        workspace?.status === WORKSPACE_STATUS.COMPLETE
           ? routes.circles
           : routes.credentials
     });
@@ -46,7 +48,7 @@ const MenuItem = ({ id, name, status, selectedWorkspace }: Props) => {
   return (
     <Styled.Link onClick={handleClick}>
       <Styled.ListItem icon="workspace" marginContent="8px">
-        <Styled.Item color="light">{name}</Styled.Item>
+        <Styled.Item color="light">{workspace?.name}</Styled.Item>
       </Styled.ListItem>
     </Styled.Link>
   );

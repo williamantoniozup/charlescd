@@ -21,8 +21,8 @@ export interface Workspace {
   id: string;
   name: string;
   status?: string;
-  authorId: string;
-  createdAt: string;
+  authorId?: string;
+  createdAt?: string;
   circleMatcherUrl?: string;
   gitConfiguration?: Configuration;
   userGroups?: UserGroup[];

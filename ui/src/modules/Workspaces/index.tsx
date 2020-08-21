@@ -25,11 +25,7 @@ import { clearWorkspace } from 'core/utils/workspace';
 import { useWorkspace } from './hooks';
 import Menu from './Menu';
 
-interface Props {
-  selectedWorkspace: (name: string) => void;
-}
-
-const Workspaces = ({ selectedWorkspace }: Props) => {
+const Workspaces = () => {
   const profileName = getProfileByKey('name');
   const workspaces = getProfileByKey('workspaces');
   const [filterWorkspace, , loading] = useWorkspace();
@@ -52,7 +48,6 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
           items={list?.content || workspaces}
           isLoading={loading}
           onSearch={setName}
-          selectedWorkspace={(name: string) => selectedWorkspace(name)}
         />
       </Page.Menu>
       <Page.Content>
