@@ -79,7 +79,9 @@ export const useLogin = (): {
     if (profile) {
       const profileBase64 = btoa(JSON.stringify(profile));
       saveProfile(profileBase64);
-      setStatus('resolved');
+      setTimeout(() => {
+        setStatus('resolved');
+      }, 1000)
     }
   }, [profile]);
 
