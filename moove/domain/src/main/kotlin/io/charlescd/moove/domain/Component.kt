@@ -27,5 +27,6 @@ data class Component(
     val errorThreshold: Int,
     val latencyThreshold: Int,
     val hostValue: String?,
-    val gatewayName: String?
+    val gatewayName: String?,
+    val namespace: String?
 )

@@ -16,6 +16,8 @@
 
 package io.charlescd.moove.infrastructure.service.client.request
 
+import javax.xml.stream.events.Namespace
+
 data class DeployRequest(
     val deploymentId: String,
     val applicationName: String,
@@ -39,7 +41,8 @@ data class DeployComponentRequest(
     val buildImageUrl: String,
     val buildImageTag: String,
     val hostValue: String?,
-    val gatewayName: String?
+    val gatewayName: String?,
+    val namespace: String?
 )
 
 data class DeployCircleRequest(
