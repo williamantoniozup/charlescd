@@ -38,6 +38,8 @@ test('render default CircleReleasesTable', async () => {
 
   await wait();
 
+  screen.debug();
+
   expect(screen.getAllByText(/release/)).toHaveLength(2);
   expect(screen.getAllByText('12/07/2020 • 16:07')).toHaveLength(4);
   expect(screen.getAllByText('Jhon Doe')).toHaveLength(2);

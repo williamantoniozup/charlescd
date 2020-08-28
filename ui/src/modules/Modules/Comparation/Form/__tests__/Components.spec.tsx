@@ -15,10 +15,9 @@
  */
 
 import React from "react";
-import { render, act, fireEvent, cleanup, wait } from "@testing-library/react";
+import { render, fireEvent, wait } from 'unit-test/testUtils';
 import Components from "../Components";
 import { Component } from "modules/Modules/interfaces/Component";
-import { ThemeProviderWrapper } from "unit-test/testUtils";
 
 const fakeComponent: Component = {
   id: "fake-id",
@@ -52,16 +51,14 @@ jest.mock("react-hook-form", () => {
 
 test("Test componentForm for one component render", async () => {
   const { container } = render(
-    <ThemeProviderWrapper>
-      <Components
-        fieldArray={{
-          append: mockAppend,
-          remove: mockRemove,
-          fields: arrayFakeComponent
-        }}
-        key={"fake-key"}
-      />
-    </ThemeProviderWrapper>
+    <Components
+      fieldArray={{
+        append: mockAppend,
+        remove: mockRemove,
+        fields: arrayFakeComponent
+      }}
+      key={"fake-key"}
+    />
   );
   await wait()
   expect(container.innerHTML).toMatch("input-wrapper-components[0]");
@@ -69,16 +66,14 @@ test("Test componentForm for one component render", async () => {
 
 test("Test componentForm for two components render", async () => {
   const { container } = render(
-    <ThemeProviderWrapper>
-      <Components
-        fieldArray={{
-          append: mockAppend,
-          remove: mockRemove,
-          fields: arrayFakeComponents
-        }}
-        key={"fake-key"}
-      />
-    </ThemeProviderWrapper>
+    <Components
+      fieldArray={{
+        append: mockAppend,
+        remove: mockRemove,
+        fields: arrayFakeComponents
+      }}
+      key={"fake-key"}
+    />
   );
   await wait()
   expect(container.innerHTML).toMatch("input-wrapper-components[0]");
@@ -87,33 +82,29 @@ test("Test componentForm for two components render", async () => {
 
 
 test("Test componentForm for append another component", async () => {
-  const { container, getByTestId , rerender} = render(
-    <ThemeProviderWrapper>
-      <Components
-        fieldArray={{
-          append: mockAppend,
-          remove: mockRemove,
-          fields: arrayFakeComponents
-        }}
-        key={"fake-key"}
-      />
-    </ThemeProviderWrapper>
+  const { container, getByTestId, rerender } = render(
+    <Components
+      fieldArray={{
+        append: mockAppend,
+        remove: mockRemove,
+        fields: arrayFakeComponents
+      }}
+      key={"fake-key"}
+    />
   );
   await wait()
   const buttonAppend = getByTestId("button-default-add-component")
   fireEvent.click(buttonAppend)
   await wait()
   rerender(
-    <ThemeProviderWrapper>
-      <Components
-        fieldArray={{
-          append: mockAppend,
-          remove: mockRemove,
-          fields: arrayFakeComponents
-        }}
-        key={"fake-key"}
-      />
-    </ThemeProviderWrapper>
+    <Components
+      fieldArray={{
+        append: mockAppend,
+        remove: mockRemove,
+        fields: arrayFakeComponents
+      }}
+      key={"fake-key"}
+    />
   );
   await wait()
   expect(container.innerHTML).toMatch("input-wrapper-components[0]");

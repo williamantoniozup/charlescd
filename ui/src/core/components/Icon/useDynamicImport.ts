@@ -21,6 +21,7 @@ interface Data {
 }
 const useDynamicImport = (name: string) => {
   const [uri, setUri] = useState('');
+  console.log('blz');
 
   useEffect(() => {
     let abort: () => void = null;

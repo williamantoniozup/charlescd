@@ -15,7 +15,7 @@
  */
 
 import React from "react";
-import { render, act, fireEvent, cleanup, wait } from "@testing-library/react";
+import { render, act, fireEvent, cleanup, wait } from "unit-test/testUtils";
 import ComponentForm from "../ComponentForm";
 import { Component } from "modules/Modules/interfaces/Component";
 import { ThemeProviderWrapper } from "unit-test/testUtils";

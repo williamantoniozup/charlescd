@@ -15,7 +15,7 @@
  */
 
 import React, { ReactElement } from "react";
-import { render, act, fireEvent, cleanup, wait } from "@testing-library/react";
+import { render, act, fireEvent, cleanup, wait } from "unit-test/testUtils";
 import FormModule from "../";
 import { Component as ComponentInterface } from "modules/Modules/interfaces/Component";
 import { AllTheProviders } from "unit-test/testUtils";
