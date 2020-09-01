@@ -28,7 +28,8 @@ const headers = {
 
 export const login = (username: string, password: string) => {
   const grantType = 'password';
-  const data = `grant_type=${grantType}&client_id=${clientId}&username=${username}&password=${password}`;
+  const clientSecret = '09081d0d-c3f5-4386-a82b-91cac5d22a77';
+  const data = `grant_type=${grantType}&client_id=${clientId}&username=${username}&password=${password}&client_secret=${clientSecret}`;
 
   return authRequest(endpoint, data, { method: 'POST', headers });
 };
