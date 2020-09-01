@@ -53,7 +53,7 @@ declare global {
 }
 
 export const basePath = window.ENVIRONMENT?.REACT_APP_API_URI || '/api';
-export const authPath = window.ENVIRONMENT?.REACT_APP_AUTH_URI;
+export const authPath = 'https://idm.zup.com.br'; //window.ENVIRONMENT?.REACT_APP_AUTH_URI;
 
 export const authRequest = (
   url: string,
