@@ -17,18 +17,19 @@
 import { authRequest, unauthenticatedRequest } from './base';
 
 const clientId = window.ENVIRONMENT?.REACT_APP_AUTH_CLIENT_ID;
-const realm = window.ENVIRONMENT?.REACT_APP_AUTH_REALM;
+// const realm = window.ENVIRONMENT?.REACT_APP_AUTH_REALM;
 const workspaceId = window.ENVIRONMENT?.REACT_APP_WORKSPACE_ID || 'UNKNOWN';
 
 const circleMatcherEndpoint = '/charlescd-circle-matcher/identify';
-const endpoint = `/auth/realms/${realm}/protocol/openid-connect/token`;
+const endpoint = `/auth/realms/ZupDev/protocol/openid-connect/token`;
 const headers = {
   'Content-Type': 'application/x-www-form-urlencoded'
 };
 
 export const login = (username: string, password: string) => {
   const grantType = 'password';
-  const data = `grant_type=${grantType}&client_id=${clientId}&username=${username}&password=${password}`;
+  const clientSecret = '09081d0d-c3f5-4386-a82b-91cac5d22a77';
+  const data = `grant_type=${grantType}&client_id=${clientId}&username=${username}&password=${password}&client_secret=${clientSecret}`;
 
   return authRequest(endpoint, data, { method: 'POST', headers });
 };
