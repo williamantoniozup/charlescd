@@ -269,8 +269,9 @@ class JdbcModuleRepository(
                            latency_threshold,
                            host_value,
                            gateway_name,
+                           namespace
                            created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)
             """
 
         this.jdbcTemplate.batchUpdate(
