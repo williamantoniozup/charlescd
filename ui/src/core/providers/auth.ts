@@ -26,10 +26,19 @@ const headers = {
   'Content-Type': 'application/x-www-form-urlencoded'
 };
 
-export const login = (username: string, password: string) => {
-  const grantType = 'password';
-  const data = `grant_type=${grantType}&client_id=${clientId}&username=${username}&password=${password}`;
+export const loginStart = (username: string) => {
+  const grantType = 'username';
+  const data = `grant_type=${grantType}&client_id=${clientId}&username=${username}`;
 
+  console.log('TODO: loginStart (username) API', data);
+  return authRequest(endpoint, data, { method: 'POST', headers });
+};
+
+export const login = (password: string) => {
+  const grantType = 'password';
+  const data = `grant_type=${grantType}&client_id=${clientId}&password=${password}`;
+
+  console.log('TODO: loginFinish (password) API', data);
   return authRequest(endpoint, data, { method: 'POST', headers });
 };
 

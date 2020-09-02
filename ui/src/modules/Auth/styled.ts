@@ -12,6 +12,16 @@ const Wrapper = styled.div`
   overflow: hidden;
 `;
 
+const Login = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: -64px;
+
+  > :first-child {
+    margin-bottom: 50px;
+  }
+`;
+
 const Container = styled.div`
   position: relative;
   width: 1080px;
@@ -129,5 +139,6 @@ export default {
   Button,
   Copyright,
   Heart,
+  Login,
   Zup
 };

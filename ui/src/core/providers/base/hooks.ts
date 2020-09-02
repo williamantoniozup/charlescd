@@ -17,9 +17,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { HTTP_STATUS } from 'core/enums/HttpStatus';
 import { renewToken, login } from '../auth';
-import { getRefreshToken } from 'core/utils/auth';
-import { redirectToLegacy } from 'core/utils/routes';
-import routes from 'core/constants/routes';
+import { getRefreshToken, logout } from 'core/utils/auth';
 
 interface FetchData<T> {
   response: T;
@@ -57,7 +55,7 @@ const renewTokenByCb = (fn: () => Promise<Response>, isLoginRequest: boolean) =>
         }
         return fn();
       } catch (error) {
-        redirectToLegacy(routes.login);
+        logout();
         return error;
       }
     } else {

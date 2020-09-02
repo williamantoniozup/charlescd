@@ -15,13 +15,19 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { useFetch } from 'core/providers/base/hooks';
-import { login, circleMatcher } from 'core/providers/auth';
+import {
+  useFetch,
+  FetchStatus,
+  useFetchData,
+  useFetchStatus
+} from 'core/providers/base/hooks';
+import { login, loginStart, circleMatcher } from 'core/providers/auth';
 import { saveSessionData } from 'core/utils/auth';
 import { saveCircleId } from 'core/utils/circle';
-import { CIRCLE_UNMATCHED } from './constants';
+import { CIRCLE_UNMATCHED } from './Form/constants';
 import { useUser } from 'modules/Users/hooks';
 import { saveProfile } from 'core/utils/profile';
+import { assignTo } from 'core/utils/routes';
 
 interface CircleMatcherResponse {
   circles: {
@@ -66,43 +72,83 @@ interface AuthResponse {
 
 export const useLogin = (): {
   doLogin: Function;
-  status: string;
+  status: FetchStatus;
   error: string;
 } => {
-  const [, , getSession] = useFetch<AuthResponse>(login);
+  const getSession = useFetchData<AuthResponse>(login);
+  const status = useFetchStatus();
   const { getCircleId } = useCircleMatcher();
   const [profile, , getUserByEmail] = useUser();
-  const [status, setStatus] = useState('');
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (profile) {
       const profileBase64 = btoa(JSON.stringify(profile));
       saveProfile(profileBase64);
-      setStatus('resolved');
+      status.resolved();
     }
   }, [profile]);
 
-  const doLogin = useCallback(
-    async (email: string, password: string) => {
-      setStatus('pending');
-      setError('');
-      try {
-        const response: AuthResponse = await getSession(email, password);
-        saveSessionData(response['access_token'], response['refresh_token']);
-        await getCircleId({ username: email });
-        getUserByEmail(email);
-      } catch (e) {
-        const errorMessage = e.message || `${e.status}: ${e.statusText}`;
-        setError(errorMessage);
-        setStatus('rejected');
-      }
-    },
-    [getSession, getCircleId, getUserByEmail]
-  );
+  const doLogin = async (email: string, password: string) => {
+    status.pending();
+
+    try {
+      const response: AuthResponse = await getSession(email, password);
+      saveSessionData(response['access_token'], response['refresh_token']);
+      await getCircleId({ username: email });
+      getUserByEmail(email);
+
+      status.resolved();
+    } catch (e) {
+      const errorMessage = e.message || `${e.status}: ${e.statusText}`;
+      setError(errorMessage);
+
+      status.rejected();
+    }
+  };
 
   return {
     doLogin,
+    status,
+    error
+  };
+};
+
+export const useAuth = (): {
+  doAuth: Function;
+  status: FetchStatus;
+  error: string;
+} => {
+  const startSession = useFetchData<AuthResponse>(loginStart);
+  const { getCircleId } = useCircleMatcher();
+  const status = useFetchStatus();
+  const [error, setError] = useState('');
+
+  const doAuth = async (email: string) => {
+    try {
+      status.pending();
+      const response: AuthResponse = await startSession(email);
+      saveSessionData(response['access_token'], response['refresh_token']);
+      await getCircleId({ username: email });
+
+      // if (response['redirect']) {
+      console.log('TODO: Redirect to Livepass');
+      // assignTo('');
+      // }
+
+      status.resolved();
+
+      return response;
+    } catch (e) {
+      const errorMessage = e.message || `${e.status}: ${e.statusText}`;
+      setError(errorMessage);
+
+      status.rejected();
+    }
+  };
+
+  return {
+    doAuth,
     status,
     error
   };

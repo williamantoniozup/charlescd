@@ -18,7 +18,7 @@ import React from 'react';
 import { renderHook, act } from '@testing-library/react-hooks';
 import { FetchMock } from 'jest-fetch-mock';
 import { circleKey } from 'core/utils/circle';
-import { useCircleMatcher } from '../hook';
+import { useCircleMatcher } from '../../hook';
 import { CIRCLE_UNMATCHED } from '../constants';
 
 test('match a circle id', async () => {

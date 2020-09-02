@@ -96,7 +96,7 @@ export function saveSessionData(accessToken: string, refreshToken: string) {
 
 export const logout = () => {
   clearSession();
-  window.location.href = routes.login;
+  window.location.href = routes.auth;
 };
 
 export const checkStatus = (status: number) => {

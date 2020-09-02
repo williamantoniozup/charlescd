@@ -14,25 +14,23 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import Icon from 'core/components/Icon';
 import Form from 'core/components/Form';
 import { validFields } from 'core/utils/validation';
 import routes from 'core/constants/routes';
-import { useRouter } from 'core/utils/routes';
-import { useLogin } from '../hook';
+import { useAuth } from '../hook';
 import Styled from '../styled';
 
-const Login = () => {
+const AuthForm = () => {
   const [isDisabled, setIsDisabled] = useState(true);
   const { register, errors, getValues, watch, handleSubmit } = useForm({
     mode: 'onChange'
   });
-  const { doLogin, status, error } = useLogin();
+  const { doAuth, status, error } = useAuth();
   const history = useHistory();
-  const router = useRouter();
   const watchFields = watch();
 
   useEffect(() => {
@@ -46,18 +44,13 @@ const Login = () => {
   }, [status, history]);
 
   const onSubmit = () => {
-    // TODO: get email from somewhere
-    const { email, password } = getValues();
-    doLogin(email, password);
-  };
-
-  const resetLogin = () => {
-    router.push(routes.auth);
+    // const { email } = getValues();
+    // doAuth(email);
+    history.push({ pathname: routes.login });
   };
 
   return (
-    <Styled.Login>
-      <Icon name="arrow-left" color="dark" onClick={() => resetLogin()} />
+    <Fragment>
       <Icon name="charles-logo" />
       <Styled.Form onSubmit={handleSubmit(onSubmit)}>
         <Styled.Title color="light">
@@ -65,12 +58,13 @@ const Login = () => {
         </Styled.Title>
         <Styled.Error color="error">{error}</Styled.Error>
         <Styled.Field>
-          <Form.Password
+          <Form.Input
+            type="email"
             ref={register({ required: true })}
-            name="password"
-            label="Enter your password"
+            name="email"
+            label="Email address"
           />
-          {errors.password && (
+          {errors.email && (
             <Styled.Error color="error">Required Field</Styled.Error>
           )}
         </Styled.Field>
@@ -80,11 +74,11 @@ const Login = () => {
           isDisabled={isDisabled}
           isLoading={status.isPending}
         >
-          Log in
+          Continue
         </Styled.Button>
       </Styled.Form>
-    </Styled.Login>
+    </Fragment>
   );
 };
 
-export default Login;
+export default AuthForm;

@@ -70,6 +70,14 @@ const goTo = (path: string) => {
   window.open(path, '_blank');
 };
 
+const assignTo = (path: string) => {
+  window.location.assign(path);
+};
+
+const replaceTo = (path: string) => {
+  window.location.replace(path);
+};
+
 const redirectToLegacy = (path: string) => {
   const { location } = window;
   const { href } = location;
@@ -89,5 +97,7 @@ export {
   redirectToLegacy,
   getPath,
   replaceRoute,
-  goTo
+  goTo,
+  assignTo,
+  replaceTo
 };

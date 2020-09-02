@@ -4,6 +4,7 @@ import routes from 'core/constants/routes';
 import { ReactComponent as AuthSVG } from 'core/assets/svg/circle-login.svg';
 import Styled from './styled';
 
+const Form = lazy(() => import('modules/Auth/Form'));
 const Login = lazy(() => import('modules/Auth/Login'));
 
 const Auth = () => {
@@ -17,6 +18,7 @@ const Auth = () => {
           <Suspense fallback="">
             <Switch>
               <Route path={routes.login} component={Login} />
+              <Route component={Form} />
             </Switch>
           </Suspense>
         </Styled.Content>
