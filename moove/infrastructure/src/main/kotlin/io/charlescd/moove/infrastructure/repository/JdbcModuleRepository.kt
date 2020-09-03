@@ -269,7 +269,7 @@ class JdbcModuleRepository(
                            latency_threshold,
                            host_value,
                            gateway_name,
-                           namespace
+                           namespace,
                            created_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)
             """
