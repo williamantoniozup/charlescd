@@ -27,7 +27,7 @@ import { saveCircleId } from 'core/utils/circle';
 import { CIRCLE_UNMATCHED } from './Form/constants';
 import { useUser } from 'modules/Users/hooks';
 import { saveProfile } from 'core/utils/profile';
-import { assignTo } from 'core/utils/routes';
+// import { assignTo } from 'core/utils/routes';
 
 interface CircleMatcherResponse {
   circles: {
@@ -85,7 +85,6 @@ export const useLogin = (): {
     if (profile) {
       const profileBase64 = btoa(JSON.stringify(profile));
       saveProfile(profileBase64);
-      status.resolved();
     }
   }, [profile]);
 
