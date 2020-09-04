@@ -2,23 +2,23 @@ package tests
 
 import (
 	"compass/internal/plugin"
-	"github.com/stretchr/testify/require"
-	"github.com/stretchr/testify/suite"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 )
 
 type SuitePlugins struct {
 	suite.Suite
 
-	repository   plugin.UseCases
+	repository plugin.UseCases
 }
 
 func (s *SuitePlugins) SetupSuite() {
-	os.Setenv("ENV", "TEST")
+	os.Setenv("ENV", testEnv)
 	s.repository = plugin.NewMain()
 }
-
 
 func TestInitPlugins(t *testing.T) {
 	suite.Run(t, new(SuitePlugins))
@@ -28,10 +28,9 @@ func (s *SuitePlugins) TestFindAll() {
 	expectedPlugins := []plugin.Plugin{
 		{
 			Name: "Prometheus",
-			Src: "prometheus",
+			Src:  "prometheus",
 		},
 	}
-
 
 	os.Setenv("PLUGINS_DIR", "../../plugins")
 	plugins, err := s.repository.FindAll()

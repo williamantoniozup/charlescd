@@ -23,25 +23,6 @@ services:
     volumes:
       - ./prometheus.yaml:/etc/prometheus/prometheus.yml:ro
 
-  app:
-    build:
-      dockerfile: ./test/Dockerfile.test
-      context: ../
-    image: compass
-    ports:
-      - 8080:8080
-    environment:
-      - DB_NAME=charlescd_compass
-      - DB_USER=charlescd_compass
-      - DB_PASSWORD=compass
-      - DB_HOST=db
-      - ENV=PROD
-    networks:
-      - development
-    depends_on:
-      - "db"
-      - "provider"
-
 networks:
   development:
     driver: bridge

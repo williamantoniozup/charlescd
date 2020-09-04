@@ -6,11 +6,12 @@ import (
 	"compass/internal/metricsgroup"
 	"compass/internal/util"
 	"compass/pkg/logger"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
 	"log"
 	"sync"
 	"time"
+
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
 type UseCases interface {

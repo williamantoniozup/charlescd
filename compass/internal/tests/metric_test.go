@@ -30,7 +30,7 @@ type SuiteMetric struct {
 func (s *SuiteMetric) SetupSuite() {
 	var err error
 
-	os.Setenv("ENV", "TEST")
+	os.Setenv("ENV", testEnv)
 
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)

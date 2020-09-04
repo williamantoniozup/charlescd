@@ -28,7 +28,7 @@ type SuiteMetricExecution struct {
 func (s *SuiteMetricExecution) SetupSuite() {
 	var err error
 
-	os.Setenv("ENV", "TEST")
+	os.Setenv("ENV", testEnv)
 
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)
@@ -49,7 +49,6 @@ func (s *SuiteMetricExecution) BeforeTest(suiteName, testName string) {
 	s.DB.Exec("DELETE FROM data_sources")
 	s.DB.Exec("DELETE FROM metric_executions")
 }
-
 
 func TestInitMetricExecutions(t *testing.T) {
 	suite.Run(t, new(SuiteMetricExecution))
@@ -105,14 +104,14 @@ func (s *SuiteMetricExecution) TestFindAllMetricExecutions() {
 
 	expectedExecutions := []metric.MetricExecution{
 		{
-			MetricID: metric1Created.ID,
+			MetricID:  metric1Created.ID,
 			LastValue: 0,
-			Status:  "ACTIVE",
+			Status:    "ACTIVE",
 		},
 		{
-			MetricID: metric2Created.ID,
+			MetricID:  metric2Created.ID,
 			LastValue: 0,
-			Status:  "ACTIVE",
+			Status:    "ACTIVE",
 		},
 	}
 
@@ -164,16 +163,16 @@ func (s *SuiteMetricExecution) TestUpdateMetricExecution() {
 
 	require.Equal(s.T(), metric.MetricExecution{
 		BaseModel: executions[0].BaseModel,
-		MetricID: metricCreated.ID,
+		MetricID:  metricCreated.ID,
 		LastValue: 0,
-		Status: "ACTIVE",
+		Status:    "ACTIVE",
 	}, executions[0])
 
 	updateExecution := metric.MetricExecution{
 		BaseModel: executions[0].BaseModel,
-		MetricID: metricCreated.ID,
+		MetricID:  metricCreated.ID,
 		LastValue: 0,
-		Status: "REACHED",
+		Status:    "REACHED",
 	}
 
 	_, err = s.repository.UpdateMetricExecution(updateExecution)
@@ -184,8 +183,8 @@ func (s *SuiteMetricExecution) TestUpdateMetricExecution() {
 
 	require.Equal(s.T(), metric.MetricExecution{
 		BaseModel: newExecutions[0].BaseModel,
-		MetricID: metricCreated.ID,
+		MetricID:  metricCreated.ID,
 		LastValue: 0,
-		Status: "REACHED",
+		Status:    "REACHED",
 	}, newExecutions[0])
 }

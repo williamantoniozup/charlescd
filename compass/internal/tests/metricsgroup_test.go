@@ -32,7 +32,7 @@ type SuiteMetricGroup struct {
 func (s *SuiteMetricGroup) SetupSuite() {
 	var err error
 
-	os.Setenv("ENV", "TEST")
+	os.Setenv("ENV", testEnv)
 
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)
@@ -287,11 +287,11 @@ func (s *SuiteMetricGroup) TestResumeByCircle() {
 
 	expectedGroupResume := []metricsgroup.MetricGroupResume{
 		{
-			Name: metricgroup.Name,
-			Thresholds: 2,
+			Name:              metricgroup.Name,
+			Thresholds:        2,
 			ThresholdsReached: 0,
-			Metrics: 2,
-			Status: "ACTIVE",
+			Metrics:           2,
+			Status:            "ACTIVE",
 		},
 	}
 

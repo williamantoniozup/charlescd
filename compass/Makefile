@@ -23,10 +23,9 @@ build:
 local-tests:
 				$(GOTEST) ./...
 tests:
-				docker-compose -f $(COMPOSE_TESTS) up --build --abort-on-container-exit
-				docker-compose -f $(COMPOSE_TESTS) down --volumes
+				$(GOTEST) -v -coverpkg ./... ./internal/tests/ -coverprofile=coverage.cov
 tests-dep-up:
-				docker-compose -f $(COMPOSE_TESTS) up -d --build db provider
+				docker-compose -f $(COMPOSE_TESTS) up -d
 				sh build-plugins.sh
 tests-dep-down:
 				docker-compose -f $(COMPOSE_TESTS) down
