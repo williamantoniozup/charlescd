@@ -15,33 +15,34 @@
  */
 
 import React from 'react';
-import { render, fireEvent, wait } from 'unit-test/testUtils';
+import { render, fireEvent, screen } from 'unit-test/testUtils';
 import TabPanel from '../';
 
 
 test('render TabPanel default component loading mode', async () => {
   const Children = <div>children</div>;
 
-  const { getByText, queryByTestId } = render(
+  render(
     <TabPanel title="Circle" children={Children} name="charles" />
   );
 
-  await wait(() => expect(getByText('Circle')).toBeInTheDocument());
-  expect(getByText('children')).toBeInTheDocument();
-  expect(queryByTestId('button')).not.toBeInTheDocument();
+  expect(screen.getByText('Circle')).toBeInTheDocument();
+  expect(screen.queryByTestId('icon-cancel')).not.toBeInTheDocument();
+  expect(screen.getByText('children')).toBeInTheDocument();
+  expect(screen.queryByTestId('button')).not.toBeInTheDocument();
 });
 
 test('render TabPanel default component with action', async () => {
   const action = jest.fn();
   const Children = <div>children</div>;
 
-  const { getAllByText, queryByTestId } = render(
+  render(
     <TabPanel title="Circle" name="charles" size="15px" children={Children} onClose={action} />
   );
 
-  const tabpanelBtnClose = queryByTestId('icon-cancel');
+  const tabpanelBtnClose = screen.getByTestId('icon-cancel');
 
-  await wait(() => expect(tabpanelBtnClose).toBeInTheDocument());
+  expect(tabpanelBtnClose).toBeInTheDocument();
   fireEvent.click(tabpanelBtnClose);
   expect(action).toBeCalled();
 });
