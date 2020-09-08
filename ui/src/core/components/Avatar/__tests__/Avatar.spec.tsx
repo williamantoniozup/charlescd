@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import Avatar from '../';
 
 const props = {
@@ -28,11 +28,10 @@ const props = {
 }
 
 test('render Avatar', () => {
-
-  const { getByTestId } = render(
+  render(
     <Avatar {...props} />
   );
 
-  const element = getByTestId('avatar')
+  const element = screen.getByTestId('avatar')
   expect(element).toHaveStyle(`width: ${props.size};`);
 });
