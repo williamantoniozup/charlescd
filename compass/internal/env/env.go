@@ -1,4 +1,4 @@
-package configuration
+package env
 
 import (
 	"fmt"
@@ -56,10 +56,10 @@ func GetDBConnection(migrationsPath string) (*gorm.DB, error) {
 	return db, err
 }
 
-func GetConfiguration(configuration string) string {
-	env := os.Getenv(configuration)
+func GetConfiguration(envKey string) string {
+	env := os.Getenv(envKey)
 	if env == "" {
-		return initialValues[configuration]
+		return initialValues[envKey]
 	}
 
 	return env

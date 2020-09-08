@@ -1,7 +1,7 @@
 package dispatcher
 
 import (
-	"compass/internal/configuration"
+	"compass/internal/env"
 	"compass/internal/metric"
 	"compass/internal/metricsgroup"
 	"compass/internal/util"
@@ -98,7 +98,7 @@ func (dispatcher *Dispatcher) getMetricResult(execution metric.MetricExecution) 
 }
 
 func (dispatcher *Dispatcher) getInterval() (time.Duration, error) {
-	return time.ParseDuration(configuration.GetConfiguration("DISPATCHER_INTERVAL"))
+	return time.ParseDuration(env.GetConfiguration("DISPATCHER_INTERVAL"))
 }
 
 func (dispatcher *Dispatcher) Start(stopChan chan bool) error {

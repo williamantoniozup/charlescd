@@ -121,10 +121,10 @@ func (main Main) GetMetrics(dataSourceID, name string) (datasource.MetricList, e
 		return datasource.MetricList{}, err
 	}
 
-	configurationData, _ := json.Marshal(dataSourceResult.Data)
-	list, err := getList.(func(configurationData []byte) (datasource.MetricList, error))(configurationData)
+	envData, _ := json.Marshal(dataSourceResult.Data)
+	list, err := getList.(func(envData []byte) (datasource.MetricList, error))(envData)
 	if err != nil {
-		logger.Error(util.PluginListError, "GetMetrics", err, configurationData)
+		logger.Error(util.PluginListError, "GetMetrics", err, envData)
 		return datasource.MetricList{}, err
 	}
 

@@ -1,7 +1,7 @@
 package plugin
 
 import (
-	"compass/internal/configuration"
+	"compass/internal/env"
 	"compass/internal/util"
 	"compass/pkg/logger"
 	"fmt"
@@ -31,7 +31,7 @@ func (main Main) getNamePluginByFilename(filename string) string {
 func (main Main) FindAll() ([]Plugin, error) {
 	var plugins []Plugin
 
-	files, err := ioutil.ReadDir(configuration.GetConfiguration("PLUGINS_DIR"))
+	files, err := ioutil.ReadDir(env.GetConfiguration("PLUGINS_DIR"))
 	if err != nil {
 		logger.Error(util.FindPluginError, "FindAll", err, plugins)
 		return []Plugin{}, err
@@ -50,6 +50,6 @@ func (main Main) FindAll() ([]Plugin, error) {
 }
 
 func (main Main) GetPluginBySrc(src string) (*plugin.Plugin, error) {
-	pluginsPath := configuration.GetConfiguration("PLUGINS_DIR")
+	pluginsPath := env.GetConfiguration("PLUGINS_DIR")
 	return plugin.Open(filepath.Join(pluginsPath, fmt.Sprintf("%s.so", src)))
 }

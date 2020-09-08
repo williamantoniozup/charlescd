@@ -1,8 +1,8 @@
 package tests
 
 import (
-	"compass/internal/configuration"
 	"compass/internal/datasource"
+	"compass/internal/env"
 	metric2 "compass/internal/metric"
 	"compass/internal/metricsgroup"
 	"compass/internal/plugin"
@@ -32,7 +32,7 @@ func (s *SuiteMetric) SetupSuite() {
 
 	os.Setenv("ENV", testEnv)
 
-	s.DB, err = configuration.GetDBConnection("../../migrations")
+	s.DB, err = env.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)
 
 	s.DB.LogMode(dbLog)

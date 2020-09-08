@@ -1,9 +1,9 @@
 package main
 
 import (
-	"compass/internal/configuration"
 	"compass/internal/datasource"
 	"compass/internal/dispatcher"
+	"compass/internal/env"
 	"compass/internal/metric"
 	"compass/internal/metricsgroup"
 	"compass/internal/plugin"
@@ -18,7 +18,7 @@ import (
 func main() {
 	godotenv.Load()
 
-	db, err := configuration.GetDBConnection("migrations")
+	db, err := env.GetDBConnection("migrations")
 	if err != nil {
 		log.Fatal(err)
 	}

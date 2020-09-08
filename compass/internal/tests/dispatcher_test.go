@@ -1,34 +1,35 @@
 package tests
 
 import (
-	"compass/internal/configuration"
 	"compass/internal/datasource"
 	"compass/internal/dispatcher"
+	"compass/internal/env"
 	"compass/internal/metric"
 	"compass/internal/metricsgroup"
 	"compass/internal/plugin"
 	"encoding/json"
+	"os"
+	"testing"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"os"
-	"testing"
-	"time"
 )
 
 type SuiteDispatcher struct {
 	suite.Suite
 	DB *gorm.DB
 
-	repository   dispatcher.UseCases
+	repository dispatcher.UseCases
 	metricMain metric.UseCases
 }
 
 func (s *SuiteDispatcher) SetupSuite() {
 	var err error
 
-	s.DB, err = configuration.GetDBConnection("../../migrations")
+	s.DB, err = env.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)
 
 	s.DB.LogMode(dbLog)
@@ -47,7 +48,6 @@ func (s *SuiteDispatcher) BeforeTest(suiteName, testName string) {
 	s.DB.Exec("DELETE FROM data_sources")
 	s.DB.Exec("DELETE FROM metric_executions")
 }
-
 
 func TestInitDispatcher(t *testing.T) {
 	suite.Run(t, new(SuiteDispatcher))
@@ -92,7 +92,7 @@ func (s *SuiteDispatcher) TestStartMetricProviderError() {
 	require.NoError(s.T(), err)
 
 	time.Sleep(2 * time.Second)
-	stopChan<-true
+	stopChan <- true
 
 	execution, err := s.metricMain.FindAllMetricExecutions()
 	require.NoError(s.T(), err)

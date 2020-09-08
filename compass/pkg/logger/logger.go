@@ -1,13 +1,14 @@
 package logger
 
 import (
-	"compass/internal/configuration"
-	"github.com/sirupsen/logrus"
+	"compass/internal/env"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 func Info(msg string, data interface{}) {
-	if configuration.GetConfiguration("ENV") == "TEST" {
+	if env.GetConfiguration("ENV") == "TEST" {
 		return
 	}
 
@@ -17,7 +18,7 @@ func Info(msg string, data interface{}) {
 }
 
 func Error(msg string, functionName string, err error, data interface{}) {
-	if configuration.GetConfiguration("ENV") == "TEST" {
+	if env.GetConfiguration("ENV") == "TEST" {
 		return
 	}
 
@@ -28,7 +29,7 @@ func Error(msg string, functionName string, err error, data interface{}) {
 	}).WithTime(time.Now()).Errorln(msg)
 }
 func Panic(msg string, functionName string, err error, data interface{}) {
-	if configuration.GetConfiguration("ENV") == "TEST" {
+	if env.GetConfiguration("ENV") == "TEST" {
 		return
 	}
 

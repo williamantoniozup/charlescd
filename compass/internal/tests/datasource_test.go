@@ -1,8 +1,8 @@
 package tests
 
 import (
-	"compass/internal/configuration"
 	datasource2 "compass/internal/datasource"
+	"compass/internal/env"
 	"compass/internal/plugin"
 	"encoding/json"
 	"io/ioutil"
@@ -29,7 +29,7 @@ func (s *Suite) SetupSuite() {
 
 	os.Setenv("ENV", testEnv)
 
-	s.DB, err = configuration.GetDBConnection("../../migrations")
+	s.DB, err = env.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)
 
 	s.DB.LogMode(dbLog)
