@@ -16,7 +16,7 @@
 
 import React, { Suspense } from 'react';
 import { FetchMock } from 'jest-fetch-mock/types';
-import { render, wait, act } from 'unit-test/testUtils';
+import { render, act, screen } from 'unit-test/testUtils';
 import { dark } from 'core/assets/themes/sidebar';
 import { genMenuId } from 'core/utils/menu';
 import routes from 'core/constants/routes';
@@ -56,15 +56,14 @@ afterEach(() => {
   window = originalWindow;
 });
 
-test('render menu component', () => {
+test('render menu component', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'use fetch' }));
-  const { getByTestId } = render(<Main />);
 
-  const sidebar = getByTestId('sidebar');
-  const content = getByTestId('main-content');
-  const footer = getByTestId('footer');
+  render(<Main />);
 
-  wait();
+  const sidebar = await screen.findByTestId('sidebar');
+  const content = await screen.findByTestId('main-content');
+  const footer = await screen.findByTestId('footer');
 
   expect(sidebar.tagName).toBe('NAV');
   expect(content.tagName).toBe('SECTION');
@@ -73,9 +72,10 @@ test('render menu component', () => {
 
 test('render menu in expanded mode with the workspaces screen active', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'use fetch' }));
-  const { getByTestId } = render(<Main />);
-
-  const icon = getByTestId('icon-workspaces');
+  
+  render(<Main />);
+  
+  const icon = await screen.findByTestId('icon-workspaces');
   const iconStyle = window.getComputedStyle(icon);
   
   expect(iconStyle.color).toBe(dark.menuIconActive);
@@ -84,19 +84,17 @@ test('render menu in expanded mode with the workspaces screen active', async () 
 test('render and collapse sidebar', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'use fetch' }));
   const menuId = genMenuId(window.location.pathname);
-  const { getByTestId } = render(<Main />);
+  
+  render(<Main />);
 
-  const expandButton = getByTestId('sidebar-expand-button');
-
-  expect(getByTestId(menuId)).toHaveTextContent(/\w+/gi);
-
-  act(() => expandButton.click());
-
-  expect(getByTestId(menuId).textContent).toBe('');
+  const expandButton = await screen.findByTestId('sidebar-expand-button');
+  expect(screen.getByTestId(menuId)).toHaveTextContent(/\w+/gi);
+  expandButton.click();
+  expect(screen.getByTestId(menuId).textContent).toBe('');
 });
 
 test('lazy loading', async () => {
-  const { getByText } = await render(
+  render(
     <Suspense fallback={<div>loading...</div>}>
       <Workspaces selectedWorkspace={() => act(() => jest.fn())} />
       <Users />
@@ -110,17 +108,6 @@ test('lazy loading', async () => {
     </Suspense>
   );
 
-  const lazyLoading = getByText('loading...');
-
+  const lazyLoading = screen.getByText('loading...');
   expect(lazyLoading).toBeInTheDocument();
-});
-
-test('selecting workspace', async () => {
-  const setState = jest.fn();
-  const useStateMock: any = (state: string) => [state, setState];
-  jest.spyOn(React, 'useState').mockImplementation(useStateMock);
-
-  const wrapper = render(<Main />);
-
-  await wait(() => expect(setState).toHaveBeenCalledTimes(3));
 });
