@@ -59,12 +59,14 @@ const Input = React.forwardRef(
       maxLength,
       isLoading,
       hasError,
+      id,
       ...rest
     }: Props,
     ref: Ref<HTMLInputElement>
   ) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const [isFocused, setIsFocused] = useState(true);
+    const elementId = id ?? name;
 
     useEffect(() => {
       const isEmptyValue = isEmpty(rest.defaultValue?.toString());
@@ -85,7 +87,7 @@ const Input = React.forwardRef(
     const handleClick = () => {
       inputRef.current.focus();
       setIsFocused(true);
-    }
+    };
 
     return (
       <Styled.Wrapper
@@ -106,6 +108,7 @@ const Input = React.forwardRef(
           onBlur={handleFocused}
           disabled={disabled}
           hasError={hasError}
+          id={elementId}
           {...rest}
         />
         {label && (
@@ -114,6 +117,7 @@ const Input = React.forwardRef(
             isFocused={isFocused}
             hasError={hasError}
             onClick={() => handleClick()}
+            htmlFor={elementId}
           >
             {label}
           </Styled.Label>

@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { renderWithTheme, screen } from 'unit-test/testUtils';
+import { renderWithTheme, screen, within } from 'unit-test/testUtils';
 import ContentIcon from '../';
 
 test('renders ContentIcon component with default properties', () => {
@@ -26,13 +26,8 @@ test('renders ContentIcon component with default properties', () => {
   );
 
   const childElement = screen.getByText('hello');
-  
-  const contentElement = screen.getByTestId('contentIcon-charles').querySelector(
-    ':nth-child(2)'
-  );
   const iconElement = screen.getByTestId('icon-charles');
 
-  expect(contentElement).toBeInTheDocument();
   expect(childElement).toBeInTheDocument();
   expect(iconElement).toBeInTheDocument();
 });

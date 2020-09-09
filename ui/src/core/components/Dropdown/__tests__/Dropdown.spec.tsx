@@ -18,7 +18,7 @@ import React from 'react';
 import { render, screen} from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import Dropdown from '../';
-import { Action as ActionProps } from '../Item';
+import { Props as ActionProps } from '../Item';
 
 const action: ActionProps = {
   icon: 'delete',
