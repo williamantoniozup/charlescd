@@ -20,12 +20,12 @@ import { Component, Deployment } from '../../../../app/v2/api/deployments/interf
 import { SpinnakerPipelineBuilder } from '../../../../app/v2/core/integrations/spinnaker/pipeline-builder'
 import {
   completeSpinnakerPipeline,
-  noUnusedSpinnakerPipeline, oneComponentHostnameGateway, oneComponentNoRollbackStage,
-  oneComponentNoUnused,
+  noUnusedSpinnakerPipeline, oneComponentHostnameGateway, oneComponentSameTagDiffCirclesRollback,
+  oneComponentSameTagDiffCirclesUnused, oneComponentSameTagSameCircle,
   oneComponentSpinnakerPipeline,
   oneComponentVSSpinnakerPipeline, oneComponentWithUnused
 } from './fixtures/deployment'
-import { oneComponentNoRepeatedSubset } from './fixtures/deployment/one-component-no-repeated-subset'
+import { oneComponentDiffSubsetsSameTag } from './fixtures/deployment/one-component-diff-subsets-same-tag'
 
 const deploymentWith3Components: Deployment = {
   id: 'deployment-id',
@@ -55,7 +55,9 @@ const deploymentWith3Components: Deployment = {
       imageTag: 'v2',
       imageUrl: 'https://repository.com/A:v2',
       name: 'A',
-      running: false
+      running: false,
+      gatewayName: null,
+      hostValue: null
     },
     {
       id: 'component-id-2',
@@ -63,7 +65,9 @@ const deploymentWith3Components: Deployment = {
       imageTag: 'v2',
       imageUrl: 'https://repository.com/B:v2',
       name: 'B',
-      running: false
+      running: false,
+      gatewayName: null,
+      hostValue: null
     },
     {
       id: 'component-id-3',
@@ -71,7 +75,9 @@ const deploymentWith3Components: Deployment = {
       imageTag: 'v2',
       imageUrl: 'https://repository.com/C:v2',
       name: 'C',
-      running: false
+      running: false,
+      gatewayName: null,
+      hostValue: null
     }
   ]
 }
@@ -104,7 +110,9 @@ const deploymentWith1ComponentCircle1: Deployment = {
       imageTag: 'v2',
       imageUrl: 'https://repository.com/A:v2',
       name: 'A',
-      running: false
+      running: false,
+      gatewayName: null,
+      hostValue: null
     }
   ]
 }
@@ -137,7 +145,9 @@ const deploymentWith1ComponentCircle2: Deployment = {
       imageTag: 'v2',
       imageUrl: 'https://repository.com/A:v2',
       name: 'A',
-      running: false
+      running: false,
+      gatewayName: null,
+      hostValue: null
     }
   ]
 }
@@ -170,7 +180,9 @@ const deploymentWith1ComponentOpenSea: Deployment = {
       imageTag: 'v0',
       imageUrl: 'https://repository.com/A:v0',
       name: 'A',
-      running: false
+      running: false,
+      gatewayName: null,
+      hostValue: null
     }
   ]
 }
@@ -211,6 +223,7 @@ const deploymentWith1ComponentCircle1HostGateway: Deployment = {
 }
 
 describe('V2 Spinnaker Deployment Pipeline Builder', () => {
+
   it('should create the correct complete pipeline object with 3 new components', async() => {
 
     const activeComponents: Component[] = [
@@ -221,6 +234,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v1',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id4',
           authorId: 'user-1',
@@ -251,6 +266,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/B:v1',
         name: 'B',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id5',
           authorId: 'user-1',
@@ -281,6 +298,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v0',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -311,6 +330,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/B:v0',
         name: 'B',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -341,6 +362,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/C:v0',
         name: 'C',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -381,6 +404,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v0',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -411,6 +436,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/B:v0',
         name: 'B',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -441,6 +468,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/C:v0',
         name: 'C',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -481,6 +510,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v0',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -511,6 +542,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/B:v0',
         name: 'B',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -541,6 +574,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/C:v0',
         name: 'C',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -581,6 +616,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v0',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -611,6 +648,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v1',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -641,6 +680,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/B:v0',
         name: 'B',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -671,6 +712,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/C:v0',
         name: 'C',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -701,7 +744,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
     ).toEqual(oneComponentVSSpinnakerPipeline)
   })
 
-  it('should create the correct pipeline object with 1 new component and without unused versions', async() => {
+  it('should create the correct pipeline object with 1 new component and unused version, even with same tag in different circles', async() => {
 
     const activeComponents: Component[] = [
       {
@@ -711,6 +754,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v0',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -741,6 +786,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/B:v0',
         name: 'B',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -771,6 +818,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/C:v0',
         name: 'C',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -801,6 +850,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v1',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -828,7 +879,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
 
     expect(
       new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle2, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
-    ).toEqual(oneComponentNoUnused)
+    ).toEqual(oneComponentSameTagDiffCirclesUnused)
   })
 
   it('should create the correct pipeline object with 1 new component and with correct unused versions', async() => {
@@ -841,6 +892,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v0',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -871,6 +924,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/B:v0',
         name: 'B',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -901,6 +956,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/C:v0',
         name: 'C',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -931,6 +988,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v1',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -961,7 +1020,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
     ).toEqual(oneComponentWithUnused)
   })
 
-  it('should create the correct pipeline object without repeated destination rules subsets', async() => {
+  it('should create the correct pipeline object with different subsets with same tag', async() => {
 
     const activeComponents: Component[] = [
       {
@@ -971,6 +1030,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v0',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1001,6 +1062,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v0',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1031,6 +1094,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v0',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1061,6 +1126,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/B:v0',
         name: 'B',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -1091,6 +1158,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/C:v0',
         name: 'C',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -1121,6 +1190,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v1',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1148,10 +1219,10 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
 
     expect(
       new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle2, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
-    ).toEqual(oneComponentNoRepeatedSubset)
+    ).toEqual(oneComponentDiffSubsetsSameTag)
   })
 
-  it('should create the correct pipeline object without rollback stages', async() => {
+  it('should create the correct pipeline object with rollback stage, even with same tag in different circles', async() => {
 
     const activeComponents: Component[] = [
       {
@@ -1161,6 +1232,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v0',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1183,7 +1256,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             deployments: null
           },
         }
-      }, // A v0 circle-id3
+      },
       {
         id: 'component-id-7',
         helmUrl: 'http://localhost:2222/helm',
@@ -1191,6 +1264,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v0',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1213,7 +1288,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             deployments: null
           },
         }
-      }, // A v0 circle-id5
+      },
       {
         id: 'component-id-2',
         helmUrl: 'http://localhost:2222/helm',
@@ -1221,6 +1296,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/B:v0',
         name: 'B',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -1243,7 +1320,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             deployments: null
           },
         }
-      }, // B v0 open sea
+      },
       {
         id: 'component-id-3',
         helmUrl: 'http://localhost:2222/helm',
@@ -1251,6 +1328,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/C:v0',
         name: 'C',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -1273,7 +1352,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             deployments: null
           },
         }
-      }, // C v0 open sea
+      },
       {
         id: 'component-id-4',
         helmUrl: 'http://localhost:2222/helm',
@@ -1281,6 +1360,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v1',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1303,12 +1384,12 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             deployments: null
           },
         }
-      }  // A v1 circle-id2
+      }
     ]
 
     expect(
       new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentOpenSea, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
-    ).toEqual(oneComponentNoRollbackStage)
+    ).toEqual(oneComponentSameTagDiffCirclesRollback)
   })
 
   it('should create the correct pipeline object with custom host name and gateway name', async() => {
@@ -1321,6 +1402,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v0',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1351,6 +1434,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v1',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1381,6 +1466,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/B:v0',
         name: 'B',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -1411,6 +1498,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/C:v0',
         name: 'C',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -1442,5 +1531,47 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         { executionId: 'execution-id', incomingCircleId: 'Default' }
       )
     ).toEqual(oneComponentHostnameGateway)
+  })
+
+  it('should create the correct pipeline object with no rollback/undeploy stage, because of same tag deployment in the circle', async() => {
+
+    const activeComponents: Component[] = [
+      {
+        id: 'component-id-6',
+        helmUrl: 'http://localhost:2222/helm',
+        imageTag: 'v2',
+        imageUrl: 'https://repository.com/A:v0',
+        name: 'A',
+        running: true,
+        gatewayName: null,
+        hostValue: null,
+        deployment: {
+          id: 'deployment-id6',
+          authorId: 'user-1',
+          callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
+          circleId: 'circle-id',
+          createdAt: new Date(),
+          cdConfiguration: {
+            id: 'cd-configuration-id',
+            type: CdTypeEnum.SPINNAKER,
+            configurationData: {
+              gitAccount: 'github-artifact',
+              account: 'default',
+              namespace: 'sandbox',
+              url: 'spinnaker-url'
+            },
+            name: 'spinnakerconfiguration',
+            authorId: 'user-2',
+            workspaceId: 'workspace-id',
+            createdAt: new Date(),
+            deployments: null
+          },
+        }
+      }
+    ]
+
+    expect(
+      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle1, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
+    ).toEqual(oneComponentSameTagSameCircle)
   })
 })
