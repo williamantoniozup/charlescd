@@ -69,7 +69,7 @@ const Input = React.forwardRef(
     const elementId = id ?? name;
 
     useEffect(() => {
-      const isEmptyValue = isEmpty(rest.defaultValue?.toString());
+      const isEmptyValue = isEmpty(inputRef.current.value);
       setIsFocused(!isEmptyValue || disabled);
     }, [rest.defaultValue, disabled]);
 
