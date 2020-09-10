@@ -17,7 +17,6 @@
 import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
 import { Stage, Subset } from '../../interfaces/spinnaker-pipeline.interface'
 import { Component, Deployment } from '../../../../../api/deployments/interfaces'
-import { AppConstants } from '../../../../../../v1/core/constants'
 import { CommonTemplateUtils } from '../../utils/common-template.utils'
 
 export const getUndeploymentDestinationRulesStage = (
@@ -36,11 +35,11 @@ export const getUndeploymentDestinationRulesStage = (
       apiVersion: 'networking.istio.io/v1alpha3',
       kind: 'DestinationRule',
       metadata: {
-        name: `${component.name}`,
+        name: component.name,
         namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
       },
       spec: {
-        host: component.hostValue ? component.hostValue : component.name,
+        host: component.name,
         subsets: getActiveComponentsSubsets(deployment.circleId, activeComponents)
       }
     }
