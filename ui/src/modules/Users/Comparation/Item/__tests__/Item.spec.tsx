@@ -18,6 +18,7 @@ import React from 'react';
 import { render, fireEvent, screen, waitFor } from 'unit-test/testUtils';
 import UsersComparationItem from '..';
 import * as PathUtils from 'core/utils/path';
+import { FetchMock } from 'jest-fetch-mock/types';
 
 const props = {
   email: 'test@zup.com.br'
@@ -95,6 +96,22 @@ test('close UsersComparationItem component', async () => {
     expect(tabPanelCloseButton).toBeInTheDocument();
 
     fireEvent.click(tabPanelCloseButton);
-
+    
     expect(delParamSpy).toHaveBeenCalledWith('user', '/users/compare', expect.anything(), props.email);
+});
+
+test('render UsersComparationItem component and trigger ModalResetPassword', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify({ id: '123-456', password: '123457' })
+  );
+
+  render(
+    <UsersComparationItem {...props} onChange={jest.fn} />
+  );
+
+  expect(screen.getByTestId(`users-comparation-item-${props.email}`)).toBeInTheDocument();
+
+  const buttonResetPassword = await screen.findByTestId('labeledIcon-shield');
+  fireEvent.click(buttonResetPassword);
+  expect(screen.queryByTestId('modal-default')).toBeInTheDocument()
 });
