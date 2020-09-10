@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { render, screen, fireEvent, wait } from 'unit-test/testUtils';
-import MutationObserver from 'mutation-observer';
+
 import { FetchMock } from 'jest-fetch-mock';
 import AddMetric from '../AddMetric';
 import { metricsData } from './fixtures';

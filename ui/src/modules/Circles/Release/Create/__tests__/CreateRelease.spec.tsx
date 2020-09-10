@@ -16,12 +16,12 @@
 
 import React from 'react';
 import { render, fireEvent, act, waitForElement } from 'unit-test/testUtils';
-import MutationObserver from 'mutation-observer';
+
 import selectEvent from 'react-select-event';
 import { FetchMock } from 'jest-fetch-mock';
 import CreateRelease from '../index';
 
-(global as any).MutationObserver = MutationObserver
+
 
 jest.mock('lodash/debounce', () => jest.fn(fn => fn));
 

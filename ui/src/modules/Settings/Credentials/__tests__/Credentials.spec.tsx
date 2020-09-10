@@ -20,7 +20,7 @@ import { render, fireEvent, wait } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock/types';
 import Credentials from '..';
 
-(global as any).MutationObserver = MutationObserver
+
 
 test('render Credentials default component', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'workspace' }));

@@ -15,13 +15,13 @@
  */
 
 import React from 'react';
-import MutationObserver from 'mutation-observer';
+
 import { FormContext, useForm } from 'react-hook-form';
 import { render, fireEvent, screen } from 'unit-test/testUtils';
 import Rule, { Props } from '../Rule';
 import { renderHook } from '@testing-library/react-hooks';
 
-(global as any).MutationObserver = MutationObserver
+
 
 const props: Props = {
   prefixName: 'input-rule',

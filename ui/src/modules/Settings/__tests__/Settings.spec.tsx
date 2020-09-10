@@ -19,7 +19,7 @@ import MutationObserver from 'mutation-observer'
 import { render, wait } from 'unit-test/testUtils';
 import Settings from '..';
 
-(global as any).MutationObserver = MutationObserver
+
 
 test('render Settings default component', async () => {
   const { getByTestId } = render(

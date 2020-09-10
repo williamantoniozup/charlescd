@@ -19,7 +19,7 @@ import MutationObserver from 'mutation-observer'
 import { render, wait, fireEvent, act } from 'unit-test/testUtils';
 import CreateUser from '..';
 
-(global as any).MutationObserver = MutationObserver
+
 
 const props = {
   onFinish: jest.fn()

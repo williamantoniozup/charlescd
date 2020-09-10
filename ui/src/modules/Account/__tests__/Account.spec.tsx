@@ -21,10 +21,10 @@ import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import routes from 'core/constants/routes';
 import { FetchMock } from 'jest-fetch-mock';
-import MutationObserver from 'mutation-observer';
+
 import Account from '../';
 
-(global as any).MutationObserver = MutationObserver
+
 
 test('render account tab profile', async () => {
   const history = createMemoryHistory();

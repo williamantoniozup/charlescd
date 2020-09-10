@@ -22,7 +22,7 @@ import CirclesComparationItem from '..';
 import { FetchMock } from 'jest-fetch-mock';
 import { Actions, Subjects } from 'core/utils/abilities';
 
-(global as any).MutationObserver = MutationObserver
+
 
 interface fakeCanProps {
   I?: Actions;

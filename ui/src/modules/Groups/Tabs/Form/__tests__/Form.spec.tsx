@@ -16,11 +16,11 @@
 
 import React from 'react';
 import { render, fireEvent, wait } from 'unit-test/testUtils';
-import MutationObserver from 'mutation-observer';
+
 import Form from '../index';
 import { mockUserGroup1, mockUserGroup2 } from './fixtures';
 
-(global as any).MutationObserver = MutationObserver;
+;
 
 test('render user group Form ', () => {
   const { getByTestId } = render(

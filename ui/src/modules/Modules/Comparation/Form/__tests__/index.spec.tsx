@@ -23,7 +23,7 @@ import { Module, Author } from "modules/Modules/interfaces/Module";
 import { Actions, Subjects } from "core/utils/abilities";
 import MutationObserver from 'mutation-observer'
 
-(global as any).MutationObserver = MutationObserver
+
 
 interface fakeCanProps {
   I?: Actions;

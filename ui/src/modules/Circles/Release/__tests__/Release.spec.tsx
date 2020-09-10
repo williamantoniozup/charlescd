@@ -19,7 +19,7 @@ import { render, wait, fireEvent } from 'unit-test/testUtils';
 import MutationObserver from 'mutation-observer'
 import Release from '../index';
 
-(global as any).MutationObserver = MutationObserver
+
 
 test('should render the CreateRelease component', () => {
   const { getByTestId } = render(
