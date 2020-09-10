@@ -15,9 +15,10 @@
  */
 
 import React from 'react';
-import { render, fireEvent, screen } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import { dark as inputTheme } from 'core/assets/themes/input';
-import Input from '..';
+import Input from '../';
 
 const textProps = {
   type: 'text',
@@ -57,47 +58,46 @@ test('renders Input component as a resume', () => {
   expect(inputElement).toHaveStyle('border: none;');
 });
 
-test('renders Input component with label', async () => {
+test('renders Input component with label', () => {
   render(<Input name="keyName" label="Label" />);
-  screen.debug()
 
-  const Label = screen.getByLabelText('Label');
-  // const Element = screen.getByTestId('input-text-keyName');
+  const label = screen.getByLabelText('Label');
+  const input = screen.getByTestId('input-text-keyName');
 
-  // expect(Label).toBeInTheDocument();
-  // expect(Element).not.toHaveFocus();
+  expect(label).toBeInTheDocument();
+  expect(input).not.toHaveFocus();
 
-  // fireEvent.click(Label);
-
-  // expect(Element).toHaveFocus();
+  userEvent.click(label);
+  expect(input).toHaveFocus();
 });
 
-test('renders Input component disabled with label', async () => {
-  const { getByTestId } = render(<Input disabled name="keyName" label="Label" />);
+test('renders Input component disabled with label', () => {
+  render(<Input disabled name="keyName" label="Label" />);
 
-  const Label = getByTestId('label-text-keyName');
-  const Element = getByTestId('input-text-keyName');
+  const label = screen.getByLabelText('Label');
+  const input = screen.getByTestId('input-text-keyName');
 
-  expect(Label).toBeInTheDocument();
-  expect(Element).not.toHaveFocus();
+  expect(label).toBeInTheDocument();
+  expect(input).not.toHaveFocus();
 
-  fireEvent.click(Label);
-
-  expect(Element).not.toHaveFocus();
+  userEvent.click(label);
+  expect(input).not.toHaveFocus();
 });
 
+// TODO: verificar com washington
 test('floating label when Input has value', () => {
-  const { container } = render(<Input name="keyName" defaultValue="value" label="Label" />);
+  render(<Input name="keyName" defaultValue="value" label="Label" />);
 
+  screen.debug();
   const labelElement = container.getElementsByTagName('label').item(0);
   const labelStyle = window.getComputedStyle(labelElement);
   expect(labelStyle.top).toBe('0px');
 });
 
-test('renders Input component loading', () => {
-  const { getByTestId } = render(<Input name="keyName" label="Label" isLoading />);
-  const loading = getByTestId('icon-ellipse-loading');
+test.only('renders Input component loading', () => {
+  render(<Input name="keyName" label="Label" isLoading />);
 
+  const loading = screen.getByTestId('icon-ellipse-loading');
   expect(loading).toBeInTheDocument();
 });
 

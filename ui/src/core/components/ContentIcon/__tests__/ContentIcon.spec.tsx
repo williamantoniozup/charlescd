@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { renderWithTheme, screen, within } from 'unit-test/testUtils';
+import { renderWithTheme, screen } from 'unit-test/testUtils';
 import ContentIcon from '../';
 
 test('renders ContentIcon component with default properties', () => {
