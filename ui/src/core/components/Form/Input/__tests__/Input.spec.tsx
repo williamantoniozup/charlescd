@@ -61,9 +61,9 @@ test('renders Input component as a resume', () => {
 test('renders Input component with label', () => {
   render(<Input name="keyName" label="Label" />);
 
-  const label = screen.getByLabelText('Label');
+  const label = screen.getByText('Label');
   const input = screen.getByTestId('input-text-keyName');
-
+  
   expect(label).toBeInTheDocument();
   expect(input).not.toHaveFocus();
 
@@ -74,7 +74,7 @@ test('renders Input component with label', () => {
 test('renders Input component disabled with label', () => {
   render(<Input disabled name="keyName" label="Label" />);
 
-  const label = screen.getByLabelText('Label');
+  const label = screen.getByText('Label');
   const input = screen.getByTestId('input-text-keyName');
 
   expect(label).toBeInTheDocument();
@@ -84,25 +84,23 @@ test('renders Input component disabled with label', () => {
   expect(input).not.toHaveFocus();
 });
 
-// TODO: verificar com washington
-test('floating label when Input has value', () => {
+test('should show floating label when Input has value', () => {
   render(<Input name="keyName" defaultValue="value" label="Label" />);
-
-  screen.debug();
-  const labelElement = container.getElementsByTagName('label').item(0);
-  const labelStyle = window.getComputedStyle(labelElement);
-  expect(labelStyle.top).toBe('0px');
+  
+  const labelElement = screen.getByText('Label');
+  
+  expect(labelElement).toHaveStyle('top: 0px');
 });
 
-test.only('renders Input component loading', () => {
+test('renders Input component loading', () => {
   render(<Input name="keyName" label="Label" isLoading />);
 
   const loading = screen.getByTestId('icon-ellipse-loading');
   expect(loading).toBeInTheDocument();
 });
 
-test('renders Input component error', async () => {
-  const { container, getByTestId } = render(
+test('renders Input component error', () => {
+  render(
     <Input
       hasError
       type={textProps.type}
@@ -111,8 +109,9 @@ test('renders Input component error', async () => {
     />
   );
 
-  const inputElement = getByTestId(`input-${textProps.type}-${textProps.name}`);
-  const labelElement = container.getElementsByTagName('label').item(0);
+  const inputElement = screen.getByTestId(`input-${textProps.type}-${textProps.name}`);
+  const labelElement = screen.getByText('Label');
+  
   const borderColor = inputTheme.error.borderColor.replace(/\ /gi, '');
   const color = inputTheme.error.color.replace(/\ /gi, '');
 

@@ -15,7 +15,8 @@
  */
 
 import React from 'react';
-import { render, wait, fireEvent } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
+import { render, screen, act } from 'unit-test/testUtils';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import routes from 'core/constants/routes';
@@ -36,9 +37,12 @@ test('render account tab profile', async () => {
     email: 'user@zup.com.br',
     photoUrl: ''
   }));
-  const { queryByTestId } = render(<Router history={history}><Account /></Router>);
+  
+  render(<Router history={history}><Account /></Router>);
 
-  await wait(() => expect(queryByTestId('tabpanel-Account')).toBeInTheDocument());
+  const tabElement = await screen.findByTestId('tabpanel-Account');
+
+  expect(tabElement).toBeInTheDocument();
 });
 
 test('show change password modal', async () => {
@@ -52,11 +56,15 @@ test('show change password modal', async () => {
     email: 'user@zup.com.br',
     photoUrl: ''
   }));
-  const { queryByTestId, getByTestId } = render(<Router history={history}><Account /></Router>);
-
-  await wait(() => expect(queryByTestId('tabpanel-Account')).toBeInTheDocument());
-  const changePassButton = getByTestId('labeledIcon-account');
-  fireEvent.click(changePassButton);
   
-  await wait(() => expect(queryByTestId('modal-default')).toBeInTheDocument());
+  render(<Router history={history}><Account /></Router>);
+  
+  const tabPanaelElement = await screen.findByTestId('tabpanel-Account');
+  expect(tabPanaelElement).toBeInTheDocument();
+
+  const changePassButton = await screen.findByTestId('labeledIcon-account');
+  userEvent.click(changePassButton);
+  const modalElement = await screen.findByTestId('modal-default');
+  
+  expect(modalElement).toBeInTheDocument();
 });
