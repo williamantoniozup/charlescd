@@ -62,9 +62,13 @@ export const useUserGroup = (): FetchProps => {
     }
   }, [errorSave, dispatch]);
 
-  const getAll = useCallback(() => {
-    getUserGroups();
-  }, [getUserGroups]);
+  const getAll = useCallback(
+    (typed: string) => {
+      console.log('typed', typed);
+      getUserGroups(typed);
+    },
+    [getUserGroups]
+  );
 
   useEffect(() => {
     if (error) {

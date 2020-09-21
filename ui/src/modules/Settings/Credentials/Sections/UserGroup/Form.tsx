@@ -17,6 +17,7 @@
 import React, { useState, useEffect } from 'react';
 import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
+import debounce from 'lodash/debounce';
 import { useForm } from 'react-hook-form';
 import Text from 'core/components/Text';
 import Card from 'core/components/Card';
@@ -51,6 +52,7 @@ const FormUserGroup = ({ onFinish }: Props) => {
   const watchedRoleId = watch('roleId');
   const [isDisableAdd, setIsDisableAdd] = useState(true);
   const [isDisableSave, setIsDisableSave] = useState(true);
+  const [userType, setUserType] = useState(null);
   const [form, setForm] = useState(false);
   const [roleOptions, setRoleOptions] = useState(null);
   const [group, setGroup] = useState(null);
@@ -65,7 +67,7 @@ const FormUserGroup = ({ onFinish }: Props) => {
     setRoleOptions(options);
   }, [rolesAll]);
 
-  useEffect(() => getAll(), [getAll]);
+  useEffect(() => getAll(userType), [getAll, userType]);
 
   useEffect(() => {
     if (responseSave) onFinish();
@@ -149,6 +151,7 @@ const FormUserGroup = ({ onFinish }: Props) => {
         label="Select a user group"
         isDisabled={loadingAll}
         onChange={group => onSelectGoup(group)}
+        onInputChange={debounce(setUserType, 500)}
       />
       <Button.Default
         isLoading={loadingAll}

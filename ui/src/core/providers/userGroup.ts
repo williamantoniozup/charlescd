@@ -21,7 +21,8 @@ import { endpoint as endpointWorkspace } from './workspace';
 const endpoint = '/moove/v2/user-groups';
 const groupPath = 'groups';
 
-export const findAll = () => baseRequest(`${endpoint}`);
+export const findAll = (typed: string) =>
+  baseRequest(`${endpoint}?name=${typed}`);
 
 export const create = (id: string, groupRoles: GroupRoles) =>
   postRequest(`${endpointWorkspace}/${id}/${groupPath}`, groupRoles);
