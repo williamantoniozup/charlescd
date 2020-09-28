@@ -222,6 +222,11 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
               onClick={() => handleAddMetric(metricGroup)}
             />
             <Dropdown.Item
+              icon="rocket"
+              name="Add action"
+              onClick={() => console.log('Wat action')}
+            />
+            <Dropdown.Item
               icon="delete"
               name="Delete"
               onClick={() => handleDeleteMetricsGroup(metricGroup.id)}
