@@ -48,24 +48,23 @@ test('render error in invalid field', async () => {
 });
 
 test('submit password change form', async () => {
-  // (fetch as FetchMock).mockResponseOnce(JSON.stringify({}));
-  // const onSubmit = jest.fn();
-  // const { queryByTestId } = render(<ChangePassword onSubmit={onSubmit} />);
-  // const oldPassword = queryByTestId('input-password-oldPassword');
-  // const newPassword = queryByTestId('input-password-newPassword');
-  // const confirmPassword = queryByTestId('input-password-confirmPassword');
-  // const value = '@Asdfg1234';
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({}));
+  const onSubmit = jest.fn();
+  const { queryByTestId } = render(<ChangePassword onSubmit={onSubmit} />);
+  const oldPassword = queryByTestId('input-password-oldPassword');
+  const newPassword = queryByTestId('input-password-newPassword');
+  const confirmPassword = queryByTestId('input-password-confirmPassword');
+  const value = '@Asdfg1234';
 
-  // expect(newPassword).toBeInTheDocument();
-  // fireEvent.change(oldPassword, { target: { value }});
-  // fireEvent.change(newPassword, { target: { value }});
-  // fireEvent.change(confirmPassword, { target: { value }});
+  expect(newPassword).toBeInTheDocument();
+  fireEvent.change(oldPassword, { target: { value }});
+  fireEvent.change(newPassword, { target: { value }});
+  fireEvent.change(confirmPassword, { target: { value }});
+  fireEvent.blur(confirmPassword);
 
-  // screen.debug()
-  // fireEvent.blur(confirmPassword);
-  // const button = screen.getByTestId('button-default-change-password');
-  // expect(button).not.toBeDisabled();
-  // fireEvent.click(button);
+  const button = screen.getByTestId('button-default-change-password');
+  expect(button).not.toBeDisabled();
+  fireEvent.click(button);
   
-  // await waitFor(() => expect(onSubmit).toBeCalled());
+  await waitFor(() => expect(onSubmit).toBeCalled());
 });
