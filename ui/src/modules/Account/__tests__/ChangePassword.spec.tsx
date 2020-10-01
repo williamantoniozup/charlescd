@@ -16,7 +16,7 @@
 
 import React from 'react';
 import userEvent from '@testing-library/user-event';
-import { render, fireEvent, screen, waitFor } from 'unit-test/testUtils';
+import { render, fireEvent, screen, waitFor, act } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import ChangePassword from '../ChangePassword';
 
@@ -50,21 +50,25 @@ test('render error in invalid field', async () => {
 test('submit password change form', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({}));
   const onSubmit = jest.fn();
-  const { queryByTestId } = render(<ChangePassword onSubmit={onSubmit} />);
-  const oldPassword = queryByTestId('input-password-oldPassword');
-  const newPassword = queryByTestId('input-password-newPassword');
-  const confirmPassword = queryByTestId('input-password-confirmPassword');
+
+  render(<ChangePassword onSubmit={onSubmit} />);
+
+  const oldPassword = screen.getByTestId('input-password-oldPassword');
+  const newPassword = screen.getByTestId('input-password-newPassword');
+  const confirmPassword = screen.getByTestId('input-password-confirmPassword');
   const value = '@Asdfg1234';
 
   expect(newPassword).toBeInTheDocument();
-  fireEvent.change(oldPassword, { target: { value }});
-  fireEvent.change(newPassword, { target: { value }});
-  fireEvent.change(confirmPassword, { target: { value }});
-  fireEvent.blur(confirmPassword);
 
-  const button = screen.getByTestId('button-default-change-password');
+  userEvent.type(oldPassword, value);
+  await act(() => userEvent.type(newPassword, value));
+  await act(() => userEvent.type(confirmPassword, value));
+
+  userEvent.tab();
+
+  const button = await screen.findByTestId('button-default-change-password');
   expect(button).not.toBeDisabled();
-  fireEvent.click(button);
+  userEvent.click(button);
   
   await waitFor(() => expect(onSubmit).toBeCalled());
 });
