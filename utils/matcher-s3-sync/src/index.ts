@@ -48,11 +48,13 @@ const filterNewestFile = (filesGroup: S3.ListObjectsOutput) => {
 }
 
 const getSubFolders = async (s3: S3) => {
+  console.log('subfolders')
   const paramsSubfolders = { Bucket: process.env.BUCKET_NAME, Delimiter: '/', Prefix: process.env.PREFIX }
   return s3.listObjects(paramsSubfolders).promise()
 }
 
 const getNewestFileFromSubFolder = async (folderPrefix: S3.CommonPrefix, s3: S3) => {
+  console.log('getNewestFileFromSubFolder')
   const filePromise = await s3.listObjects(paramsFiles(folderPrefix)).promise()
   return {
     [folderPrefix.Prefix]: filterNewestFile(filePromise)
@@ -60,6 +62,7 @@ const getNewestFileFromSubFolder = async (folderPrefix: S3.CommonPrefix, s3: S3)
 }
 
 const getObjectFromS3 = async (filesGroup, s3: S3) => {
+  console.log('getObjectFromS3')
   const key = Object.keys(filesGroup)[0]
   const file = filesGroup[key]
   if (!file) {
@@ -101,6 +104,7 @@ const createCacheFile = (eTag, circle) => {
 
 const triggerS3 = async (credentials: Credentials) => {
   if (checkEnvFiles()) {
+    console.log(Credentials)
     try {
       const s3 = new S3({
         credentials: credentials
