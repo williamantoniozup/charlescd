@@ -104,7 +104,6 @@ const createCacheFile = (eTag, circle) => {
 const triggerS3 = async () => {
   if (checkEnvFiles()) {
     try {
-      getAwsCredentials()
       const subFolders = await getSubFolders()
       const { CommonPrefixes } = subFolders
       const filePromises = CommonPrefixes.map(async (folderPrefix) =>
@@ -187,5 +186,5 @@ if (process.env.LIST_BUCKETS && Number(process.env.LIST_BUCKETS)) {
     console.log(data)
   })
 } else {
-  setInterval(triggerS3, Number(process.env.PERIOD) || 10000)
+  setInterval(() => getAwsCredentials(triggerS3), Number(process.env.PERIOD) || 10000)
 }
