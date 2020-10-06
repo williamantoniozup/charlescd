@@ -2,11 +2,9 @@ import getAwsCredentials from './auth/getAwsToken'
 import { unzipSync } from 'zlib'
 import Axios from 'axios'
 import FormData from 'form-data'
-import { S3 } from 'aws-sdk'
+import { S3, Credentials } from 'aws-sdk'
 import fs from 'fs'
 import { getToken } from './auth/getCharlesToken'
-
-const s3 = new S3()
 
 const envValues = {
   username: process.env.CHARLES_USER,
@@ -49,19 +47,19 @@ const filterNewestFile = (filesGroup: S3.ListObjectsOutput) => {
   }, null)
 }
 
-const getSubFolders = async () => {
+const getSubFolders = async (s3: S3) => {
   const paramsSubfolders = { Bucket: process.env.BUCKET_NAME, Delimiter: '/', Prefix: process.env.PREFIX }
   return s3.listObjects(paramsSubfolders).promise()
 }
 
-const getNewestFileFromSubFolder = async (folderPrefix: S3.CommonPrefix) => {
+const getNewestFileFromSubFolder = async (folderPrefix: S3.CommonPrefix, s3: S3) => {
   const filePromise = await s3.listObjects(paramsFiles(folderPrefix)).promise()
   return {
     [folderPrefix.Prefix]: filterNewestFile(filePromise)
   }
 }
 
-const getObjectFromS3 = async (filesGroup) => {
+const getObjectFromS3 = async (filesGroup, s3: S3) => {
   const key = Object.keys(filesGroup)[0]
   const file = filesGroup[key]
   if (!file) {
@@ -101,16 +99,19 @@ const createCacheFile = (eTag, circle) => {
   }
 }
 
-const triggerS3 = async () => {
+const triggerS3 = async (credentials: Credentials) => {
   if (checkEnvFiles()) {
     try {
-      const subFolders = await getSubFolders()
+      const s3 = new S3({
+        credentials: credentials
+      })
+      const subFolders = await getSubFolders(s3)
       const { CommonPrefixes } = subFolders
       const filePromises = CommonPrefixes.map(async (folderPrefix) =>
-        getNewestFileFromSubFolder(folderPrefix)
+        getNewestFileFromSubFolder(folderPrefix, s3)
       )
       const resolvedFolders = await Promise.all(filePromises)
-      const s3Files = resolvedFolders.map(async (filesGroup) => getObjectFromS3(filesGroup))
+      const s3Files = resolvedFolders.map(async (filesGroup) => getObjectFromS3(filesGroup, s3))
       const resolvedFiles = await Promise.all(s3Files)
 
       const mooveCalls = resolvedFiles.map(async (s3Object) => {

@@ -10,7 +10,7 @@ const getAwsCredentials = (callback) => {
       console.log('Error to get cretentials from web token', err)
     }
     config.credentials = credentials
-    callback()
+    callback(credentials)
   })
 }
 
