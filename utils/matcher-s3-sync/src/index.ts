@@ -124,14 +124,16 @@ const triggerS3 = async () => {
         const mooveCalls = resolvedFiles.map(async (s3Object) => {
           if (s3Object) {
             const s3ObjectKey = Object.keys(s3Object)[0]
-            console.log(s3ObjectKey)
+            const paths = s3ObjectKey.split('/')
+            const circleId = paths[paths.length - 2]
+            console.log(s3ObjectKey, circleId)
             if (checkIfIsCached(s3Object[s3ObjectKey].ETag, s3ObjectKey)) {
               console.log('Cached', s3Object[s3ObjectKey].ETag, s3ObjectKey)
             } else {
               console.log('not cached')
               const s3ObjectContent: S3.GetObjectOutput = s3Object[s3ObjectKey]
               getFinalData(s3ObjectContent, s3ObjectKey.slice(0, -1)).then(() => {
-                createCacheFile(s3Object[s3ObjectKey].ETag, s3ObjectKey)
+                createCacheFile(s3Object[s3ObjectKey].ETag, circleId)
               })
                 .catch((err) => console.log(err))
             }
