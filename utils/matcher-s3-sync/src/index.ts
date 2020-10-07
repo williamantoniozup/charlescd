@@ -161,6 +161,8 @@ const buildFormData = (buffer: Buffer, circleId: string, name: string) => {
 
 const getFinalData = async (s3Object: S3.GetObjectOutput, circleId: string) => {
   const token = await getToken(envValues.username, envValues.password, envValues.keycloak)
+  console.log('token', token)
+  console.log('circleURL', `${envValues.moove}/v2/circles/${circleId}`)
   const circle = await Axios.get(
     `${envValues.moove}/v2/circles/${circleId}`,
     {
@@ -186,6 +188,7 @@ const getFinalData = async (s3Object: S3.GetObjectOutput, circleId: string) => {
       }
     )
   } else {
+    console.log(circle)
     throw new Error('circle not exists')
   }
 }
