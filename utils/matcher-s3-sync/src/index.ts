@@ -124,6 +124,7 @@ const triggerS3 = async () => {
         const mooveCalls = resolvedFiles.map(async (s3Object) => {
           if (s3Object) {
             const s3ObjectKey = Object.keys(s3Object)[0]
+            console.log(s3ObjectKey)
             if (checkIfIsCached(s3Object[s3ObjectKey].ETag, s3ObjectKey)) {
               console.log('Cached', s3Object[s3ObjectKey].ETag, s3ObjectKey)
             } else {
