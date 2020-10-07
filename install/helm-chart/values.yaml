@@ -185,7 +185,7 @@ mongodb:
   mongodbRootPassword: "octopipe"
 
 nginx:
-  enabled: true
+  enabled: false
   ui:
     enabled: true
   moove:
