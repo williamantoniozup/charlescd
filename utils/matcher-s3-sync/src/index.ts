@@ -1,8 +1,8 @@
-import getAwsCredentials from './auth/getAwsToken'
+// import getAwsCredentials from './auth/getAwsToken'
 import { unzipSync } from 'zlib'
 import Axios from 'axios'
 import FormData from 'form-data'
-import { S3, Credentials } from 'aws-sdk'
+import { S3, Credentials, CredentialProviderChain } from 'aws-sdk'
 import fs from 'fs'
 import { getToken } from './auth/getCharlesToken'
 
@@ -102,38 +102,42 @@ const createCacheFile = (eTag, circle) => {
   }
 }
 
-const triggerS3 = async (credentials: Credentials) => {
+const triggerS3 = async () => {
   if (checkEnvFiles()) {
-    console.log(Credentials)
     try {
-      const s3 = new S3({
-        credentials: credentials
-      })
-      const subFolders = await getSubFolders(s3)
-      const { CommonPrefixes } = subFolders
-      const filePromises = CommonPrefixes.map(async (folderPrefix) =>
-        getNewestFileFromSubFolder(folderPrefix, s3)
-      )
-      const resolvedFolders = await Promise.all(filePromises)
-      const s3Files = resolvedFolders.map(async (filesGroup) => getObjectFromS3(filesGroup, s3))
-      const resolvedFiles = await Promise.all(s3Files)
-
-      const mooveCalls = resolvedFiles.map(async (s3Object) => {
-        if (s3Object) {
-          const s3ObjectKey = Object.keys(s3Object)[0]
-          if (checkIfIsCached(s3Object[s3ObjectKey].ETag, s3ObjectKey)) {
-            console.log('Cached', s3Object[s3ObjectKey].ETag, s3ObjectKey)
-          } else {
-            console.log('not cached')
-            const s3ObjectContent: S3.GetObjectOutput = s3Object[s3ObjectKey]
-            getFinalData(s3ObjectContent, s3ObjectKey.slice(0, -1)).then(() => {
-              createCacheFile(s3Object[s3ObjectKey].ETag, s3ObjectKey)
-            })
-              .catch((err) => console.log(err))
-          }
+      const auth = new CredentialProviderChain()
+      auth.resolve(async (err, credentials) => {
+        if (err) {
+          console.log(err)
         }
+        console.log(credentials.accessKeyId)
+        const s3 = new S3({})
+        const subFolders = await getSubFolders(s3)
+        const { CommonPrefixes } = subFolders
+        const filePromises = CommonPrefixes.map(async (folderPrefix) =>
+          getNewestFileFromSubFolder(folderPrefix, s3)
+        )
+        const resolvedFolders = await Promise.all(filePromises)
+        const s3Files = resolvedFolders.map(async (filesGroup) => getObjectFromS3(filesGroup, s3))
+        const resolvedFiles = await Promise.all(s3Files)
+
+        const mooveCalls = resolvedFiles.map(async (s3Object) => {
+          if (s3Object) {
+            const s3ObjectKey = Object.keys(s3Object)[0]
+            if (checkIfIsCached(s3Object[s3ObjectKey].ETag, s3ObjectKey)) {
+              console.log('Cached', s3Object[s3ObjectKey].ETag, s3ObjectKey)
+            } else {
+              console.log('not cached')
+              const s3ObjectContent: S3.GetObjectOutput = s3Object[s3ObjectKey]
+              getFinalData(s3ObjectContent, s3ObjectKey.slice(0, -1)).then(() => {
+                createCacheFile(s3Object[s3ObjectKey].ETag, s3ObjectKey)
+              })
+                .catch((err) => console.log(err))
+            }
+          }
+        })
+        return Promise.all(mooveCalls)
       })
-      return Promise.all(mooveCalls)
     } catch (error) {
       console.log(error)
     }
@@ -183,13 +187,4 @@ const getFinalData = async (s3Object: S3.GetObjectOutput, circleId: string) => {
   }
 }
 
-if (process.env.LIST_BUCKETS && Number(process.env.LIST_BUCKETS)) {
-  s3.listBuckets((err, data) => {
-    if (err) {
-      console.log(err)
-    }
-    console.log(data)
-  })
-} else {
-  setInterval(() => getAwsCredentials(triggerS3), Number(process.env.PERIOD) || 10000)
-}
+setInterval(() => triggerS3, Number(process.env.PERIOD) || 10000)
