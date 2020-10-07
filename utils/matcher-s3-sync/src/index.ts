@@ -103,7 +103,7 @@ const createCacheFile = (eTag, circle) => {
 }
 
 const triggerS3 = async () => {
-  if (checkEnvFiles()) {
+  if (!checkEnvFiles()) {
     try {
       const auth = new CredentialProviderChain()
       auth.resolve(async (err, credentials) => {
@@ -187,4 +187,4 @@ const getFinalData = async (s3Object: S3.GetObjectOutput, circleId: string) => {
   }
 }
 
-setInterval(() => triggerS3, Number(process.env.PERIOD) || 10000)
+setInterval(triggerS3, Number(process.env.PERIOD) || 10000)
