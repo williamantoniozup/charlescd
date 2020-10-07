@@ -1,3 +1,4 @@
+import userEvent from '@testing-library/user-event';
 /*
  * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
@@ -15,7 +16,7 @@
  */
 
 import React from 'react';
-import { render, fireEvent } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import InputAction from '..';
 
 const onClick = jest.fn();
@@ -26,21 +27,22 @@ const props = {
   defaultValue: '123457'
 };
 
-test('render InputAction component and fire action', () => {
-  const { getByTestId } = render(
+test('render InputAction component', () => {
+  render(
     <InputAction { ... props } onClick={onClick} />
   );
 
-  const element = getByTestId(`input-action-${props.name}`);
+  const element = screen.getByTestId(`input-action-${props.name}`);
   expect(element).toBeInTheDocument();
 });
 
 test('render InputAction component and fire action', () => {
-  const { getByTestId } = render(
+  render(
     <InputAction { ... props } onClick={onClick} />
   );
   
-  const button = getByTestId(`input-action-${props.name}-button`);
-  fireEvent.click(button);
-  expect(onClick).toBeCalled();
+  const button = screen.getByTestId(`input-action-${props.name}-button`);
+  userEvent.click(button);
+
+  expect(onClick).toHaveBeenCalledTimes(1);
 });
