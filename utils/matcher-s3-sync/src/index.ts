@@ -103,7 +103,7 @@ const createCacheFile = (eTag, circle) => {
 }
 
 const triggerS3 = async () => {
-  if (!checkEnvFiles()) {
+  if (checkEnvFiles()) {
     try {
       const auth = new CredentialProviderChain()
       auth.resolve(async (err, credentials) => {
