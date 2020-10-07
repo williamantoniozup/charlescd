@@ -1,8 +1,7 @@
-// import getAwsCredentials from './auth/getAwsToken'
 import { unzipSync } from 'zlib'
 import Axios from 'axios'
 import FormData from 'form-data'
-import { S3, Credentials, CredentialProviderChain } from 'aws-sdk'
+import { S3, CredentialProviderChain } from 'aws-sdk'
 import fs from 'fs'
 import { getToken } from './auth/getCharlesToken'
 
@@ -12,7 +11,8 @@ const envValues = {
   keycloak: process.env.CHARLES_KEYCLOAK,
   moove: process.env.MOOVE_URL,
   bucket: process.env.BUCKET_NAME,
-  workspace: process.env.WORKSPACE_ID
+  workspace: process.env.WORKSPACE_ID,
+  matcherParam: process.env.MATCHER_PARAM
 }
 
 const checkEnvFiles = () => {
@@ -49,7 +49,7 @@ const filterNewestFile = (filesGroup: S3.ListObjectsOutput) => {
 
 const getSubFolders = async (s3: S3) => {
   console.log('subfolders')
-  const paramsSubfolders = { Bucket: process.env.BUCKET_NAME, Delimiter: '/', Prefix: process.env.PREFIX }
+  const paramsSubfolders = { Bucket: process.env.BUCKET_NAME, Delimiter: '/', Prefix: process.env.PREFIX || '' }
   return s3.listObjects(paramsSubfolders).promise()
 }
 
@@ -148,12 +148,12 @@ const triggerS3 = async () => {
 }
 
 const buildFormData = (buffer: Buffer, circleId: string, name: string) => {
-  const externalIdColumn = Buffer.from('externalId\n')
+  const externalIdColumn = Buffer.from(`${envValues.matcherParam}\n`)
   const completeBuffer = Buffer.concat([externalIdColumn, buffer])
   const data = new FormData()
   data.append('authorId', 'c7e6dafe-aa7a-4536-be1b-34eaad4c2915')
   data.append('name', name)
-  data.append('keyName', 'externalId')
+  data.append('keyName', `${envValues.matcherParam}`)
   data.append('file', completeBuffer, {
     filename: 'arquivo.csv',
     contentType: 'text/csv'
