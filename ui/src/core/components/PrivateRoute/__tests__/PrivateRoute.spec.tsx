@@ -15,8 +15,8 @@
  */
 
 import React from 'react';
-import { render, wait } from 'unit-test/testUtils';
-import PrivateRoute from '../index';
+import { render, screen, waitFor } from 'unit-test/testUtils';
+import PrivateRoute from '../';
 import { MemoryRouter } from 'react-router-dom';
 import { setAccessToken } from 'core/utils/auth';
 
@@ -28,8 +28,8 @@ beforeAll(() => {
   );
 });
 
-test('render Private Route allowed', async () => {
-  const { getByTestId } = render(
+test('render Private Route allowed', () => {
+  render(
     <MemoryRouter initialEntries={['/main']}>
       <PrivateRoute
         path="/main"
@@ -40,11 +40,12 @@ test('render Private Route allowed', async () => {
     </MemoryRouter>
   );
 
-  await wait(() => expect(getByTestId('mock-component')).toBeInTheDocument());
+  const mockElement = screen.getByTestId('mock-component');
+  expect(mockElement).toBeInTheDocument();
 });
 
-test('render Private Route not allowed', async () => {
-  const { getByTestId } = render(
+test('render Private Route not allowed', () => {
+  render(
     <MemoryRouter initialEntries={['/main']}>
       <PrivateRoute
         path="/main"
@@ -53,18 +54,18 @@ test('render Private Route not allowed', async () => {
       />
     </MemoryRouter>
   );
-  const body = getByTestId('mock-component');
-  await wait(() => expect(body).not.toBeInTheDocument());
+  
+  const mockElement = screen.getByTestId('mock-component');
+  waitFor(() => expect(mockElement).not.toBeInTheDocument());
 });
 
-test('render PrivateRoute without role', async () => {
-  const { queryByTestId } = render(
+test('render PrivateRoute without role', () => {
+  render(
     <MemoryRouter initialEntries={['/main']}>
       <PrivateRoute path="/main" component={MockApp} allowedRoles={['']} />
     </MemoryRouter>
   );
 
-  await wait(() =>
-    expect(queryByTestId('mock-component')).not.toBeInTheDocument()
-  );
+  const mockElement = screen.getByTestId('mock-component');
+  waitFor(() => expect(mockElement).not.toBeInTheDocument());
 });
