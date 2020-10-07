@@ -15,11 +15,12 @@
  */
 
 import React from 'react';
-import { render, fireEvent, screen } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import TabPanel from '../';
 
 
-test('render TabPanel default component loading mode', async () => {
+test('render TabPanel default component loading mode', () => {
   const Children = <div>children</div>;
 
   render(
@@ -32,7 +33,7 @@ test('render TabPanel default component loading mode', async () => {
   expect(screen.queryByTestId('button')).not.toBeInTheDocument();
 });
 
-test('render TabPanel default component with action', async () => {
+test('render TabPanel default component with action', () => {
   const action = jest.fn();
   const Children = <div>children</div>;
 
@@ -43,6 +44,6 @@ test('render TabPanel default component with action', async () => {
   const tabpanelBtnClose = screen.getByTestId('icon-cancel');
 
   expect(tabpanelBtnClose).toBeInTheDocument();
-  fireEvent.click(tabpanelBtnClose);
-  expect(action).toBeCalled();
+  userEvent.click(tabpanelBtnClose);
+  expect(action).toBeCalledTimes(1);
 });
