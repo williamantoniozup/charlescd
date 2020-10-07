@@ -148,11 +148,13 @@ const triggerS3 = async () => {
 }
 
 const buildFormData = (buffer: Buffer, circleId: string, name: string) => {
+  const externalIdColumn = Buffer.from('externalId\n')
+  const completeBuffer = Buffer.concat([externalIdColumn, buffer])
   const data = new FormData()
   data.append('authorId', 'c7e6dafe-aa7a-4536-be1b-34eaad4c2915')
   data.append('name', name)
   data.append('keyName', 'externalId')
-  data.append('file', buffer, {
+  data.append('file', completeBuffer, {
     filename: 'arquivo.csv',
     contentType: 'text/csv'
   })
