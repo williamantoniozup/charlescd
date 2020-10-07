@@ -15,10 +15,11 @@
  */
 
 import React from 'react';
-import { render, fireEvent, screen } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import Modal from 'core/components/Modal';
 
-test('render Trigger', async () => {
+test('render Trigger', () => {
   render(
     <Modal.Trigger
       title="Test"
@@ -30,27 +31,27 @@ test('render Trigger', async () => {
     </Modal.Trigger>
   );
 
-  const element = screen.getByTestId('modal-trigger');
-  const button = screen.getByTestId('button-default-continue');
-  expect(element).toBeInTheDocument();
-  expect(button).toBeInTheDocument();
+  const modalElement = screen.getByTestId('modal-trigger');
+  const continueButton = screen.getByTestId('button-default-continue');
+
+  expect(modalElement).toBeInTheDocument();
+  expect(continueButton).toBeInTheDocument();
 });
 
-test('onDismiss button click', async () => {
+test('onDismiss button click', () => {
   const onDismiss = jest.fn();
   render(
     <Modal.Trigger title="Test" dismissLabel="dismiss" onDismiss={onDismiss}>
       Test
     </Modal.Trigger>
   );
-  const button = screen.getByTestId('button-default-dismiss');
-  fireEvent.click(button);
-  expect(onDismiss).toHaveBeenCalled();
+  const dismissButton = screen.getByTestId('button-default-dismiss');
+  userEvent.click(dismissButton);
+  expect(onDismiss).toHaveBeenCalledTimes(1);
 });
 
-test('onContinue button click', async () => {
+test('onContinue button click', () => {
   const onContinue = jest.fn();
-
   render(
     <Modal.Trigger title="Test"
       dismissLabel="dismiss"
@@ -61,13 +62,13 @@ test('onContinue button click', async () => {
     </Modal.Trigger>
   );
 
-  const button = screen.getByTestId('button-default-continue');
-  fireEvent.click(button);
+  const continueButton = screen.getByTestId('button-default-continue');
+  userEvent.click(continueButton);
 
-  expect(onContinue).toHaveBeenCalled();
+  expect(onContinue).toHaveBeenCalledTimes(1);
 });
 
-test('onClose button click', async () => {
+test('onClose button click', () => {
   render(
     <Modal.Trigger
       title="Test"
@@ -79,9 +80,10 @@ test('onClose button click', async () => {
     </Modal.Trigger>
   );
 
-  const element = screen.getByTestId('modal-trigger');
-  const button = screen.getByTestId('icon-cancel');
-  expect(element).toBeInTheDocument();
-  fireEvent.click(button);
-  expect(element).not.toBeInTheDocument();
+  const modalElement = screen.getByTestId('modal-trigger');
+  const cancelButton = screen.getByTestId('icon-cancel');
+  expect(modalElement).toBeInTheDocument();
+
+  userEvent.click(cancelButton);
+  expect(modalElement).not.toBeInTheDocument();
 });
