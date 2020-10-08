@@ -17,6 +17,12 @@ static_resources:
             - name: backend
               domains:
               - "*"
+              cors:
+                allow_origin_string_match:
+                - exact: "http://charles.info.example"
+                - exact: "https://charles.info.example"
+                allow_methods: "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+                allow_headers: "Authorization,x-circle-id,x-workspace-id,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range"
               routes:
               - match:
                   prefix: "/moove/"
@@ -47,6 +53,8 @@ static_resources:
                 route:
                   cluster: charlescd-ui
           http_filters:
+          - name: envoy.filters.http.cors
+            typed_config: {}
           - name: envoy.filters.http.router
             typed_config: {}
 
@@ -135,3 +143,10 @@ static_resources:
               socket_address:
                 address: charlescd-compass
                 port_value: 8080
+
+admin:
+  access_log_path: "/dev/null"
+  address:
+    socket_address:
+      address: 0.0.0.0
+      port_value: 8001
