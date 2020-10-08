@@ -15,9 +15,10 @@
  */
 
 import React from 'react';
-import { render, fireEvent, wait } from 'unit-test/testUtils';
-import { Action as MenuAction } from '..';
-import Menu from '..';
+import { render, screen, act, fireEvent, wait, waitFor, waitForElementToBeRemoved } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
+import { Action as MenuAction } from '../';
+import Menu from '../';
 
 const menuFilterItemsMock: MenuAction[] = [
   {
@@ -33,7 +34,7 @@ const menuFilterItemsMock: MenuAction[] = [
 
 
 test('render Menu', () => {
-  const { getByText, getByTestId } = render(
+  render(
     <Menu
       actions={menuFilterItemsMock}
       active={menuFilterItemsMock[0].name}
@@ -42,39 +43,47 @@ test('render Menu', () => {
        content
     </Menu>
   );
-  const menuContentElement = getByText('content');
-  fireEvent.click(menuContentElement);
-  expect(getByTestId('icon-checkmark')).toBeInTheDocument();
+
+  const menuContentElement = screen.getByText('content');
   expect(menuContentElement).toBeInTheDocument();
+
+  act(() => userEvent.click(menuContentElement));
+
+  const iconElement = screen.getByTestId('icon-checkmark');
+  expect(iconElement).toBeInTheDocument();
 });
 
 test('trigger Menu actions', () => {
-  const { getByText, getAllByText } = render(
+  render(
     <Menu actions={menuFilterItemsMock} onSelect={jest.fn()}>
        content
     </Menu>
   );
 
-  const menuContentElement = getByText('content');
-  fireEvent.click(menuContentElement);
-  const actionsElements = getAllByText(/Action/);
-  expect(actionsElements.length).toBe(2);
+  const menuContentElement = screen.getByText('content');
+  act(() => userEvent.click(menuContentElement))
+  
+  const actionsElements = screen.getAllByText(/Action/);
+  expect(actionsElements).toHaveLength(2);
   expect(menuContentElement).toBeInTheDocument();
-  fireEvent.click(menuContentElement);
-  wait(() => expect(actionsElements.length).toBe(0));
+
+  userEvent.click(menuContentElement);
+  expect(screen.queryByText(/Action/)).not.toBeInTheDocument();
 });
 
 test('trigger Menu select action', () => {
   const onSelect = jest.fn();
-  const { getByText, getAllByText } = render(
+  render(
     <Menu actions={menuFilterItemsMock} onSelect={onSelect}>
        content
     </Menu>
   );
-  const menuContentElement = getByText('content');
-  fireEvent.click(menuContentElement);
-  const actionsElements = getAllByText(/Action/);
-  fireEvent.click(actionsElements[0]);
+  const menuContentElement = screen.getByText('content');
+  act(() => userEvent.click(menuContentElement));
+  
+  const actionsElements = screen.getAllByText(/Action/);
+  userEvent.click(actionsElements[0]);
+
   expect(onSelect).toHaveBeenCalledWith('first_action');
-  wait(() => expect(actionsElements.length).toBe(0));
+  waitFor(() => expect(actionsElements.length).toBe(0));
 });
