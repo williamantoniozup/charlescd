@@ -11,3 +11,5 @@ dependencies:
   condition: mongodb.enabled
 - name: keycloak
   condition: keycloak.enabled
+- name: envoy
+  condition: envoy.enabled
