@@ -52,7 +52,7 @@ test('renders sidebar component', async () => {
 
   await wait(() => expect(getByTestId(workspacesId)).toBeInTheDocument());
   await wait(() => expect(getByTestId(accountId)).toBeInTheDocument());
-  expect(links.children.length).toBe(3);
+  expect(links.children).toHaveLength(3);
 });
 
 test('renders sidebar component with selected workspace', async () => {

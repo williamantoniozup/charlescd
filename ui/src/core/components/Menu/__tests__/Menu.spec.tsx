@@ -85,5 +85,5 @@ test('trigger Menu select action', () => {
   userEvent.click(actionsElements[0]);
 
   expect(onSelect).toHaveBeenCalledWith('first_action');
-  waitFor(() => expect(actionsElements.length).toBe(0));
+  waitFor(() => expect(actionsElements).toHaveLength(0));
 });

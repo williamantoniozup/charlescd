@@ -32,7 +32,7 @@ test('renders sidebar menu Items', async () => {
 
   expect(getByTestId(workspacesId)).toBeInTheDocument();
   expect(getByTestId(accountId)).toBeInTheDocument();
-  expect(links.children.length).toBe(3);
+  expect(links.children).toHaveLength(3);
 });
 
 test('testing outside click menu Items', async () => {
@@ -54,7 +54,7 @@ test('testing outside click menu Items', async () => {
 
   expect(getByTestId(workspacesId)).toBeInTheDocument();
   expect(getByTestId(accountId)).toBeInTheDocument();
-  expect(links.children.length).toBe(3);
+  expect(links.children).toHaveLength(3);
   fireEvent.click(externalDiv);
   wait(() => expect(props.isExpanded).toBeTruthy());
 });
@@ -73,7 +73,7 @@ test('testing expand menu click', async () => {
 
   expect(getByTestId(workspacesId)).toBeInTheDocument();
   expect(getByTestId(accountId)).toBeInTheDocument();
-  expect(links.children.length).toBe(3);
+  expect(links.children).toHaveLength(3);
 
   fireEvent.click(links.children[1]);
 

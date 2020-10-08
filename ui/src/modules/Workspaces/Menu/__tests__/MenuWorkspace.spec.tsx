@@ -38,7 +38,7 @@ test('renders Workspace menu', async () => {
 
   expect(createButton).toBeInTheDocument();
   expect(searchInput).toBeInTheDocument();
-  expect(workspacesArray.length).toBe(5);
+  expect(workspacesArray).toHaveLength(5);
 });
 
 test('renders Workspace menu on loading', () => {

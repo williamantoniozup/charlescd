@@ -55,5 +55,5 @@ test('renders anothers text variations', () => {
   );
 
   const textElements = screen.getAllByText('hello');
-  expect(textElements.length).toBe(4);
+  expect(textElements).toHaveLength(4);
 });
