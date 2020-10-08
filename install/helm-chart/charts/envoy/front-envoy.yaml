@@ -55,6 +55,24 @@ static_resources:
           http_filters:
           - name: envoy.filters.http.cors
             typed_config: {}
+          - name: envoy.filters.http.jwt_authn
+            config:
+              providers:
+                charlescd_keycloak:
+                  issuer: http://charles.info.example/keycloak/auth/realms/charlescd
+                  remote_jwks:
+                    http_uri:
+                      uri: http://charlescd-keycloak-http/keycloak/auth/realms/charlescd/protocol/openid-connect/certs
+                      cluster: charlescd-keycloak-http
+                      timeout: 3s
+                    cache_duration:
+                      seconds: 60
+                  forward: true
+              rules:
+                - match:
+                    prefix: "/moove"
+                  requires:
+                    provider_name: charlescd_keycloak
           - name: envoy.filters.http.router
             typed_config: {}
 
