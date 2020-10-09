@@ -18,6 +18,7 @@ package manager
 
 import (
 	"context"
+
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 )
@@ -37,7 +38,7 @@ func (manager Manager) ExecuteV2DeploymentPipeline(v2Pipeline V2DeploymentPipeli
 	manager.triggerV2Callback(v2Pipeline.CallbackUrl, DEPLOYMENT_CALLBACK, SUCCEEDED_STATUS, incomingCircleId)
 	err = manager.runV2UnusedDeployments(v2Pipeline)
 	if err != nil {
-		log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline", "error": err.Error()}).Info("ERROR:RUN_V2_UNUSED_DEPLOYMENTS")
+		log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline", "error": err.Error()}).Error("ERROR:RUN_V2_UNUSED_DEPLOYMENTS")
 	}
 	log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline"}).Info("FINISH:EXECUTE_V2_DEPLOYMENT_PIPELINE")
 }
@@ -101,7 +102,7 @@ func (manager Manager) handleV2DeploymentError(v2Pipeline V2DeploymentPipeline, 
 	log.WithFields(log.Fields{"function": "handleV2DeploymentError", "error": err.Error()}).Info("START:HANDLE_V2_DEPLOYMENT_ERROR")
 	rollbackErr := manager.runV2Rollbacks(v2Pipeline)
 	if rollbackErr != nil {
-		log.WithFields(log.Fields{"function": "handleV2DeploymentError", "error": err.Error()}).Info("ERROR:RUN_V2_ROLLBACKS")
+		log.WithFields(log.Fields{"function": "handleV2DeploymentError", "error": err.Error()}).Error("ERROR:RUN_V2_ROLLBACKS")
 	}
 	manager.triggerV2Callback(v2Pipeline.CallbackUrl, DEPLOYMENT_CALLBACK, FAILED_STATUS, incomingCircleId)
 	log.WithFields(log.Fields{"function": "handleV2DeploymentError"}).Info("FINISH:HANDLE_V2_DEPLOYMENT_ERROR")
