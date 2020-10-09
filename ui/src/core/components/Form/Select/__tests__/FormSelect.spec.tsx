@@ -31,3 +31,14 @@ test('render react hook select', () => {
   const select = screen.getByTestId('select-fieldSelect');
   expect(select).toBeInTheDocument();
 });
+
+test('render react hook multi select', () => {
+  const { result } = renderHook(() => useForm());
+  const { control } = result.current;
+
+  const { getByTestId } = render(
+    <FormSelect.MultiCheck name="fieldMultiSelect" control={control} options={[]} />
+  );
+
+  expect(getByTestId('select-fieldMultiSelect')).toBeInTheDocument();
+});

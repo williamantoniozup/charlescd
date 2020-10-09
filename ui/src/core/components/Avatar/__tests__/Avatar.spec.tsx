@@ -16,22 +16,42 @@
 
 import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import Avatar from '../';
 
-const props = {
+const profile = {
   size: '10px',
   profile: {
     name: 'Charles',
     email: 'charles@zup.com.br',
-    photoUrl: 'https://photo.png'
   }
 }
 
-test('render Avatar', () => {
-  render(
-    <Avatar {...props} />
-  );
+test('render Avatar with photo', () => {
+  const props = { ...profile, photoUrl: 'https://photo.png' };
+
+  render(<Avatar { ...props } />);
 
   const element = screen.getByTestId('avatar')
-  expect(element).toHaveStyle(`width: ${props.size};`);
+  expect(element).toHaveStyle(`width: ${profile.size};`);
+});
+
+test('render Avatar with initial content', () => {
+  render(<Avatar { ...profile } />);
+
+  const element = screen.getByText('C');
+  expect(element).toBeInTheDocument();
+});
+
+test('render Avatar and click to edit', () => {
+  render(<Avatar {...profile} />);
+
+  const element = screen.getByTestId('avatar')
+  expect(element).toHaveStyle(`width: ${profile.size};`);
+
+  const editIcon = screen.getByTestId('icon-edit-avatar');
+  userEvent.click(editIcon);
+
+  const inputURL = screen.getByTestId('input-text-photoUrl');
+  expect(inputURL).toBeInTheDocument();
 });

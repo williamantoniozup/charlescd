@@ -17,9 +17,11 @@
 import React, { ReactElement } from 'react';
 import { render, wait, fireEvent, screen, waitFor } from 'unit-test/testUtils';
 import { AllTheProviders } from "unit-test/testUtils";
-import CirclesComparationItem from '..';
-import { FetchMock } from 'jest-fetch-mock';
+import { FetchMock } from 'jest-fetch-mock/types';
+import * as StateHooks from 'core/state/hooks';
+import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import { Actions, Subjects } from 'core/utils/abilities';
+import CirclesComparationItem from '..';
 
 interface fakeCanProps {
   I?: Actions;
@@ -30,7 +32,7 @@ interface fakeCanProps {
   children: ReactElement;
 }
 
-jest.mock('core/components/Can', () => {
+jest.mock('containers/Can', () => {
   return {
     __esModule: true,
     default:  ({children}: fakeCanProps) => {
@@ -69,7 +71,16 @@ test('render CircleComparationItem default component', async () => {
 });
 
 test('render CircleComparationItem with release', async () => {
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({})).mockResponseOnce(JSON.stringify(circle));
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123-workspace',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify(circle))
+    .mockResponseOnce(JSON.stringify(circle));
   const handleChange = jest.fn();
 
   render(

@@ -15,16 +15,22 @@
  */
 
 import React from 'react';
+import { render, screen, act} from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
-import { render, screen, act } from 'unit-test/testUtils';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import routes from 'core/constants/routes';
 import { FetchMock } from 'jest-fetch-mock';
-
 import Account from '../';
+import { saveProfile } from 'core/utils/profile';
 
+beforeEach(() => {
+  (fetch as FetchMock).resetMocks();
+});
 
+beforeAll(() => {
+  saveProfile({ id: '123', name: 'User', email: 'user@zup.com.br' });
+});
 
 test('render account tab profile', async () => {
   const history = createMemoryHistory();
@@ -37,15 +43,14 @@ test('render account tab profile', async () => {
     email: 'user@zup.com.br',
     photoUrl: ''
   }));
-  
+
   render(<Router history={history}><Account /></Router>);
 
   const tabElement = await screen.findByTestId('tabpanel-Account');
-
   expect(tabElement).toBeInTheDocument();
 });
 
-test('show change password modal', async () => {
+test('show change password modal', async() => {
   const history = createMemoryHistory();
   history.push(routes.accountProfile);
 
@@ -56,15 +61,15 @@ test('show change password modal', async () => {
     email: 'user@zup.com.br',
     photoUrl: ''
   }));
-  
-  render(<Router history={history}><Account /></Router>);
-  
-  const tabPanaelElement = await screen.findByTestId('tabpanel-Account');
-  expect(tabPanaelElement).toBeInTheDocument();
 
-  const changePassButton = await screen.findByTestId('labeledIcon-account');
-  userEvent.click(changePassButton);
-  const modalElement = await screen.findByTestId('modal-default');
+  render(<Router history={history}><Account /></Router>);
+
+  const tabPanelElement = await screen.findByTestId('tabpanel-Account');
+  expect(tabPanelElement).toBeInTheDocument();
   
+  const changePassButton = await screen.findByTestId('labeledIcon-account');
+  act(() => userEvent.click(changePassButton));
+
+  const modalElement = await screen.findByTestId('modal-default');
   expect(modalElement).toBeInTheDocument();
 });

@@ -15,37 +15,135 @@
  */
 
 import React from 'react';
-import MutationObserver from 'mutation-observer'
-import { render, fireEvent, wait } from 'unit-test/testUtils';
+import MutationObserver from 'mutation-observer';
+import { render, fireEvent, wait, screen, act } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock/types';
-import Credentials from '..';
+import * as StateHooks from 'core/state/hooks';
+import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
+import Credentials from '../';
 
-
-
-test('render Credentials default component', async () => {
+test('render Credentials default component', () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'workspace' }));
-  const { getByTestId } = render(
+  render(
     <Credentials />
   );
 
-  await wait();
-
-  expect(getByTestId("credentials")).toBeInTheDocument();
+  expect(screen.getByTestId("credentials")).toBeInTheDocument();
 });
 
-test('render Credentials with inner form', async () => {
+test('render Credentials items', () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'workspace' }));
-  const { getByTestId, getAllByTestId } = render(
-    <Credentials />
-  );
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+  render(<Credentials />);
 
-  await wait();
+  expect(screen.getByTestId('contentIcon-workspace')).toBeInTheDocument();
+  expect(screen.getByTestId('contentIcon-users')).toBeInTheDocument();
+  expect(screen.getByTestId('contentIcon-git')).toBeInTheDocument();
+  expect(screen.getByTestId('contentIcon-server')).toBeInTheDocument();
+  expect(screen.getByTestId('contentIcon-cd-configuration')).toBeInTheDocument();
+  expect(screen.getByTestId('contentIcon-circle-matcher')).toBeInTheDocument();
+  expect(screen.getByTestId('contentIcon-metrics')).toBeInTheDocument();
+});
 
-  const addButtons = getAllByTestId("button-iconRounded-add");
-  expect(addButtons).toHaveLength(6);
+test('render User Group credentials', async () => {
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+  render(<Credentials />);
 
-  fireEvent.click(addButtons[0]);
+  const content = screen.getByTestId('contentIcon-users');
+  expect(content).toBeInTheDocument();
 
-  expect(getByTestId("credentials")).toBeInTheDocument();
-  wait(() => expect(getByTestId("icon-arrow-left")).toBeInTheDocument());
+  const addUserGroupButton = screen.getByText('Add User group');
+  userEvent.click(addUserGroupButton);
+
+  const backButton = screen.getByTestId('icon-arrow-left');
+  expect(backButton).toBeInTheDocument();
+  
+  await act(async () => userEvent.click(backButton));
+  expect(backButton).not.toBeInTheDocument();
+});
+
+test('render Git Credentials', () => {
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+  render(<Credentials />);
+
+  const addGitButton = screen.getByText(/Add Git/i);
+  userEvent.click(addGitButton);
+
+  const backButton = screen.getByTestId('icon-arrow-left');
+  expect(backButton).toBeInTheDocument();
+});
+
+test('render CD Configuration Credentials', () => {
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+  render(<Credentials />);
+
+  const addCDConfigButton = screen.getByText('Add CD Configuration');
+  console.log('[button text]', addCDConfigButton.textContent);
+
+  userEvent.click(addCDConfigButton);
+
+  const backButton = screen.getByTestId('icon-arrow-left');
+  expect(backButton).toBeInTheDocument();
+});
+
+test('render Circle Matcher Credentials', () => {
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+  render(<Credentials />);
+
+  const addCircleMatcherButton = screen.getByText('Add Circle Matcher');
+  userEvent.click(addCircleMatcherButton);
+
+  const backButton = screen.getByTestId('icon-arrow-left');
+  expect(backButton).toBeInTheDocument();
+});
+
+// TODO what it does?
+test('click to copy to clipboard', async () => {
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+  render(<Credentials />);
+  
+  const content = screen.queryByTestId('contentIcon-circle-matcher');
+  const button = content.nextElementSibling.querySelector('button');
+  console.log('[button]', button.textContent);
+  await wait(() => fireEvent.click(button));
+
+  const buttonBack = screen.queryByTestId('icon-arrow-left');
+  expect(buttonBack).toBeInTheDocument();
 });

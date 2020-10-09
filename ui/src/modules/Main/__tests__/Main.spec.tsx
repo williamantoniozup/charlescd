@@ -16,7 +16,8 @@
 
 import React, { Suspense } from 'react';
 import { FetchMock } from 'jest-fetch-mock/types';
-import { render, act, screen } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import { dark } from 'core/assets/themes/sidebar';
 import { genMenuId } from 'core/utils/menu';
 import routes from 'core/constants/routes';
@@ -30,7 +31,7 @@ import Main, {
   Modules,
   Settings,
   Metrics
-} from '../index';
+} from '../';
 
 jest.mock('modules/Workspaces', () => {
   return {
@@ -56,7 +57,7 @@ afterEach(() => {
   window = originalWindow;
 });
 
-test('render menu component', async () => {
+test('render menu component with semantic tags', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'use fetch' }));
 
   render(<Main />);
@@ -76,9 +77,7 @@ test('render menu in expanded mode with the workspaces screen active', async () 
   render(<Main />);
   
   const icon = await screen.findByTestId('icon-workspaces');
-  const iconStyle = window.getComputedStyle(icon);
-  
-  expect(iconStyle.color).toBe(dark.menuIconActive);
+  expect(icon).toHaveStyle(`color: ${dark.menuIconActive}`);
 });
 
 test('render and collapse sidebar', async () => {
@@ -89,14 +88,15 @@ test('render and collapse sidebar', async () => {
 
   const expandButton = await screen.findByTestId('sidebar-expand-button');
   expect(screen.getByTestId(menuId)).toHaveTextContent(/\w+/gi);
-  expandButton.click();
-  expect(screen.getByTestId(menuId).textContent).toBe('');
+
+  userEvent.click(expandButton);
+  expect(screen.getByTestId(menuId)).toHaveTextContent('');
 });
 
-test('lazy loading', async () => {
+test('lazy loading', () => {
   render(
     <Suspense fallback={<div>loading...</div>}>
-      <Workspaces selectedWorkspace={() => act(() => jest.fn())} />
+      <Workspaces selectedWorkspace={() => () => jest.fn()} />
       <Users />
       <Groups />
       <Account />
