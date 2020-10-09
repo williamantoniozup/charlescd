@@ -42,7 +42,10 @@ const FormRegistry = ({ onFinish }: Props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (responseAdd) onFinish();
+    if (responseAdd) {
+      console.log('[salvo!]');
+      onFinish();
+    }
   }, [onFinish, responseAdd]);
 
   const onChange = (value: string) => {

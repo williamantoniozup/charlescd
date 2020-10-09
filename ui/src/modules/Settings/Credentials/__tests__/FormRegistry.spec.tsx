@@ -67,14 +67,14 @@ jest.mock('core/components/Form/AceEditor', () => {
   };
 });
 
-// TODO what it does?
+// TODO do test pgtar douglas
 test('render Registry form default component', async () => {
   const { container } = render(
     <FormRegistry onFinish={mockOnFinish}/>
   );
 
-  // screen.debug();
-  console.log('[container]', container.innerHTML);
+  screen.debug();
+  //console.log('[container]', container.innerHTML);
   expect(container.innerHTML).toMatch("test");
 });
 
@@ -168,7 +168,7 @@ test('Not trigger onSubmit on json parse error with GCP form', () => {
 });
 
 // TODO is passing even with wrong assertion
-test('Trigger submit on json parse success with GCP form', () => {
+test('Trigger submit on json parse success with GCP form', async () => {
   render(<FormRegistry onFinish={mockOnFinish} />);
 
   const radioButton = screen.getByTestId('radio-group-registry-item-GCP');
@@ -192,11 +192,12 @@ test('Trigger submit on json parse success with GCP form', () => {
   userEvent.type(inputGCPName, 'fake-name');
   userEvent.type(inputGCPAddress, 'http://fake-host');
   userEvent.type(inputGCPOrganization, 'fake-access-key');
-  userEvent.type(inputGCPJsonKey, '{ "testKey": "testValue"}');
+  // userEvent.type(inputGCPJsonKey, '{ "testKey": "testValue"}');
+  fireEvent.change(inputGCPJsonKey, { target: { value: '{ "testKey": "testValue"}' }});
   userEvent.click(submitButton);
   // await act(async () => userEvent.click(submitButton));
   
-  waitFor(() => expect(mockSave).toBeCalledTimes(1));
+  await waitFor(() => expect(mockSave).toHaveBeenCalledTimes(1));
 });
 
 // TODO why is not working
