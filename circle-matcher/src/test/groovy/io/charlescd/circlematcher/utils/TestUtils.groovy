@@ -37,7 +37,8 @@ class TestUtils {
                 "52eb5b4b-59ac-4361-a6eb-cb9f70eb6a85",
                 type,
                 "78094351-7f16-4571-ac7a-7681db81e146",
-                false)
+                false,
+                null)
     }
 
     static Segmentation createDefaultSegmentation(Node node, SegmentationType type) {
@@ -47,7 +48,19 @@ class TestUtils {
                 "52eb5b4b-59ac-4361-a6eb-cb9f70eb6a89",
                 type,
                 "78094351-7f16-4571-ac7a-7681db81e146",
-                true)
+                true,
+                null)
+    }
+
+    static Segmentation createPercentageSegmentation(Node node, SegmentationType type, Integer percentage) {
+        new Segmentation("Percentage",
+                node,
+                "0f5f699a-df28-4517-9cd6-e98f2f775fe3",
+                "868fc345-7836-4bde-bdff-86adde6cafc9 ",
+                type,
+                "bde0c670-96c9-41f7-afac-f284a785c287",
+                false,
+                percentage)
     }
 
     static createSegmentationRequest(Node node, SegmentationType type) {

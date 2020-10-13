@@ -14,10 +14,21 @@
  * limitations under the License.
  */
 
-package io.charlescd.circlematcher.domain;
+package io.charlescd.circlematcher.domain.service.impl;
 
-public enum SegmentationType {
-    SIMPLE_KV,
-    REGULAR,
-    PERCENTAGE
+import io.charlescd.circlematcher.domain.service.RandomService;
+import org.springframework.stereotype.Component;
+import java.security.SecureRandom;
+@Component
+public class RandomServiceImpl implements RandomService {
+    private SecureRandom secureRandom;
+    private RandomServiceImpl()
+    {
+        this.secureRandom = new SecureRandom();
+    }
+
+    public int getRandomNumber(int number) {
+        return this.secureRandom.nextInt(number)+1;
+    }
+
 }
