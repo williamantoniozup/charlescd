@@ -23,7 +23,7 @@ interface LabelProps {
   value: string;
 }
 
-const RadioGroup = styled.div`
+const RadioButtons = styled.div`
   display: flex;
   flex-direction: row;
 
@@ -92,5 +92,5 @@ export default {
   Icon,
   Text,
   Radio,
-  RadioGroup
+  RadioButtons
 };
