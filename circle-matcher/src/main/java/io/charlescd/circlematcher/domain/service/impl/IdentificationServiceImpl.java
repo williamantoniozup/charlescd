@@ -97,7 +97,7 @@ public class IdentificationServiceImpl implements IdentificationService {
         var matched = metadata.stream()
                 .parallel()
                 .map(item -> findSegmentation(item, request))
-                .filter(item -> item.isPresent() && isMatched(request, item.get()))
+                .filter(item -> item.isPresent() && isMatched(request, item.get()) && isActive(item.get()))
                 .map(item -> new Circle(item.get().getCircleId(), item.get().getName()))
                 .collect(Collectors.toSet());
 
@@ -136,5 +136,9 @@ public class IdentificationServiceImpl implements IdentificationService {
                 .findFirst()
                 .map(m -> new Circle(m.getCircleId(), m.getName()))
                 .orElseThrow(() -> new NoSuchElementException("Default circle metadata not found."));
+    }
+
+    private boolean isActive(Segmentation segmentation) {
+        return segmentation.getActive();
     }
 }
