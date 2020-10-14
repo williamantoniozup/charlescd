@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.metrics.interactor
+import { baseRequest, postRequest, deleteRequest } from './base';
+import { Datasource } from 'modules/Settings/Credentials/Sections/MetricProvider/interfaces';
 
-import io.charlescd.moove.metrics.api.ProjectionType
-import io.charlescd.moove.metrics.api.response.ComponentMetricRepresentation
-import io.charlescd.moove.metrics.domain.MetricType
+const endpoint = '/compass/api/v1';
 
-interface RetrieveCircleComponentsPeriodMetricInteractor {
+export const getAllPlugins = () => baseRequest(`${endpoint}/plugins?category=datasource`)
 
-    fun execute(
-        circleId: String,
-        projectionType: ProjectionType,
-        metricType: MetricType,
-        workspaceId: String
-    ): ComponentMetricRepresentation
-}
+export const getAllDatasources = () => baseRequest(`${endpoint}/datasources`);
+
+export const createDatasource = (datasourcePayload: Datasource) => postRequest(`${endpoint}/datasources`, datasourcePayload)
+
+export const deleteDatasource = (datasourceId: string) => deleteRequest(`${endpoint}/datasources/${datasourceId}`)

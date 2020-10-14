@@ -20,10 +20,11 @@ package tests
 
 import (
 	"compass/internal/plugin"
-	"github.com/stretchr/testify/require"
-	"github.com/stretchr/testify/suite"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 )
 
 type SuitePlugins struct {
@@ -42,25 +43,66 @@ func TestInitPlugins(t *testing.T) {
 }
 
 func (s *SuitePlugins) TestFindAll() {
-	expectedPlugins := []plugin.Plugin{
-		{
-			Name: "Prometheus",
-			Src:  "prometheus",
+	gInput := []interface{}{
+		map[string]interface{}{
+			"name":     "viewId",
+			"label":    "View ID",
+			"type":     "text",
+			"required": true,
+		},
+		map[string]interface{}{
+			"name":     "serviceAccount",
+			"label":    "Service Account",
+			"type":     "textarea",
+			"required": true,
 		},
 	}
 
-	os.Setenv("PLUGINS_DIR", "../../plugins")
-	plugins, err := s.repository.FindAll()
-	require.NoError(s.T(), err)
+	pInput := []interface{}{
+		map[string]interface{}{
+			"name":     "url",
+			"label":    "Url",
+			"type":     "text",
+			"required": true,
+		},
+	}
 
+	expectedPlugins := []plugin.Plugin{
+		{
+			ID:          "google_analytics",
+			Category:    "datasource",
+			Name:        "Google Analytics",
+			Src:         "datasource/google_analytics/google_analytics",
+			Description: "My google analytics",
+			InputParameters: map[string]interface{}{
+				"configurationInputs": gInput,
+			},
+		},
+		{
+			ID:          "prometheus",
+			Category:    "datasource",
+			Name:        "Prometheus",
+			Src:         "datasource/prometheus/prometheus",
+			Description: "My prometheus",
+			InputParameters: map[string]interface{}{
+				"health":              true,
+				"configurationInputs": pInput,
+			},
+		},
+	}
+
+	os.Setenv("PLUGINS_DIR", "../../dist")
+	plugins, err := s.repository.FindAll("datasource")
+
+	require.NoError(s.T(), err)
 	for i, p := range plugins {
 		require.Equal(s.T(), expectedPlugins[i], p)
 	}
 }
 
 func (s *SuitePlugins) TestFindAllNoSuchDirectory() {
-	os.Setenv("PLUGINS_DIR", "./plugin")
+	os.Setenv("PLUGINS_DIR", "./dist")
 
-	_, err := s.repository.FindAll()
+	_, err := s.repository.FindAll("")
 	require.Error(s.T(), err)
 }
