@@ -15,7 +15,7 @@ COMPOSE_TESTS=./test/docker-compose.test.yaml
 
 
 start:
-				for plugin in ./plugins/datasource/*/; do $(GOBUILDPLUGIN) -o ./plugins "$$plugin"/*.go ; done
+				sh build-plugins.sh
 				$(GORUN) $(CMD_PATH)
 build: 
 				$(GOBUILD) -o $(DIST_PATH)/$(BINARY_NAME) $(CMD_PATH)
@@ -23,8 +23,8 @@ build:
 local-tests:
 				$(GOTEST) ./...
 tests:
-				docker-compose -f $(COMPOSE_TESTS) up --build --abort-on-container-exit
-				docker-compose -f $(COMPOSE_TESTS) down --volumes
+				make tests-dep-up
+				$(GOTEST) ./...
 tests-dep-up:
 				docker-compose -f $(COMPOSE_TESTS) up -d --build db provider
 				sh build-plugins.sh
