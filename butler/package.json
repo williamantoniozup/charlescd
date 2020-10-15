@@ -34,6 +34,7 @@
     "cls-rtracer": "^1.4.1",
     "consul": "^0.36.0",
     "js-yaml": "^3.13.1",
+    "json2yaml": "^1.1.0",
     "lodash": "^4.17.19",
     "morgan": "^1.10.0",
     "mustache": "^3.2.1",
@@ -46,7 +47,8 @@
     "swagger-ui-express": "^4.1.4",
     "typeorm": "^0.2.25",
     "uuid": "8.3.0",
-    "winston": "^3.2.1"
+    "winston": "^3.2.1",
+    "yaml": "^1.10.0"
   },
   "devDependencies": {
     "@babel/types": "7.5.5",
