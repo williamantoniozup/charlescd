@@ -37,6 +37,7 @@ import java.util.*
 import javax.transaction.Transactional
 import org.hibernate.Hibernate
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -56,6 +57,9 @@ class CardService(
     private val charlesNotificationService: CharlesNotificationService
 ) {
     private val log = LoggerFactory.getLogger(this.javaClass)
+
+    @Value("\${charlescd.protected.branches}")
+    lateinit var protectedBranches: Array<String>
 
     @Transactional
     fun create(createCardRequest: CreateCardRequest, workspaceId: String): CardRepresentation {
@@ -86,12 +90,12 @@ class CardService(
     }
 
     @Transactional
-    fun delete(id: String, workspaceId: String) {
+    fun delete(id: String, workspaceId: String, branchDeletion: Boolean = false) {
         return cardRepository.findByIdAndWorkspaceId(id, workspaceId)
             .orElseThrow { NotFoundExceptionLegacy("card", id) }
             .also { deleteCardRelationships(it) }
             .also { this.cardRepository.delete(it) }
-            .let { deleteFeatureBranches(it) }
+            .let { deleteFeatureBranches(it, branchDeletion) }
     }
 
     @Transactional
@@ -148,8 +152,8 @@ class CardService(
             .let { this.cardRepository.save(it) }
     }
 
-    private fun deleteFeatureBranches(card: Card) {
-        if (card is SoftwareCard) {
+    private fun deleteFeatureBranches(card: Card, branchDeletion: Boolean = false) {
+        if (card is SoftwareCard && branchDeletion) {
             card.feature.modules.forEach { module ->
                 validateWorkspace(module.workspace)
                 deleteBranch(
@@ -162,8 +166,10 @@ class CardService(
 
     private fun deleteBranch(gitCredentials: GitCredentials, repository: String, branchName: String) {
         try {
-            gitServiceMapperLegacy.getByType(gitCredentials.serviceProvider)
-                .deleteBranch(gitCredentials, repository, branchName)
+            if (isExcludableBranch(branchName)) {
+                gitServiceMapperLegacy.getByType(gitCredentials.serviceProvider)
+                    .deleteBranch(gitCredentials, repository, branchName)
+            }
         } catch (e: Exception) {
             log.error("failed to delete branch: $branchName with error: $e")
         }
@@ -197,6 +203,10 @@ class CardService(
     private fun validateWorkspace(workspace: Workspace) {
         workspace.gitConfigurationId
             ?: throw BusinessExceptionLegacy.of(MooveErrorCodeLegacy.WORKSPACE_GIT_CONFIGURATION_IS_MISSING)
+    }
+
+    private fun isExcludableBranch(branchName: String): Boolean {
+        return !protectedBranches.contains(branchName)
     }
 
     private fun createNewBranch(
@@ -279,7 +289,7 @@ class CardService(
             is SoftwareCard -> this.buildUpdatedActionCard(updateCardRequest)
                 .also { cardRepository.deleteById(it.id) }
                 .also { cardRepository.save(it) }
-                .also { deleteFeatureBranches(this) }
+                .also { deleteFeatureBranches(this, updateCardRequest.branchDeletion) }
             is ActionCard -> this.buildUpdatedActionCard(updateCardRequest)
                 .let { cardRepository.save(it) }
             else -> throw IllegalArgumentException("Invalid card type")
