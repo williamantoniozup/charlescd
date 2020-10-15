@@ -23,6 +23,8 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"math"
 	"strconv"
 	"time"
 
@@ -58,6 +60,10 @@ func getDatasourceValuesByPrometheusVectorResult(query string, prometheusResult 
 			return nil, err
 		}
 
+		if math.IsNaN(valueParsed) {
+			valueParsed = 0
+		}
+
 		datasourceValues = append(datasourceValues, datasource.Value{
 			Total:  valueParsed,
 			Period: value.Timestamp.String(),
@@ -78,6 +84,10 @@ func getDatasourceValuesByPrometheusVectorMetrix(query string, prometheusResult 
 			valueParsed, err := strconv.ParseFloat(value.Value.String(), 64)
 			if err != nil {
 				return nil, err
+			}
+
+			if math.IsNaN(valueParsed) {
+				valueParsed = 0
 			}
 
 			datasourceValues = append(datasourceValues, datasource.Value{
@@ -111,14 +121,20 @@ func GetMetrics(datasourceConfiguration []byte) (datasource.MetricList, error) {
 	return metricList, nil
 }
 
-func Query(datasourceConfiguration, query, period, interval []byte, filters []datasource.MetricFilter) ([]datasource.Value, error) {
-	apiClient, err := getPrometheusApiClient(datasourceConfiguration)
+func Query(request datasource.QueryRequest) ([]datasource.Value, error) {
+	apiClient, err := getPrometheusApiClient(request.DatasourceConfiguration)
 	if err != nil {
 		return nil, err
 	}
 
 	v1Api := v1.NewAPI(apiClient)
-	buildedQuery := createQueryByMetric(filters, string(query), string(period), string(interval))
+	buildedQuery := createQueryByMetric(request.Filters, request.Query, "", "")
+	if request.RangePeriod.Value != 0 && request.RangePeriod.Unit != "" {
+		buildedRangePeriod := fmt.Sprintf("%d%s", request.RangePeriod.Value, request.RangePeriod.Unit)
+		buildedInterval := fmt.Sprintf("%d%s", request.Interval.Value, request.Interval.Unit)
+		buildedQuery = createQueryByMetric(request.Filters, request.Query, buildedRangePeriod, buildedInterval)
+	}
+
 	result, _, err := v1Api.Query(context.Background(), buildedQuery, time.Now())
 	if err != nil {
 		return nil, err
@@ -134,8 +150,8 @@ func Query(datasourceConfiguration, query, period, interval []byte, filters []da
 	}
 }
 
-func Result(datasourceConfiguration, query []byte, filters []datasource.MetricFilter) (float64, error) {
-	values, err := Query(datasourceConfiguration, query, []byte(""), []byte(""), filters)
+func Result(request datasource.ResultRequest) (float64, error) {
+	values, err := Query(datasource.QueryRequest{request, datasource.Period{}, datasource.Period{}})
 	if err != nil {
 		return 0, err
 	}
