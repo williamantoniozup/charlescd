@@ -22,6 +22,7 @@ import { FetchMock } from 'jest-fetch-mock/types';
 import * as StateHooks from 'core/state/hooks';
 import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import Credentials from '../';
+import * as clipboardUtils from 'core/utils/clipboard';
 
 test('render Credentials default component', () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'workspace' }));
@@ -137,6 +138,17 @@ test.only('click to copy to clipboard', async () => {
     },
     status: 'resolved'
   }));
+
+  jest.spyOn(clipboardUtils, 'copyToClipboard');
+
   render(<Credentials />);
+
   
+  const dropdownElement = screen.getByTestId('icon-vertical-dots');
+  userEvent.click(dropdownElement);
+  const copyIDElement = screen.getByText('Copy ID');
+  expect(copyIDElement).toBeInTheDocument();
+  userEvent.click(copyIDElement);
+  expect(clipboardUtils.copyToClipboard).toBeCalled();
+  // screen.debug();
 });

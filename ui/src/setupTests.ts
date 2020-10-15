@@ -28,11 +28,18 @@ interface CustomDocument {
   cookie?: string;
 }
 
+interface CustomNavigator {
+  clipboard: {
+    writeText: () => void;
+  };
+}
+
 export interface CustomGlobal {
   fetch: FetchMock;
   localStorage?: object;
   document?: CustomDocument;
   Worker: object;
+  navigator: CustomNavigator;
 }
 
 declare const global: CustomGlobal;
@@ -51,3 +58,8 @@ window.URL.createObjectURL = jest.fn();
 global.fetch = fetch as FetchMock;
 global.localStorage = storageMock();
 global.document.cookie = '';
+global.navigator = {
+  clipboard: {
+    writeText: () => null
+  }
+};
