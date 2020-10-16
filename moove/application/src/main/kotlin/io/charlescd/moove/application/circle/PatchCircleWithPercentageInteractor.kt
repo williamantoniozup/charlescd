@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package io.charlescd.circlematcher.domain;
+package io.charlescd.moove.application.circle
 
-public enum SegmentationType {
-    SIMPLE_KV,
-    REGULAR,
-    PERCENTAGE
+import io.charlescd.moove.application.circle.request.PatchCirclePercentageRequest
+import io.charlescd.moove.application.circle.response.CircleResponse
+
+interface PatchCircleWithPercentageInteractor {
+
+    fun execute(id: String, request: PatchCirclePercentageRequest): CircleResponse
 }
