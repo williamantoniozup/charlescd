@@ -508,9 +508,10 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         }
       }
     ]
-
+    const teste = new ArgoCdRequestBuilder().buildDeploymentRequest(deploymentWith3Components, activeComponents)
+    console.log(JSON.stringify(teste))
     expect(
-      new ArgoCdRequestBuilder().buildDeploymentRequest(deploymentWith3Components, activeComponents)
+      teste
     ).toEqual('batata')
   })
 
