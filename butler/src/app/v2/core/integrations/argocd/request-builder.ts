@@ -21,6 +21,10 @@ import { stringify } from 'yaml'
 import { ArgocdAppEntries, ArgocdApplication, ArgocdCharlesValues } from './interfaces/argocd-application.interface'
 import { ArgocdDeploymentRequest } from './interfaces/argocd-deployment.interface'
 
+const createSubstring = (applicationName: string): string => {
+    return applicationName.substring(0, 53)
+}
+
 export class ArgoCdRequestBuilder {
 
   public buildDeploymentRequest(
@@ -62,14 +66,19 @@ export class ArgoCdRequestBuilder {
         },
         tag: component.imageTag,
         component: component.name,
-        deploymentName: `${component.name}-${component.imageTag}-${deployment.circleId}`,
+        deploymentName: `${component.name}-${component.imageTag}-${deployment.circleId?.substring(24)}`,
         circleId: deployment.circleId
       }
       const argocdApplication: ArgocdApplication = {
         'apiVersion': 'argoproj.io/v2alpha1',
         'kind': 'Application',
         'metadata': {
-          'name': `${component.name}-${component.imageTag}-${deployment.circleId}`
+          'name': createSubstring(`${deployment.circleId}-${component.name}-${component.imageTag}`),
+          'labels': {
+            'circleId': deployment.circleId,
+            'imageTag': component.imageTag,
+            'componentName': component.name,
+          }
         },
         'spec': {
           'destination': {

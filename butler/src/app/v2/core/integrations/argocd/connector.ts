@@ -21,6 +21,7 @@ import { CdConnector } from '../interfaces/cd-connector.interface'
 import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
 import { ConnectorResult, ConnectorResultError } from '../spinnaker/interfaces'
 import { ArgocdApi } from './argocd-api'
+import { ArgocdDeploymentRequest } from './interfaces/argocd-deployment.interface'
 import { ArgoCdRequestBuilder } from './request-builder'
 
 @Injectable()
@@ -42,14 +43,23 @@ export class ArgocdConnector implements CdConnector {
       const argocdDeployment =
         new ArgoCdRequestBuilder().buildDeploymentRequest(deployment, activeComponents)
       this.consoleLoggerService.log('GET:ARGOCD_DEPLOYMENT_OBJECT', { argocdDeployment })
-      argocdDeployment.newDeploys.map((application) => {
-        console.log('to aqui')
-        this.argocdApi.createApplication(application)
+      const argocdRequests = argocdDeployment.newDeploys.map((application) => {
+        return this.argocdApi.createApplication(application)
       })
-      // await this.octopipeApi.deploy(octopipeDeployment, configuration.incomingCircleId).toPromise()
-      this.consoleLoggerService.log('FINISH:CREATE_V2_ARGOCD_DEPLOYMENT')
+      const argocdPromises = argocdRequests.map(async(response) => response.toPromise())
+      Promise.all(argocdPromises) //lidar com sucesso de forma mais elegante
+        .then(success => {
+          this.consoleLoggerService.log('POST:ARGOCD_CREATE_APPLICATION_SUCCESS', { success })
+          this.startHealthJob(argocdDeployment)
+          return { status: 'SUCCEEDED' }
+        })
+        .catch(error => {
+          this.consoleLoggerService.log('POST:ARGOCD_CREATE_APPLICATION_ERROR', { error })
+          return { status: 'ERROR', error: error }
+        })
+      
       // trigger job
-      return { status: 'SUCCEEDED' }
+      
     } catch(error) {
       this.consoleLoggerService.log('ERROR:CREATE_V2_ARGOCD_DEPLOYMENT', { error })
       return { status: 'ERROR', error: error }
@@ -74,5 +84,9 @@ export class ArgocdConnector implements CdConnector {
       this.consoleLoggerService.log('ERROR:CREATE_V2_ARGOCD_UNDEPLOYMENT', { error })
       return { status: 'ERROR', error: error }
     }
+  }
+
+  private startHealthJob(argocdDeployment: ArgocdDeploymentRequest): void {
+    
   }
 }

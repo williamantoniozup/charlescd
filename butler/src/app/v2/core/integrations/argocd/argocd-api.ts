@@ -57,8 +57,6 @@ export class ArgocdApi {
     const agent = new Agent({  
       rejectUnauthorized: false
     })
-
-    console.log(this.envConfiguration.argocdUrl)
     return this.httpService.post(
       `${this.envConfiguration.argocdUrl}/api/v1/applications`,
       argocdApplication,

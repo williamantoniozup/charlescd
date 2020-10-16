@@ -1,6 +1,11 @@
-
+interface ArgocdLabels {
+    circleId?: string | null
+    imageTag: string
+    componentName: string
+}
 interface ArgocdMetadata {
     name: string
+    labels?: ArgocdLabels
 }
 
 interface ArgocdDestination {
