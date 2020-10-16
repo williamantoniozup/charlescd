@@ -15,6 +15,7 @@
  */
 
 import { Injectable } from '@nestjs/common'
+import { application } from 'express'
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { CdConnector } from '../interfaces/cd-connector.interface'
@@ -86,7 +87,14 @@ export class ArgocdConnector implements CdConnector {
     }
   }
 
-  private startHealthJob(argocdDeployment: ArgocdDeploymentRequest): void {
-    
+  private async startHealthJob(argocdDeployment: ArgocdDeploymentRequest): void {
+    const applicationsStatus = argocdDeployment.newDeploys.reduce((acc, argocdApplication) => {
+      acc[argocdApplication.metadata.name] = false
+      return acc
+    }, {} as Record<string, boolean>)
+    const applicationNames = Object.keys(applicationsStatus)
+    while (applicationNames.filter(name => !applicationsStatus[name]).length) {
+      const chamadas = applicationNames.map(name => this.argocdApi.checkStatusApplication(name).toPromise())
+    }
   }
 }
