@@ -39,6 +39,7 @@ class TestUtils {
                 type,
                 "78094351-7f16-4571-ac7a-7681db81e146",
                 false,
+                true,
                 LocalDateTime.now())
     }
 
@@ -49,6 +50,7 @@ class TestUtils {
                 "52eb5b4b-59ac-4361-a6eb-cb9f70eb6a89",
                 type,
                 "78094351-7f16-4571-ac7a-7681db81e146",
+                true,
                 true,
                 LocalDateTime.now())
     }
@@ -61,6 +63,7 @@ class TestUtils {
         createSegmentationRequest.circleId = "52eb5b4b-59ac-4361-a6eb-cb9f70eb6a85"
         createSegmentationRequest.type = type
         createSegmentationRequest.isDefault = false
+        createSegmentationRequest.active = true
         createSegmentationRequest.createdAt = LocalDateTime.now()
         return createSegmentationRequest
     }
@@ -74,7 +77,20 @@ class TestUtils {
         request.node = node
         request.type = type
         request.isDefault = false
+        request.active = true
         request.createdAt = LocalDateTime.now()
         return request
+    }
+
+    static Segmentation createInactiveSegmentation(Node node, SegmentationType type) {
+        new Segmentation("Men",
+                node,
+                "28840781-d86e-4803-a742-53566c140e56",
+                "52eb5b4b-59ac-4361-a6eb-cb9f70eb6a85",
+                type,
+                "78094351-7f16-4571-ac7a-7681db81e146",
+                false,
+                false,
+                LocalDateTime.now())
     }
 }
