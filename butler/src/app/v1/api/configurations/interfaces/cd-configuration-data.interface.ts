@@ -16,9 +16,11 @@
 
 import {
   OctopipeConfigurationData,
-  ISpinnakerConfigurationData
+  ISpinnakerConfigurationData,
+  ArgocdConfigurationData
 } from './'
 
 export type ICdConfigurationData =
     ISpinnakerConfigurationData |
-    OctopipeConfigurationData
+    OctopipeConfigurationData |
+    ArgocdConfigurationData

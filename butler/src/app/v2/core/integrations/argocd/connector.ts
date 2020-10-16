@@ -20,15 +20,15 @@ import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { CdConnector } from '../interfaces/cd-connector.interface'
 import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
 import { ConnectorResult, ConnectorResultError } from '../spinnaker/interfaces'
-import { OctopipeApi } from './octopipe-api'
-import { OctopipeRequestBuilder } from './request-builder'
+import { ArgocdApi } from './argocd-api'
+import { ArgoCdRequestBuilder } from './request-builder'
 
 @Injectable()
 export class ArgocdConnector implements CdConnector {
 
   constructor(
     private consoleLoggerService: ConsoleLoggerService,
-    private octopipeApi: OctopipeApi
+    private argocdApi: ArgocdApi
   ) {}
 
   public async createDeployment(
@@ -38,15 +38,20 @@ export class ArgocdConnector implements CdConnector {
   ): Promise<ConnectorResult | ConnectorResultError> {
 
     try {
-      this.consoleLoggerService.log('START:CREATE_V2_OCTOPIPE_DEPLOYMENT', { deployment: deployment.id, activeComponents: activeComponents.map(c => c.id) })
-      const octopipeDeployment =
-        new OctopipeRequestBuilder().buildDeploymentRequest(deployment, activeComponents, configuration)
-      this.consoleLoggerService.log('GET:OCTOPIPE_DEPLOYMENT_OBJECT', { octopipeDeployment })
-      await this.octopipeApi.deploy(octopipeDeployment, configuration.incomingCircleId).toPromise()
-      this.consoleLoggerService.log('FINISH:CREATE_V2_OCTOPIPE_DEPLOYMENT')
+      this.consoleLoggerService.log('START:CREATE_V2_ARGOCD_DEPLOYMENT', { deployment: deployment.id, activeComponents: activeComponents.map(c => c.id) })
+      const argocdDeployment =
+        new ArgoCdRequestBuilder().buildDeploymentRequest(deployment, activeComponents)
+      this.consoleLoggerService.log('GET:ARGOCD_DEPLOYMENT_OBJECT', { argocdDeployment })
+      argocdDeployment.newDeploys.map((application) => {
+        console.log('to aqui')
+        this.argocdApi.createApplication(application)
+      })
+      // await this.octopipeApi.deploy(octopipeDeployment, configuration.incomingCircleId).toPromise()
+      this.consoleLoggerService.log('FINISH:CREATE_V2_ARGOCD_DEPLOYMENT')
+      // trigger job
       return { status: 'SUCCEEDED' }
     } catch(error) {
-      this.consoleLoggerService.log('ERROR:CREATE_V2_OCTOPIPE_DEPLOYMENT', { error })
+      this.consoleLoggerService.log('ERROR:CREATE_V2_ARGOCD_DEPLOYMENT', { error })
       return { status: 'ERROR', error: error }
     }
   }
@@ -59,14 +64,14 @@ export class ArgocdConnector implements CdConnector {
 
     try {
       this.consoleLoggerService.log('START:CREATE_V2_OCTOPIPE_UNDEPLOYMENT', { deployment: deployment.id, activeComponents: activeComponents.map(c => c.id) })
-      const octopipeUndeployment =
-        new OctopipeRequestBuilder().buildUndeploymentRequest(deployment, activeComponents, configuration)
-      this.consoleLoggerService.log('GET:OCTOPIPE_UNDEPLOYMENT_OBJECT', { octopipeUndeployment })
-      await this.octopipeApi.undeploy(octopipeUndeployment, configuration.incomingCircleId).toPromise()
-      this.consoleLoggerService.log('FINISH:CREATE_V2_OCTOPIPE_UNDEPLOYMENT')
+      const argocdUndeployment =
+        new ArgoCdRequestBuilder().buildUndeploymentRequest(deployment, activeComponents)
+      this.consoleLoggerService.log('GET:OCTOPIPE_UNDEPLOYMENT_OBJECT', { argocdUndeployment })
+      // await this.octopipeApi.undeploy(argocdUndeployment, configuration.incomingCircleId).toPromise()
+      this.consoleLoggerService.log('FINISH:CREATE_V2_ARGOCD_UNDEPLOYMENT')
       return { status: 'SUCCEEDED' }
     } catch(error) {
-      this.consoleLoggerService.log('ERROR:CREATE_V2_OCTOPIPE_UNDEPLOYMENT', { error })
+      this.consoleLoggerService.log('ERROR:CREATE_V2_ARGOCD_UNDEPLOYMENT', { error })
       return { status: 'ERROR', error: error }
     }
   }

@@ -64,6 +64,12 @@ export const Configuration: IEnvConfiguration = {
     retentionDays: 7
   },
 
-  butlerUrl: process.env.BUTLER_URL || ConfigurationConstants.BUTLER_URL
+  butlerUrl: process.env.BUTLER_URL || ConfigurationConstants.BUTLER_URL,
+
+  argocdUrl: process.env.ARGOCD_URL || ConfigurationConstants.ARGOCD_URL,
+
+  argocdUsername: process.env.ARGOCD_USERNAME || ConfigurationConstants.ARGOCD_USERNAME,
+
+  argocdPassword: process.env.ARGOCD_PASSWORD || ConfigurationConstants.ARGOCD_PASSWORD,
 
 }

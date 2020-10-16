@@ -60,6 +60,12 @@ export const ConfigurationConstants = {
 
   OCTOPIPE_URL: 'http://localhost:8883/octopipe',
 
+  ARGOCD_URL: 'https://localhost:3001',
+
+  ARGOCD_PASSWORD: 'example',
+
+  ARGOCD_USERNAME: 'example',
+
   DEPLOYMENT_EXPIRE_TIME: 25,
 
   BUTLER_URL: 'http://localhost:8883/butler'

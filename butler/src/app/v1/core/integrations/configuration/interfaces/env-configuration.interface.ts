@@ -42,6 +42,12 @@ export default interface IEnvConfiguration {
 
   octopipeUrl: string
 
+  argocdUrl: string
+
+  argocdUsername: string
+
+  argocdPassword: string
+
   spinnakerGithubAccount: string
 
   helmTemplateUrl: string
