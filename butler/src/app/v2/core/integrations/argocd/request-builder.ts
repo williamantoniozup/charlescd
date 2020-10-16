@@ -14,32 +14,19 @@
  * limitations under the License.
  */
 
-import { OctopipeDeployment, OctopipeDeploymentRequest } from './interfaces/octopipe-deployment.interface'
-import { OctopipeUndeployment, OctopipeUndeploymentRequest } from './interfaces/octopipe-undeployment.interface'
-import { CdConfiguration, Component, Deployment } from '../../../api/deployments/interfaces'
-import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
-import { OctopipeConfigurationData } from '../../../../v1/api/configurations/interfaces'
-import { UrlUtils } from '../../utils/url.utils'
-import { HelmConfig, HelmRepositoryConfig } from './interfaces/helm-config.interface'
-import { CommonTemplateUtils } from '../spinnaker/utils/common-template.utils'
+import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { DeploymentUtils } from '../utils/deployment.utils'
-import {
-  ClusterProviderEnum,
-  IEKSClusterConfig,
-  IGenericClusterConfig
-} from '../../../../v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
-import { K8sManifest } from '../interfaces/k8s-manifest.interface'
-import { IstioDeploymentManifestsUtils } from '../utils/istio-deployment-manifests.utils'
-import { IstioUndeploymentManifestsUtils } from '../utils/istio-undeployment-manifests.utils'
-import { AppConstants } from 'src/app/v1/core/constants'
+import { AppConstants } from '../../../../v1/core/constants'
 import { stringify } from 'yaml'
+import { ArgocdAppEntries, ArgocdApplication, ArgocdCharlesValues } from './interfaces/argocd-application.interface'
+import { ArgocdDeploymentRequest } from './interfaces/argocd-deployment.interface'
 
 export class ArgoCdRequestBuilder {
 
   public buildDeploymentRequest(
     deployment: Deployment,
     activeComponents: Component[],
-  ): unknown {
+  ): ArgocdDeploymentRequest {
 
     return {
       newDeploys: this.getDeploymentsArray(deployment, activeComponents),
@@ -60,23 +47,25 @@ export class ArgoCdRequestBuilder {
 
   }
 
-  private getDeploymentsArray(deployment: Deployment, activeComponents: Component[]): unknown[] {
+  private getDeploymentsArray(deployment: Deployment, activeComponents: Component[]): ArgocdApplication[]{
     if (!deployment?.components) {
       return []
     }
-    return deployment.components.map(component => {
+    const applications: ArgocdApplication[] = []
+    deployment.components.forEach((component: Component): ArgocdApplication | undefined=>  {
       if (DeploymentUtils.getActiveSameCircleTagComponent(activeComponents, component, deployment.circleId)) {
-        return
+        return 
       }
-      const values = `
-        image:
-          tag: ${component.imageUrl}
-        tag: ${component.imageTag}
-        component: ${component.name}
-        deploymentName: ${component.name}-${component.imageTag}-${deployment.circleId}
-        circleId: ${deployment.circleId}
-        `
-      return {
+      const values: ArgocdCharlesValues = {
+        image: {
+          tag: component.imageUrl
+        },
+        tag: component.imageTag,
+        component: component.name,
+        deploymentName: `${component.name}-${component.imageTag}-${deployment.circleId}`,
+        circleId: deployment.circleId
+      }
+      const argocdApplication: ArgocdApplication = {
         'apiVersion': 'argoproj.io/v2alpha1',
         'kind': 'Application',
         'metadata': {
@@ -96,7 +85,7 @@ export class ArgoCdRequestBuilder {
               'valueFiles': [
                 `${component.name}.yaml`
               ],
-              'values': values
+              'values': stringify(values)
             }
           },
           'project': 'default',
@@ -108,13 +97,16 @@ export class ArgoCdRequestBuilder {
           }
         }
       }
+      applications.push(argocdApplication)
     })
+    return applications
   }
 
-  private getProxyArgocdJson(deployment: Deployment, activeComponents: Component[]): void {
+  private getProxyArgocdJson(deployment: Deployment, activeComponents: Component[]): ArgocdApplication[] {
     // TODO: add prefix option
-    return deployment.components?.forEach(component => {
-      const appEntries = this.getAppEntries(deployment, activeComponents)
+    const proxys: ArgocdApplication[] = []
+    deployment.components?.forEach(component => {
+      const appEntries = this.getAppEntries(component, activeComponents, deployment.circleId)
       const proxyValues = {
         componentName: component.name,
         hostname:component.hostValue ? [component.hostValue, component.name] : [component.name],
@@ -122,7 +114,7 @@ export class ArgoCdRequestBuilder {
         appEntries: appEntries.circleProxy,
         defaultVersion: appEntries.defaultProxy
       }
-      return {
+      const argocdProxyApplication: ArgocdApplication = {
         'apiVersion': 'argoproj.io/v2alpha1',
         'kind': 'Application',
         'metadata': {
@@ -154,63 +146,69 @@ export class ArgoCdRequestBuilder {
           }
         }
       }
+      proxys.push(argocdProxyApplication)
     })
+    return proxys
   }
 
-  private getAppEntries(deployment: Deployment, activeComponents: Component[]): unknown {
-    return deployment.components?.map(component => {
-      const activeByName: Component[] = DeploymentUtils.getActiveComponentsByName(activeComponents, component.name)
-      const appEntries = {
-        circleProxy: [],
-        defaultProxy: {},
+  private getAppEntries(component: Component, activeComponents: Component[], circleId?: string | null): ArgocdAppEntries {
+    const appEntries: ArgocdAppEntries = {
+      circleProxy: [],
+      defaultProxy: undefined,
+    }
+    // deployment.components?.map(component => {
+    const activeByName: Component[] = DeploymentUtils.getActiveComponentsByName(activeComponents, component.name)
+    if (!circleId) {
+      activeByName.map(component => appEntries.circleProxy.push({
+        componentName: component.name,
+        imageTag: component.imageTag,
+        circleId: component.deployment?.circleId,
+      }))
+      appEntries.defaultProxy = {
+        componentName: component.name,
+        imageTag: component.imageTag,
+        circleId: AppConstants.DEFAULT_CIRCLE_ID,
       }
-      if (!deployment.circleId) {
-        activeByName.map(component => appEntries.circleProxy.push({
-          componentName: component.name,
-          imageTag: component.imageTag,
-          circleId: component.deployment?.circleId,
-        }))
-        appEntries.defaultProxy = {
-          componentName: component.name,
-          imageTag: component.imageTag,
-          circleId: AppConstants.DEFAULT_CIRCLE_ID,
-        }
-      } else {
-        appEntries.circleProxy.push({
-          componentName: component.name,
-          imageTag: component.imageTag,
-          circleId: deployment.circleId,
-        })
-        activeByName.map(component => {
-          const activeCircleId = component.deployment?.circleId
-          if (activeCircleId && activeCircleId !== deployment.circleId) {
-            appEntries.circleProxy.push({
-              componentName: component.name,
-              imageTag: component.imageTag,
-              circleId: component.deployment?.circleId,
-            })
-          }
-        })
-        const defaultComponent: Component | undefined = activeByName.find(component => component.deployment && !component.deployment.circleId)
-        if (defaultComponent) {
-          appEntries.defaultProxy ={
+    } else {
+      appEntries.circleProxy.push({
+        componentName: component.name,
+        imageTag: component.imageTag,
+        circleId: circleId,
+      })
+      activeByName.map(component => {
+        const activeCircleId = component.deployment?.circleId
+        if (activeCircleId && activeCircleId !== circleId) {
+          appEntries.circleProxy.push({
             componentName: component.name,
             imageTag: component.imageTag,
-            circleId: AppConstants.DEFAULT_CIRCLE_ID,
-          }
+            circleId: component.deployment?.circleId,
+          })
+        }
+      })
+      const defaultComponent: Component | undefined = activeByName.find(component => component.deployment && !component.deployment.circleId)
+      if (defaultComponent) {
+        appEntries.defaultProxy ={
+          componentName: defaultComponent.name,
+          imageTag: defaultComponent.imageTag,
+          circleId: AppConstants.DEFAULT_CIRCLE_ID,
         }
       }
-      return appEntries
-    })
+    }
+    // })
+    return appEntries
   }
 
-  private getUndeployAppEntries(deployment: Deployment, activeComponents: Component[]): unknown {
-    return deployment.components?.map(component => {
+  private getUndeployAppEntries(deployment: Deployment, activeComponents: Component[]): ArgocdAppEntries {
+    const appEntries: ArgocdAppEntries = {
+      circleProxy: [],
+      defaultProxy: undefined,
+    }
+    if (!deployment.components?.length) {
+      return appEntries
+    }
+    deployment.components?.map(component => {
       const activeByName: Component[] = DeploymentUtils.getActiveComponentsByName(activeComponents, component.name)
-      const appEntries = {
-        circleProxy: [],
-        defaultProxy: {},
-      }
+
       activeByName.map(component => {
         const activeCircleId = component.deployment?.circleId
         if (activeCircleId && activeCircleId !== deployment.circleId) {
@@ -230,15 +228,15 @@ export class ArgoCdRequestBuilder {
         }
       }
       
-      return appEntries
     })
+    return appEntries
   }
 
   private getUndeploymentsArray(deployment: Deployment): string[] {
     if (!deployment?.components) {
       return []
     }
-    return deployment.components.map(component => `${component.name}-${component.imageTag}-${component.deployment.circleId}`)
+    return deployment.components.map(component => `${component.name}-${component.imageTag}-${component.deployment?.circleId}`)
   }
 
   private getProxyUndeploymentsArray(deployment: Deployment, activeComponents: Component[]): unknown {
@@ -296,30 +294,10 @@ export class ArgoCdRequestBuilder {
     deployment.components.forEach(component => {
       const unusedComponent: Component | undefined = DeploymentUtils.getUnusedComponent(activeComponents, component, deployment.circleId)
       if (unusedComponent) {
-        unusedDeployments.push(`${component.name}-${component.imageTag}-${deployment.circleId}`)
+        unusedDeployments.push(`${unusedComponent.name}-${unusedComponent.imageTag}-${unusedComponent.deployment?.circleId}`)
       }
     })
     return unusedDeployments
-  }
-
-  private getHelmRepositoryConfig(component: Component, cdConfiguration: CdConfiguration): HelmRepositoryConfig {
-    return {
-      type: (cdConfiguration.configurationData as OctopipeConfigurationData).gitProvider,
-      url: component.helmUrl,
-      token: (cdConfiguration.configurationData as OctopipeConfigurationData).gitToken
-    }
-  }
-
-  private getHelmConfig(component: Component, circleId: string | null): HelmConfig {
-    return {
-      overrideValues: {
-        'image.tag': component.imageUrl,
-        deploymentName: CommonTemplateUtils.getDeploymentName(component, circleId),
-        component: component.name,
-        tag: component.imageTag,
-        circleId: CommonTemplateUtils.getCircleId(circleId)
-      }
-    }
   }
 
 }
