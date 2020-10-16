@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 
-import { ICdConfigurationData } from './cd-configuration-data.interface'
-import { ISpinnakerConfigurationData } from './spinnaker-configuration-data.interface'
-import { OctopipeConfigurationData } from './octopipe-configuration-data.type'
-import { ArgocdConfigurationData } from './argocd-configuration-data.type'
-
-export {
-  ICdConfigurationData,
-  ISpinnakerConfigurationData,
-  OctopipeConfigurationData,
-  ArgocdConfigurationData
+export interface IDefaultArgocdConfig {
+    namespace: string
 }
+
+export type ArgocdConfigurationData = IDefaultArgocdConfig

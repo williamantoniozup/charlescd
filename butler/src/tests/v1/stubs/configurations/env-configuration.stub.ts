@@ -63,5 +63,11 @@ export const EnvConfigurationStub: IEnvConfiguration = {
     user: 'postgresuser'
   },
 
-  butlerUrl: 'http://butler-url:3000'
+  butlerUrl: 'http://butler-url:3000',
+
+  argocdUrl: 'http://localhost:3000',
+
+  argocdUsername: 'example',
+
+  argocdPassword: 'example'
 }

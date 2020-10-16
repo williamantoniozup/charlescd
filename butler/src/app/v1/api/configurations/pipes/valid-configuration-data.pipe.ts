@@ -37,6 +37,12 @@ export class ValidConfigurationDataPipe implements PipeTransform {
       if (errors.length) {
         throw new BadRequestException(errors)
       }
+    }
+    if (createCdConfigurationDto.type === CdTypeEnum.ARGOCD) {
+      const errors: ValidationError[] = await validate('argocdConfigurationDataSchema', createCdConfigurationDto.configurationData)
+      if (errors.length) {
+        throw new BadRequestException(errors)
+      }
     } else if (createCdConfigurationDto.type === CdTypeEnum.OCTOPIPE) {
 
       const errors: ValidationError[] = await this.validateForProvider(createCdConfigurationDto)

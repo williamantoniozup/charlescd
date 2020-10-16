@@ -39,6 +39,8 @@ import { PaginatedExecutionsUseCase } from './use-cases/paginated-executions.use
 import { CdStrategyFactory } from '../../core/integrations/cd-strategy-factory'
 import { OctopipeConnector } from '../../core/integrations/octopipe/connector'
 import { OctopipeApi } from '../../core/integrations/octopipe/octopipe-api'
+import { ArgocdConnector } from '../../core/integrations/argocd/connector'
+import { ArgocdApi } from '../../core/integrations/argocd/argocd-api'
 
 @Module({
   imports: [
@@ -71,7 +73,9 @@ import { OctopipeApi } from '../../core/integrations/octopipe/octopipe-api'
     SpinnakerApiService,
     CdStrategyFactory,
     OctopipeConnector,
-    OctopipeApi
+    ArgocdConnector,
+    OctopipeApi,
+    ArgocdApi
   ],
   exports: [
   ]

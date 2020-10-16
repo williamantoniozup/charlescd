@@ -48,7 +48,7 @@ export class ConfigurationsController extends BaseController{
         @Body() createCdConfigurationDto: CreateCdConfigurationDto,
         @Headers('x-workspace-id') workspaceId: string
   ): Promise<ReadCdConfigurationDto> {
-
+    console.log('chega aqui')
     return await this.createCdConfigurationUseCase.execute(createCdConfigurationDto, workspaceId)
   }
 

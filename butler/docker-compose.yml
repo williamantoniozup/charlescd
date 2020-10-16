@@ -44,3 +44,6 @@ services:
         HELM_TEMPLATE_URL: http://stubby4j:8883/helm
         HELM_PREFIX_URL: http://stubby4j:8883/helm
         OCTOPIPE_URL: http://stubby4j:8883/octopipe
+        ARGOCD_URL: 'https://localhost:3000'
+        ARGOCD_PASSWORD: 'example'
+        ARGOCD_USERNAME: 'example'

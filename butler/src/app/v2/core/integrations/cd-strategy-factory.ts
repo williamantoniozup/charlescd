@@ -20,6 +20,7 @@ import { ConsoleLoggerService } from '../../../v1/core/logs/console'
 import { SpinnakerConnector } from './spinnaker/connector'
 import { CdConnector } from './interfaces/cd-connector.interface'
 import { OctopipeConnector } from './octopipe/connector'
+import { ArgocdConnector } from './argocd/connector'
 
 @Injectable()
 export class CdStrategyFactory {
@@ -27,6 +28,7 @@ export class CdStrategyFactory {
   constructor(
     private readonly spinnakerConnector: SpinnakerConnector,
     private readonly octopipeConnector: OctopipeConnector,
+    private readonly argocdConnector: ArgocdConnector,
     private readonly consoleLoggerService: ConsoleLoggerService
   ) {}
 
@@ -36,6 +38,8 @@ export class CdStrategyFactory {
         return this.spinnakerConnector
       case CdTypeEnum.OCTOPIPE:
         return this.octopipeConnector
+      case CdTypeEnum.ARGOCD:
+        return this.argocdConnector
       default:
         this.consoleLoggerService.error('ERROR:INVALID_CD_TYPE_VALUE', type)
         throw new Error('invalid cd type value')
