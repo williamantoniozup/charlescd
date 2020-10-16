@@ -18,15 +18,19 @@ import { OptionTypeBase } from 'react-select';
 import map from 'lodash/map';
 import { conditionOptions, operatorsOptions } from './constants';
 import { Option } from 'core/components/Form/Select/interfaces';
+import { getWorkspaceId } from 'core/utils/workspace';
 import find from 'lodash/find';
 import isUndefined from 'lodash/isUndefined';
 import filter from 'lodash/filter';
+import { ActionForm } from './AddAction';
 import {
+  MetricsGroup,
   MetricFilter,
   Metric,
   ChartDataByQuery,
   Data,
-  ChartData
+  ChartData,
+  ActionType
 } from './types';
 
 export const normalizeMetricOptions = (metrics: string[]) =>
@@ -125,4 +129,44 @@ export const filterMetricsSeries = (
   });
 
   return filteredData as ChartData[];
+};
+//create tests
+export const createCirclePromotionPayload = (
+  data: ActionForm,
+  circleId: string
+) => {
+  return {
+    destinationCircleId: data.circleId,
+    originCircleId: circleId,
+    workspaceId: getWorkspaceId()
+  };
+};
+
+export const createActionPayload = (
+  data: ActionForm,
+  metricsGroup: MetricsGroup,
+  circleId: string,
+  selectedAction: string
+) => {
+  const { actionId, nickname } = data;
+
+  const payloadByAction = {
+    circledeployment: () => createCirclePromotionPayload(data, circleId)
+  } as Record<string, Function>;
+
+  return {
+    metricsGroupId: metricsGroup.id,
+    actionId,
+    nickname,
+    executionParameters: payloadByAction[selectedAction]()
+  };
+};
+
+export const normalizeActionsOptions = (actionsType: ActionType[]) => {
+  return map(actionsType, actionType => ({
+    ...actionType,
+    value: actionType.id,
+    label: actionType.nickname,
+    description: actionType.description
+  }));
 };
