@@ -15,18 +15,20 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, wait } from 'unit-test/testUtils';
-import { MetricConfiguration } from './fixtures';
+import { render, screen, wait } from 'unit-test/testUtils';
+import { Datasources } from './fixtures';
 import MetricProvider from '../index';
 
 test('render Metrics Provider default component', async () => {
   const setForm = jest.fn();
   render(
-    <MetricProvider form={null} setForm={setForm} data={MetricConfiguration}/>
+    <MetricProvider form={null} setForm={setForm} data={Datasources} />
   );
 
   await wait();
 
   expect(screen.getByTestId('contentIcon-metrics')).toBeInTheDocument();
-  expect(screen.getByText('PROMETHEUS')).toBeInTheDocument();
+  expect(screen.getByText('Prometheus')).toBeInTheDocument();
 });
+
+
