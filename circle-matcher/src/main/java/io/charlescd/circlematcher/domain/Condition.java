@@ -60,7 +60,8 @@ public enum Condition {
     },
 
     GREATER_THAN("toNumber(%s) > toNumber(%s)") {
-        public String expression(String key, List<String> values) {
+        public String expression(String key, List<String> values)
+        {
             return defaultExpression(key, values);
         }
     },
@@ -126,6 +127,7 @@ public enum Condition {
                 return value;
             }
         }
+        System.out.println(condition);
         return NOT_FOUND;
     }
 
