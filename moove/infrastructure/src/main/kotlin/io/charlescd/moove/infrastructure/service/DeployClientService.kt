@@ -71,10 +71,8 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
 
     override fun undeploy(deploymentId: String, authorId: String) {
         deployClient.undeploy(
-            UndeployRequest(
-                authorId,
-                deploymentId
-            )
+            deploymentId,
+            UndeployRequest(authorId)
         )
     }
 
@@ -133,7 +131,8 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
             buildImageUrl = component.artifact!!.artifact,
             buildImageTag = component.artifact!!.version,
             hostValue = component.hostValue,
-            gatewayName = component.gatewayName
+            gatewayName = component.gatewayName,
+            namespace = component.namespace
         )
     }
 
