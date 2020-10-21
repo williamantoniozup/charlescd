@@ -15,7 +15,7 @@
  */
 
 import { Injectable } from '@nestjs/common'
-import { of, throwError, Observable } from 'rxjs'
+import { Observable, of, throwError } from 'rxjs'
 import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators'
 import { ISpinnakerConfigurationData } from '../../../../api/configurations/interfaces'
 import { AppConstants } from '../../../constants'
@@ -66,7 +66,7 @@ export class SpinnakerService implements ICdServiceStrategy {
     const cdConfiguration = configuration.cdConfiguration as ISpinnakerConfigurationData
     return {
       account: cdConfiguration.account,
-      appNamespace: cdConfiguration.namespace,
+      appNamespace: 'sandbox',
       pipelineName: configuration.componentId,
       applicationName: `${AppConstants.SPINNAKER_APPLICATION_PREFIX}${configuration.applicationName}`,
       appName: configuration.componentName,
