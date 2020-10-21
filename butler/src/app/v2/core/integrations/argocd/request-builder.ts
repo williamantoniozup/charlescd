@@ -70,38 +70,38 @@ export class ArgoCdRequestBuilder {
         circleId: deployment.circleId
       }
       const argocdApplication: ArgocdApplication = {
-        'apiVersion': 'argoproj.io/v2alpha1',
-        'kind': 'Application',
-        'metadata': {
-          'name': createSubstring(`${deployment.circleId}-${component.name}-${component.imageTag}`),
-          'labels': {
-            'circleId': deployment.circleId,
-            'imageTag': component.imageTag,
-            'componentName': component.name,
+        apiVersion: 'argoproj.io/v2alpha1',
+        kind: 'Application',
+        metadata: {
+          name: createSubstring(`${deployment.circleId}-${component.name}-${component.imageTag}`),
+          labels: {
+            circleId: deployment.circleId,
+            imageTag: component.imageTag,
+            componentName: component.name,
           }
         },
-        'spec': {
-          'destination': {
-            'name': '',
-            'namespace': deployment.cdConfiguration.configurationData.namespace,
-            'server': 'https://kubernetes.default.svc'
+        spec: {
+          destination: {
+            name: '',
+            namespace: deployment.cdConfiguration.configurationData.namespace,
+            server: 'https://kubernetes.default.svc' // mudar
           },
-          'source': {
-            'path': component.name,
-            'repoURL': component.helmUrl,
-            'targetRevision': 'master',
-            'helm': {
-              'valueFiles': [
+          source: {
+            path: component.name,
+            repoURL: component.helmUrl,
+            targetRevision: 'master', // mudar?
+            helm: {
+              valueFiles: [
                 `${component.name}.yaml`
               ],
-              'values': stringify(values)
+              values: stringify(values)
             }
           },
-          'project': 'default',
-          'syncPolicy': {
-            'automated': {
-              'prune': true,
-              'selfHeal': false
+          project: 'default', // mudar
+          syncPolicy: {
+            automated: {
+              prune: true,
+              selfHeal: false
             }
           }
         }
@@ -124,33 +124,33 @@ export class ArgoCdRequestBuilder {
         defaultVersion: appEntries.defaultProxy
       }
       const argocdProxyApplication: ArgocdApplication = {
-        'apiVersion': 'argoproj.io/v2alpha1',
-        'kind': 'Application',
-        'metadata': {
-          'name': component.name
+        apiVersion: 'argoproj.io/v2alpha1',
+        kind: 'Application',
+        metadata: {
+          name: component.name
         },
-        'spec': {
-          'destination': {
-            'name': '',
-            'namespace': deployment.cdConfiguration.configurationData.namespace,
-            'server': 'https://kubernetes.default.svc'
+        spec: {
+          destination: {
+            name: '',
+            namespace: deployment.cdConfiguration.configurationData.namespace,
+            server: 'https://kubernetes.default.svc'
           },
-          'source': {
-            'path': component.name,
-            'repoURL': component.helmUrl,
-            'targetRevision': 'master',
-            'helm': {
-              'valueFiles': [
+          source: {
+            path: component.name,
+            repoURL: component.helmUrl,
+            targetRevision: 'master',
+            helm: {
+              valueFiles: [
                 'values.yaml'
               ],
-              'values': stringify(proxyValues),
+              values: stringify(proxyValues),
             }
           },
-          'project': 'default',
-          'syncPolicy': {
-            'automated': {
-              'prune': true,
-              'selfHeal': false
+          project: 'default',
+          syncPolicy: {
+            automated: {
+              prune: true,
+              selfHeal: false
             }
           }
         }
@@ -260,33 +260,33 @@ export class ArgoCdRequestBuilder {
         defaultVersion: appEntries.defaultProxy
       }
       return {
-        'apiVersion': 'argoproj.io/v2alpha1',
-        'kind': 'Application',
-        'metadata': {
-          'name': component.name
+        apiVersion: 'argoproj.io/v2alpha1',
+        kind: 'Application',
+        metadata: {
+          name: component.name
         },
-        'spec': {
-          'destination': {
-            'name': '',
-            'namespace': deployment.cdConfiguration.configurationData.namespace,
-            'server': 'https://kubernetes.default.svc'
+        spec: {
+          destination: {
+            name: '',
+            namespace: deployment.cdConfiguration.configurationData.namespace,
+            server: 'https://kubernetes.default.svc'
           },
-          'source': {
-            'path': component.name,
-            'repoURL': component.helmUrl,
-            'targetRevision': 'master',
-            'helm': {
-              'valueFiles': [
+          source: {
+            path: component.name,
+            repoURL: component.helmUrl,
+            targetRevision: 'master',
+            helm: {
+              valueFiles: [
                 'values.yaml'
               ],
-              'values': stringify(proxyValues),
+              values: stringify(proxyValues),
             }
           },
-          'project': 'default',
-          'syncPolicy': {
-            'automated': {
-              'prune': true,
-              'selfHeal': false
+          project: 'default',
+          syncPolicy: {
+            automated: {
+              prune: true,
+              selfHeal: false
             }
           }
         }

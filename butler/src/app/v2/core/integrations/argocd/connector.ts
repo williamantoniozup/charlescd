@@ -48,18 +48,19 @@ export class ArgocdConnector implements CdConnector {
         return this.argocdApi.createApplication(application)
       })
       const argocdPromises = argocdRequests.map(async(response) => response.toPromise())
-      Promise.all(argocdPromises) //lidar com sucesso de forma mais elegante
+      let result = await Promise.all(argocdPromises) //lidar com sucesso de forma mais elegante
         .then(success => {
-          this.consoleLoggerService.log('POST:ARGOCD_CREATE_APPLICATION_SUCCESS', { success })
-          this.startHealthJob(argocdDeployment)
-          return { status: 'SUCCEEDED' }
+          this.consoleLoggerService.log('POST:ARGOCD_CREATE_APPLICATION_SUCCESS')
+          //this.startHealthJob(argocdDeployment)
+          return { status: 'SUCCEEDED' } as ConnectorResult
         })
         .catch(error => {
           this.consoleLoggerService.log('POST:ARGOCD_CREATE_APPLICATION_ERROR', { error })
-          return { status: 'ERROR', error: error }
+          return { status: 'ERROR', error: error } as ConnectorResultError
         })
-      
+
       // trigger job
+      return result
       
     } catch(error) {
       this.consoleLoggerService.log('ERROR:CREATE_V2_ARGOCD_DEPLOYMENT', { error })
@@ -87,14 +88,14 @@ export class ArgocdConnector implements CdConnector {
     }
   }
 
-  private async startHealthJob(argocdDeployment: ArgocdDeploymentRequest): void {
-    const applicationsStatus = argocdDeployment.newDeploys.reduce((acc, argocdApplication) => {
-      acc[argocdApplication.metadata.name] = false
-      return acc
-    }, {} as Record<string, boolean>)
-    const applicationNames = Object.keys(applicationsStatus)
-    while (applicationNames.filter(name => !applicationsStatus[name]).length) {
-      const chamadas = applicationNames.map(name => this.argocdApi.checkStatusApplication(name).toPromise())
-    }
-  }
+  // private async startHealthJob(argocdDeployment: ArgocdDeploymentRequest): void {
+  //   const applicationsStatus = argocdDeployment.newDeploys.reduce((acc, argocdApplication) => {
+  //     acc[argocdApplication.metadata.name] = false
+  //     return acc
+  //   }, {} as Record<string, boolean>)
+  //   const applicationNames = Object.keys(applicationsStatus)
+  //   while (applicationNames.filter(name => !applicationsStatus[name]).length) {
+  //     const chamadas = applicationNames.map(name => this.argocdApi.checkStatusApplication(name).toPromise())
+  //   }
+  // }
 }

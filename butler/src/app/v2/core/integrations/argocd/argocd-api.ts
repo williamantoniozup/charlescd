@@ -34,6 +34,7 @@ export class ArgocdApi {
 
 
   public createSession(): Observable<AxiosResponse> {
+    // Remover em prod
     const agent = new Agent({  
       rejectUnauthorized: false
     })
