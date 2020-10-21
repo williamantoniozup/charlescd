@@ -14,15 +14,8 @@
  * limitations under the License.
  */
 
-import { Registry } from 'modules/Settings/Credentials/Sections/Registry/interfaces';
-import { postRequest } from './base';
+package io.charlescd.moove.legacy.moove.api.request
 
-const v1Endpoint = '/moove/config/registry';
-const endpoint = '/moove/v2/config/registry';
-export const configPath = '/registryConfigurationId';
-
-export const create = (registry: Registry) =>
-  postRequest(`${v1Endpoint}`, registry);
-
-export const validation = (registry: Registry) =>
-  postRequest(`${endpoint}/validation`, registry);
+data class TestVillagerRegistryConnectionRequest(
+    val configurationId: String
+)

@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-import { Registry } from 'modules/Settings/Credentials/Sections/Registry/interfaces';
-import { postRequest } from './base';
+package io.charlescd.moove.legacy.moove.api.config
 
-const v1Endpoint = '/moove/config/registry';
-const endpoint = '/moove/v2/config/registry';
-export const configPath = '/registryConfigurationId';
+import feign.codec.ErrorDecoder
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 
-export const create = (registry: Registry) =>
-  postRequest(`${v1Endpoint}`, registry);
+@Configuration
+class VillagerFeignConfig {
 
-export const validation = (registry: Registry) =>
-  postRequest(`${endpoint}/validation`, registry);
+    @Bean
+    fun feignErrorDecoder(): ErrorDecoder? {
+        return VillagerErrorDecoder()
+    }
+}

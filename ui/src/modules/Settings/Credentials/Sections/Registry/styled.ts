@@ -27,7 +27,7 @@ const Title = styled(TextComponent.h2)`
   }
 `;
 
-const Subtitle = styled(TextComponent.h5)`
+const Subtitle = styled(TextComponent.h4)`
   margin-bottom: 10px;
 `;
 
@@ -51,10 +51,29 @@ const Fields = styled.div`
   }
 `;
 
+type status = {
+  status: string;
+};
+
+const StatusMessageWrapper = styled.div<status>`
+  margin-bottom: -10px;
+  display: flex;
+
+  span {
+    margin-left: 10px;
+    color: ${({ theme, status }) => theme.metrics.provider[status]};
+  }
+
+  svg {
+    color: ${({ theme, status }) => theme.metrics.provider[status]};
+  }
+`;
+
 export default {
   Content,
   Title,
   Subtitle,
   Form,
-  Fields
+  Fields,
+  StatusMessageWrapper
 };
