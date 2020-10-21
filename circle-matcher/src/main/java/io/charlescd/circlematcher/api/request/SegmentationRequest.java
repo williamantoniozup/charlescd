@@ -48,6 +48,9 @@ public abstract class SegmentationRequest {
     private Boolean isDefault;
 
     @NotNull
+    private Boolean active;
+
+    @NotNull
     private LocalDateTime createdAt;
 
     public String getName() {
@@ -108,8 +111,14 @@ public abstract class SegmentationRequest {
 
     public Segmentation toSegmentation() {
         return new Segmentation(
-            this.name, this.node, this.reference, this.circleId, this.type, workspaceId, isDefault, this.createdAt
+            this.name, this.node, this.reference, this.circleId, this.type, workspaceId, isDefault, active,
+            this.createdAt
         );
+    }
+
+    public Boolean getActive() {
+        return active;
+
     }
 
     public LocalDateTime getCreatedAt() {
@@ -119,4 +128,9 @@ public abstract class SegmentationRequest {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
 }
