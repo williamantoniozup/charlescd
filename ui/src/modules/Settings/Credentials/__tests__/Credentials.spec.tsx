@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import MutationObserver from 'mutation-observer';
+import React, { ReactElement } from 'react';
 import { render, fireEvent, wait, screen, act } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock/types';
@@ -23,6 +22,25 @@ import * as StateHooks from 'core/state/hooks';
 import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import Credentials from '../';
 import * as clipboardUtils from 'core/utils/clipboard';
+import { Actions, Subjects } from "core/utils/abilities";
+
+interface fakeCanProps {
+  I?: Actions;
+  a?: Subjects;
+  passThrough?: boolean;
+  isDisabled?: boolean;
+  allowedRoutes?: boolean;
+  children: ReactElement;
+}
+
+jest.mock('containers/Can', () => {
+  return {
+    __esModule: true,
+    default:  ({children}: fakeCanProps) => {
+      return <div>{children}</div>;
+    }
+  };
+});
 
 test('render Credentials default component', () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'workspace' }));
@@ -61,6 +79,7 @@ test('render User Group credentials', async () => {
     },
     status: 'resolved'
   }));
+
   render(<Credentials />);
 
   const content = screen.getByTestId('contentIcon-users');
@@ -104,7 +123,6 @@ test('render CD Configuration Credentials', () => {
   render(<Credentials />);
 
   const addCDConfigButton = screen.getByText('Add CD Configuration');
-  console.log('[button text]', addCDConfigButton.textContent);
 
   userEvent.click(addCDConfigButton);
 
@@ -129,26 +147,27 @@ test('render Circle Matcher Credentials', () => {
   expect(backButton).toBeInTheDocument();
 });
 
-// TODO do test
-test.only('click to copy to clipboard', async () => {
+test('click to copy to clipboard', async () => {
+
   jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
     item: {
-      id: '123',
+      id: '123-workspace',
       status: WORKSPACE_STATUS.COMPLETE
     },
     status: 'resolved'
   }));
 
-  jest.spyOn(clipboardUtils, 'copyToClipboard');
+  const copyToClipboardSpy = jest.spyOn(clipboardUtils, 'copyToClipboard');
 
   render(<Credentials />);
 
-  
   const dropdownElement = screen.getByTestId('icon-vertical-dots');
   userEvent.click(dropdownElement);
   const copyIDElement = screen.getByText('Copy ID');
+  
   expect(copyIDElement).toBeInTheDocument();
-  userEvent.click(copyIDElement);
-  expect(clipboardUtils.copyToClipboard).toBeCalled();
-  // screen.debug();
+  
+  act(() => userEvent.click(copyIDElement));
+
+  expect(copyToClipboardSpy).toBeCalled();
 });

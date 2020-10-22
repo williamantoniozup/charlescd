@@ -38,7 +38,7 @@ jest.mock('react-cookies', () => {
 test('render Auth default login', async () => {
   render(<Auth />);
 
-  await wait(() => expect(screen.getByTestId('auth')).toBeInTheDocument());
+  expect(screen.getByTestId('auth')).toBeInTheDocument();
 });
 
 test('render Auth IDM login', async () => {
@@ -55,7 +55,7 @@ test('render Auth IDM login', async () => {
 
   render(<Auth />);
 
-  await wait(() => expect(screen.queryByTestId('auth')).not.toBeInTheDocument());
+  expect(screen.queryByTestId('auth')).not.toBeInTheDocument();
 
   Object.assign(window, originalWindow);
 });

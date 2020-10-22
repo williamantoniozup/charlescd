@@ -33,8 +33,10 @@ test('render Layer Metrics with  circles metrics', () => {
       },
       status: 'resolved'
     });
+
   render(<LayerMetrics id="123" />);
-  expect(screen.queryByTestId('apexcharts-mock')).toBeInTheDocument();
+
+  expect(screen.getByTestId('apexcharts-mock')).toBeInTheDocument();
 });
 
 test('render Layer Metrics with button to add metrics', async () => {
@@ -48,6 +50,8 @@ test('render Layer Metrics with button to add metrics', async () => {
       },
       status: 'idle'
     });
+  
   render(<LayerMetrics id="123" />);
+
   expect(screen.queryByTestId('button-iconRounded-add')).not.toBeInTheDocument();
 });

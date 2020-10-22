@@ -15,22 +15,21 @@
  */
 
 import React from 'react';
-import { render, wait, screen, fireEvent } from 'unit-test/testUtils';
-import { FetchMock } from 'jest-fetch-mock';
-import { MetricsGroupsResume } from './fixtures';
+import { render, screen } from 'unit-test/testUtils';
 import MetricsGroups from '../MetricsGroups';
+import userEvent from '@testing-library/user-event';
 
 test('render Metrics Groups Layer without data', async () => {
   const handleClick = jest.fn();
 
   render(<MetricsGroups circleId={'1'} onClickCreate={handleClick}/>);
 
-  const addMetricsGroups = screen.getByTestId('button-iconRounded-add');
+  const addMetricsGroups = await screen.findByTestId('button-iconRounded-add');
 
   expect(screen.getByTestId('layer-metrics-groups')).toBeInTheDocument();
   expect(screen.getByText('Metrics Groups')).toBeInTheDocument();
   expect(addMetricsGroups).toBeInTheDocument();
 
-  fireEvent.click(addMetricsGroups);
+  userEvent.click(addMetricsGroups);
   expect(handleClick).toHaveBeenCalled();
 });

@@ -21,9 +21,6 @@ import { Component as ComponentInterface } from "modules/Modules/interfaces/Comp
 import { AllTheProviders } from "unit-test/testUtils";
 import { Module, Author } from "modules/Modules/interfaces/Module";
 import { Actions, Subjects } from "core/utils/abilities";
-import MutationObserver from 'mutation-observer'
-
-
 
 interface fakeCanProps {
   I?: Actions;

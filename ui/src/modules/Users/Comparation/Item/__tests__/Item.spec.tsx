@@ -53,7 +53,6 @@ test('render Modal.Trigger on UsersComparationItem component', async () => {
   expect(modal).toBeInTheDocument();
 });
 
-// TODO not working
 test('click on Cancel button in Modal.Trigger component', async () => {
   render(
     <UsersComparationItem {...props} onChange={jest.fn} />
@@ -75,8 +74,8 @@ test('click on Cancel button in Modal.Trigger component', async () => {
   const cancelButton = screen.getByTestId('button-default-dismiss');
   await act(async () => userEvent.click(cancelButton));
 
-  const modalElement = await screen.findByTestId('modal-trigger');
-  waitFor(() => expect(modalElement).not.toBeInTheDocument());
+  const modalElement = screen.queryByTestId('modal-trigger');
+  expect(modalElement).not.toBeInTheDocument();
 });
 
 test('click on Delete button in Modal.Trigger component', async () => {

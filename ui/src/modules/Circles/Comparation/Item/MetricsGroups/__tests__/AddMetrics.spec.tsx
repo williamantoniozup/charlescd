@@ -45,7 +45,7 @@ test('render Add Metric default value', async () => {
   const nicknameLabelElement = await screen.findByTestId('label-text-nickname');
   expect(nicknameLabelElement).toBeInTheDocument();
 
-  await act(async () => userEvent.click(goBackButton));
+  userEvent.click(goBackButton);
   expect(handleGoBack).toBeCalledTimes(1);
 
   await act(async () => userEvent.click(submitButton));
