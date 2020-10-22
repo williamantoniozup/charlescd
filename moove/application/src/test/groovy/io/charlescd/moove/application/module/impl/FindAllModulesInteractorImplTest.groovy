@@ -17,9 +17,14 @@
 package io.charlescd.moove.application.module.impl
 
 import io.charlescd.moove.application.ModuleService
+import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.module.FindAllModulesInteractor
 import io.charlescd.moove.domain.*
+import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.repository.ModuleRepository
+import io.charlescd.moove.domain.repository.UserRepository
+import io.charlescd.moove.domain.repository.WorkspaceRepository
+import net.bytebuddy.implementation.bytecode.Throw
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -29,9 +34,14 @@ class FindAllModulesInteractorImplTest extends Specification {
     private FindAllModulesInteractor findAllModulesInteractor
 
     private ModuleRepository moduleRepository = Mock(ModuleRepository)
+    private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
+    private UserRepository userRepository = Mock(UserRepository)
+
 
     void setup() {
-        findAllModulesInteractor = new FindAllModulesInteractorImpl(new ModuleService(moduleRepository))
+        findAllModulesInteractor = new FindAllModulesInteractorImpl(
+                new ModuleService(moduleRepository),
+                new WorkspaceService(workspaceRepository, userRepository))
     }
 
     def "should find all modules by workspace id"() {
@@ -49,17 +59,23 @@ class FindAllModulesInteractorImplTest extends Specification {
                 LocalDateTime.now(), author, workspaceId)
 
         def component = new Component("0e6fbc62-41e5-461a-ba11-1765b5d17776", "d4a89574-1ff0-4bf1-93e9-275a0036e48c", "component", LocalDateTime.now(),
-                workspaceId, 10, 10, 'host',  'gateway')
+                workspaceId, 10, 10, 'host', 'gateway')
 
         def module = new Module("d4a89574-1ff0-4bf1-93e9-275a0036e48c", "Villager", "gitRepositoryAddress",
                 LocalDateTime.now(), "helm-repository", author,
                 [], gitConfiguration, [component], workspaceId)
+
+        def workspace = new Workspace(UUID.randomUUID().toString(), "workspaceName", author, LocalDateTime.now(), [],
+                WorkspaceStatusEnum.INCOMPLETE, null, null, "d4a89574-1ff0-4bf1-93e9-275a0036e48c",
+                null, null)
 
         when:
         def response = findAllModulesInteractor.execute(workspaceId, null, pageRequest)
 
         then:
         1 * moduleRepository.findByWorkspaceId(workspaceId, null, pageRequest) >> new Page<Module>([module], 0, 10, 1)
+
+        1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
 
         assert response != null
         assert response.isLast
@@ -78,17 +94,58 @@ class FindAllModulesInteractorImplTest extends Specification {
         assert response.content[0].components[0].latencyThreshold == component.latencyThreshold
     }
 
-    def "should return an empty page when no modules were found"() {
+    def "should raise wxception, because git config is missing"() {
         given:
         def workspaceId = "3579deba-bd15-4982-a82d-43f353f4fe7b"
         def pageRequest = new PageRequest(0, 10)
 
+        def author = new User("81861b6f-2b6e-44a1-a745-83e298a550c9", "John Doe", "email@gmail.com",
+                "https://www.photos.com/johndoe", [], false, LocalDateTime.now())
+
+        def gitCredentials = new GitCredentials("address", "username", "password",
+                null, GitServiceProvider.GITHUB)
+
+        def gitConfiguration = new GitConfiguration("8f140b14-886d-4063-a245-eed09a1ff762", "config", gitCredentials,
+                LocalDateTime.now(), author, workspaceId)
+
+        def component = new Component("0e6fbc62-41e5-461a-ba11-1765b5d17776", "d4a89574-1ff0-4bf1-93e9-275a0036e48c", "component", LocalDateTime.now(),
+                workspaceId, 10, 10, 'host', 'gateway')
+
+        def module = new Module("d4a89574-1ff0-4bf1-93e9-275a0036e48c", "Villager", "gitRepositoryAddress",
+                LocalDateTime.now(), "helm-repository", author,
+                [], gitConfiguration, [component], workspaceId)
+
+        def workspace = new Workspace(UUID.randomUUID().toString(), "workspaceName", author, LocalDateTime.now(), [],
+                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, null)
+
+        when:
+        def response = findAllModulesInteractor.execute(workspaceId, null, pageRequest)
+
+        then:
+
+        1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+
+        def exception = thrown(BusinessException)
+
+        assert exception.errorCode == MooveErrorCode.WORKSPACE_GIT_CONFIGURATION_IS_MISSING
+    }
+
+    def "should return an empty page when no modules were found"() {
+        given:
+        def workspaceId = "3579deba-bd15-4982-a82d-43f353f4fe7b"
+        def pageRequest = new PageRequest(0, 10)
+        def author = new User("81861b6f-2b6e-44a1-a745-83e298a550c9", "John Doe", "email@gmail.com",
+                "https://www.photos.com/johndoe", [], false, LocalDateTime.now())
+        def workspace = new Workspace(UUID.randomUUID().toString(), "workspaceName", author, LocalDateTime.now(), [],
+                WorkspaceStatusEnum.INCOMPLETE, null, null, "d4a89574-1ff0-4bf1-93e9-275a0036e48c",
+                null, null)
         when:
         def response = findAllModulesInteractor.execute(workspaceId, null, pageRequest)
 
         then:
         1 * moduleRepository.findByWorkspaceId(workspaceId, null, pageRequest) >> new Page<Module>([], 0, 10, 0)
 
+        1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         assert response != null
         assert response.content.size() == 0
         assert response.isLast
