@@ -14,11 +14,26 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.metrics.interactor
+import React from 'react';
+import { render, screen, fireEvent, wait } from 'unit-test/testUtils';
+import { FetchMock } from 'jest-fetch-mock';
+import { pluginsData } from './fixtures';
+import FormAddAction from '../Form';
 
-import io.charlescd.moove.metrics.api.response.CircleHealthRepresentation
+beforeEach(() => {
+  (fetch as FetchMock).resetMocks();
+});
 
-interface RetrieveCircleComponentsHealthInteractor {
+test.only('render Metric Action Section without data', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(pluginsData)
+  );
 
-    fun execute(circleId: String, workspaceId: String): CircleHealthRepresentation
-}
+  const handleOnFinish = jest.fn();
+
+  render(<FormAddAction onFinish={handleOnFinish}/>);
+
+  const actionForm = screen.getByTestId('add-action-form');
+
+  expect(actionForm).toBeInTheDocument();
+});
