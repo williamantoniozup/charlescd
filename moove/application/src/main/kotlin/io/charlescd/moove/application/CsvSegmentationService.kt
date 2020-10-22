@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.charlescd.moove.application.circle.request.NodePart
 import io.charlescd.moove.commons.extension.toJsonNode
+import io.charlescd.moove.domain.Circle
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
 import java.io.ByteArrayInputStream
@@ -29,8 +30,10 @@ import java.io.InputStreamReader
 import java.util.*
 import javax.inject.Named
 import org.apache.commons.io.IOUtils
+import springfox.documentation.spring.web.json.Json
 import uk.gov.nationalarchives.csv.validator.api.java.CsvValidator
 import uk.gov.nationalarchives.csv.validator.api.java.FailMessage
+import kotlin.collections.ArrayList
 
 @Named
 class CsvSegmentationService(private val objectMapper: ObjectMapper) {
@@ -112,5 +115,42 @@ class CsvSegmentationService(private val objectMapper: ObjectMapper) {
         var byteArrayOutputStream = ByteArrayOutputStream()
         IOUtils.copy(input, byteArrayOutputStream)
         return byteArrayOutputStream
+    }
+    fun createJsonNodeList(rules: JsonNode?): List<JsonNode> {
+        val jsonList = mutableListOf<JsonNode>()
+        this.recursiveNodeExtraction(rules, jsonList)
+        return jsonList
+    }
+
+    private fun recursiveNodeExtraction(node: JsonNode?, nodes: MutableList<JsonNode>) {
+
+        val nodePart = node?.let {
+            objectMapper.treeToValue(
+                it,
+                NodePart::class.java
+            )
+        }
+        nodePart?.let{node ->
+            node.type?.let{ type ->
+                if(type == NodePart.NodeTypeRequest.RULE){
+                    this.createJsonNodes(node.content?.key,node.content?.value)
+                        ?.forEach{
+                            nodes.add(it)
+                        }
+                }else{
+                       node.clauses?.forEach {
+                           recursiveNodeExtraction(it.toJsonNode(), nodes)
+                       }
+                }
+            }
+        }
+    }
+
+    private fun createJsonNodes(keyName: String?, value: List<String>?): List<JsonNode>? {
+        return keyName?.let{ key ->
+            value?.map { value ->
+                this.createJsonNode(key, value)
+            }
+        }
     }
 }

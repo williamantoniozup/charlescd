@@ -40,6 +40,7 @@ data class Circle(
     fun isDefaultCircle(): Boolean = this.defaultCircle
 
     fun canBeUpdated(): Boolean = !this.isDefaultCircle()
+
 }
 
 data class SimpleCircle(
