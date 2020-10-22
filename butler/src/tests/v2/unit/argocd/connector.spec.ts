@@ -23,7 +23,7 @@ import { ArgocdConnector } from '../../../../app/v2/core/integrations/argocd/con
 import { ConsoleLoggerService } from '../../../../app/v1/core/logs/console'
 import { ArgocdApi } from '../../../../app/v2/core/integrations/argocd/argocd-api'
 import IEnvConfiguration from '../../../../app/v1/core/integrations/configuration/interfaces/env-configuration.interface'
-import { ConnectorConfiguration } from '../../../../app/v2/core/integrations/interfaces/connector-configuration.interface'
+import { ArgoCdRequestBuilder } from '../../../../app/v2/core/integrations/argocd/request-builder'
 import { of } from 'rxjs'
 import { HttpService } from '@nestjs/common'
 import { AxiosResponse } from 'axios'
@@ -80,182 +80,219 @@ const deploymentWith3Components: Deployment = {
   ]
 }
 
-describe('V2 Octopipe Deployment Request Builder', async () => {
+describe('ArgoCD Deployment', async () => {
 
-  it('should create the correct complete request object with 3 new components and some unused components', async() => {
-
-    const activeComponents: Component[] = [
-      {
-        id: 'component-id-4',
-        helmUrl: 'http://localhost:2222/helm',
-        imageTag: 'v1',
-        imageUrl: 'https://repository.com/A:v1',
-        name: 'A',
-        running: true,
-        gatewayName: null,
-        hostValue: null,
-        deployment: {
-          id: 'deployment-id4',
-          authorId: 'user-1',
-          callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
-          circleId: 'circle-id',
+  const activeComponents: Component[] = [
+    {
+      id: 'component-id-4',
+      helmUrl: 'http://localhost:2222/helm',
+      imageTag: 'v1',
+      imageUrl: 'https://repository.com/A:v1',
+      name: 'A',
+      running: true,
+      gatewayName: null,
+      hostValue: null,
+      deployment: {
+        id: 'deployment-id4',
+        authorId: 'user-1',
+        callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
+        circleId: 'circle-id',
+        createdAt: new Date(),
+        cdConfiguration: {
+          id: 'cd-configuration-id',
+          type: CdTypeEnum.ARGOCD,
+          configurationData: {
+            gitProvider: GitProvidersEnum.GITHUB,
+            gitToken: 'git-token',
+            provider: ClusterProviderEnum.DEFAULT,
+            namespace: 'sandbox'
+          },
+          name: 'argocdconfiguration',
+          authorId: 'user-2',
+          workspaceId: 'workspace-id',
           createdAt: new Date(),
-          cdConfiguration: {
-            id: 'cd-configuration-id',
-            type: CdTypeEnum.ARGOCD,
-            configurationData: {
-              gitProvider: GitProvidersEnum.GITHUB,
-              gitToken: 'git-token',
-              provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
-            },
-            name: 'argocdconfiguration',
-            authorId: 'user-2',
-            workspaceId: 'workspace-id',
-            createdAt: new Date(),
-            deployments: null
-          }
-        }
-      },
-      {
-        id: 'component-id-5',
-        helmUrl: 'http://localhost:2222/helm',
-        imageTag: 'v1',
-        imageUrl: 'https://repository.com/B:v1',
-        name: 'B',
-        running: true,
-        gatewayName: null,
-        hostValue: null,
-        deployment: {
-          id: 'deployment-id5',
-          authorId: 'user-1',
-          callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
-          circleId: 'circle-id',
-          createdAt: new Date(),
-          cdConfiguration: {
-            id: 'cd-configuration-id',
-            type: CdTypeEnum.ARGOCD,
-            configurationData: {
-              gitProvider: GitProvidersEnum.GITHUB,
-              gitToken: 'git-token',
-              provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
-            },
-            name: 'argocdconfiguration',
-            authorId: 'user-2',
-            workspaceId: 'workspace-id',
-            createdAt: new Date(),
-            deployments: null
-          }
-        }
-      },
-      {
-        id: 'component-id-6',
-        helmUrl: 'http://localhost:2222/helm',
-        imageTag: 'v0',
-        imageUrl: 'https://repository.com/A:v0',
-        name: 'A',
-        running: true,
-        gatewayName: null,
-        hostValue: null,
-        deployment: {
-          id: 'deployment-id6',
-          authorId: 'user-1',
-          callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
-          circleId: null,
-          createdAt: new Date(),
-          cdConfiguration: {
-            id: 'cd-configuration-id',
-            type: CdTypeEnum.ARGOCD,
-            configurationData: {
-              gitProvider: GitProvidersEnum.GITHUB,
-              gitToken: 'git-token',
-              provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
-            },
-            name: 'argocdconfiguration',
-            authorId: 'user-2',
-            workspaceId: 'workspace-id',
-            createdAt: new Date(),
-            deployments: null
-          }
-        }
-      },
-      {
-        id: 'component-id-7',
-        helmUrl: 'http://localhost:2222/helm',
-        imageTag: 'v0',
-        imageUrl: 'https://repository.com/B:v0',
-        name: 'B',
-        running: true,
-        gatewayName: null,
-        hostValue: null,
-        deployment: {
-          id: 'deployment-id7',
-          authorId: 'user-1',
-          callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
-          circleId: null,
-          createdAt: new Date(),
-          cdConfiguration: {
-            id: 'cd-configuration-id',
-            type: CdTypeEnum.ARGOCD,
-            configurationData: {
-              gitProvider: GitProvidersEnum.GITHUB,
-              gitToken: 'git-token',
-              provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
-            },
-            name: 'argocdconfiguration',
-            authorId: 'user-2',
-            workspaceId: 'workspace-id',
-            createdAt: new Date(),
-            deployments: null
-          }
-        }
-      },
-      {
-        id: 'component-id-8',
-        helmUrl: 'http://localhost:2222/helm',
-        imageTag: 'v0',
-        imageUrl: 'https://repository.com/C:v0',
-        name: 'C',
-        running: true,
-        gatewayName: null,
-        hostValue: null,
-        deployment: {
-          id: 'deployment-id8',
-          authorId: 'user-1',
-          callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
-          circleId: null,
-          createdAt: new Date(),
-          cdConfiguration: {
-            id: 'cd-configuration-id',
-            type: CdTypeEnum.ARGOCD,
-            configurationData: {
-              gitProvider: GitProvidersEnum.GITHUB,
-              gitToken: 'git-token',
-              provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
-            },
-            name: 'argocdconfiguration',
-            authorId: 'user-2',
-            workspaceId: 'workspace-id',
-            createdAt: new Date(),
-            deployments: null
-          }
+          deployments: null
         }
       }
-    ]
+    },
+    {
+      id: 'component-id-5',
+      helmUrl: 'http://localhost:2222/helm',
+      imageTag: 'v1',
+      imageUrl: 'https://repository.com/B:v1',
+      name: 'B',
+      running: true,
+      gatewayName: null,
+      hostValue: null,
+      deployment: {
+        id: 'deployment-id5',
+        authorId: 'user-1',
+        callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
+        circleId: 'circle-id',
+        createdAt: new Date(),
+        cdConfiguration: {
+          id: 'cd-configuration-id',
+          type: CdTypeEnum.ARGOCD,
+          configurationData: {
+            gitProvider: GitProvidersEnum.GITHUB,
+            gitToken: 'git-token',
+            provider: ClusterProviderEnum.DEFAULT,
+            namespace: 'sandbox'
+          },
+          name: 'argocdconfiguration',
+          authorId: 'user-2',
+          workspaceId: 'workspace-id',
+          createdAt: new Date(),
+          deployments: null
+        }
+      }
+    },
+    {
+      id: 'component-id-6',
+      helmUrl: 'http://localhost:2222/helm',
+      imageTag: 'v0',
+      imageUrl: 'https://repository.com/A:v0',
+      name: 'A',
+      running: true,
+      gatewayName: null,
+      hostValue: null,
+      deployment: {
+        id: 'deployment-id6',
+        authorId: 'user-1',
+        callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
+        circleId: null,
+        createdAt: new Date(),
+        cdConfiguration: {
+          id: 'cd-configuration-id',
+          type: CdTypeEnum.ARGOCD,
+          configurationData: {
+            gitProvider: GitProvidersEnum.GITHUB,
+            gitToken: 'git-token',
+            provider: ClusterProviderEnum.DEFAULT,
+            namespace: 'sandbox'
+          },
+          name: 'argocdconfiguration',
+          authorId: 'user-2',
+          workspaceId: 'workspace-id',
+          createdAt: new Date(),
+          deployments: null
+        }
+      }
+    },
+    {
+      id: 'component-id-7',
+      helmUrl: 'http://localhost:2222/helm',
+      imageTag: 'v0',
+      imageUrl: 'https://repository.com/B:v0',
+      name: 'B',
+      running: true,
+      gatewayName: null,
+      hostValue: null,
+      deployment: {
+        id: 'deployment-id7',
+        authorId: 'user-1',
+        callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
+        circleId: null,
+        createdAt: new Date(),
+        cdConfiguration: {
+          id: 'cd-configuration-id',
+          type: CdTypeEnum.ARGOCD,
+          configurationData: {
+            gitProvider: GitProvidersEnum.GITHUB,
+            gitToken: 'git-token',
+            provider: ClusterProviderEnum.DEFAULT,
+            namespace: 'sandbox'
+          },
+          name: 'argocdconfiguration',
+          authorId: 'user-2',
+          workspaceId: 'workspace-id',
+          createdAt: new Date(),
+          deployments: null
+        }
+      }
+    },
+    {
+      id: 'component-id-8',
+      helmUrl: 'http://localhost:2222/helm',
+      imageTag: 'v0',
+      imageUrl: 'https://repository.com/C:v0',
+      name: 'C',
+      running: true,
+      gatewayName: null,
+      hostValue: null,
+      deployment: {
+        id: 'deployment-id8',
+        authorId: 'user-1',
+        callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
+        circleId: null,
+        createdAt: new Date(),
+        cdConfiguration: {
+          id: 'cd-configuration-id',
+          type: CdTypeEnum.ARGOCD,
+          configurationData: {
+            gitProvider: GitProvidersEnum.GITHUB,
+            gitToken: 'git-token',
+            provider: ClusterProviderEnum.DEFAULT,
+            namespace: 'sandbox'
+          },
+          name: 'argocdconfiguration',
+          authorId: 'user-2',
+          workspaceId: 'workspace-id',
+          createdAt: new Date(),
+          deployments: null
+        }
+      }
+    }
+  ]
+
+  it('should create a deployment with success', async () => {
 
     const httpService = new HttpService()
     jest.spyOn(httpService, 'post').mockImplementation(() => of({} as AxiosResponse))
-    const argocdApi = new ArgocdApi(httpService, {} as IEnvConfiguration)
+    jest.spyOn(httpService, 'get')
+      .mockImplementationOnce(() => of(createCheckStatusResponse('circle-id-A-v2')))
+      .mockImplementationOnce(() => of(createCheckStatusResponse('circle-id-B-v2')))
+      .mockImplementation(() => of(createCheckStatusResponse('circle-id-C-v2', 'Error')))
 
+    const argocdApi = new ArgocdApi(httpService, {} as IEnvConfiguration)
     const connector = new ArgocdConnector(new ConsoleLoggerService(), argocdApi)
-    const result = await connector.createDeployment(deploymentWith3Components, activeComponents, {} as ConnectorConfiguration)
+    const result = await connector.createDeployment(deploymentWith3Components, activeComponents)
 
     expect(
       result
-    ).toEqual({ status: "SUCCEEDED"})
+    ).toEqual({ status: "SUCCEEDED" })
   })
+
+  it('check deployment status', async () => {
+
+    const httpService = new HttpService()
+    jest.spyOn(httpService, 'get')
+      .mockImplementationOnce(() => of(createCheckStatusResponse('circle-id-A-v2')))
+      .mockImplementationOnce(() => of(createCheckStatusResponse('circle-id-B-v2')))
+      .mockImplementationOnce(() => of(createCheckStatusResponse('circle-id-C-v2')))
+
+    const argocdApi = new ArgocdApi(httpService, {} as IEnvConfiguration)
+    const connector = new ArgocdConnector(new ConsoleLoggerService(), argocdApi)
+    const request = new ArgoCdRequestBuilder().buildDeploymentRequest(deploymentWith3Components, activeComponents)
+    const result = await connector.startHealthJob(request)
+
+    expect(
+      result
+    ).toEqual({ status: "SUCCEEDED" })
+  })
+
+  function createCheckStatusResponse(aplicationName: string, status = 'Healthy') {
+    return {
+      data: {
+        metadata: {
+          name: aplicationName
+        },
+        status: {
+          health: {
+            status: status
+          }
+        }
+      }
+    } as AxiosResponse
+  }
 })

@@ -15,7 +15,9 @@
  */
 
 import { Injectable } from '@nestjs/common'
+import { resolve } from 'dns'
 import { application } from 'express'
+import { reject } from 'lodash'
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { CdConnector } from '../interfaces/cd-connector.interface'
@@ -31,12 +33,11 @@ export class ArgocdConnector implements CdConnector {
   constructor(
     private consoleLoggerService: ConsoleLoggerService,
     private argocdApi: ArgocdApi
-  ) {}
+  ) { }
 
   public async createDeployment(
     deployment: Deployment,
-    activeComponents: Component[],
-    configuration: ConnectorConfiguration
+    activeComponents: Component[]
   ): Promise<ConnectorResult | ConnectorResultError> {
 
     try {
@@ -47,11 +48,11 @@ export class ArgocdConnector implements CdConnector {
       const argocdRequests = argocdDeployment.newDeploys.map((application) => {
         return this.argocdApi.createApplication(application)
       })
-      const argocdPromises = argocdRequests.map(async(response) => response.toPromise())
+      const argocdPromises = argocdRequests.map(async (response) => response.toPromise())
       let result = await Promise.all(argocdPromises) //lidar com sucesso de forma mais elegante
-        .then(success => {
+        .then(async success => {
           this.consoleLoggerService.log('POST:ARGOCD_CREATE_APPLICATION_SUCCESS')
-          //this.startHealthJob(argocdDeployment)
+          await this.startHealthJob(argocdDeployment)
           return { status: 'SUCCEEDED' } as ConnectorResult
         })
         .catch(error => {
@@ -61,8 +62,8 @@ export class ArgocdConnector implements CdConnector {
 
       // trigger job
       return result
-      
-    } catch(error) {
+
+    } catch (error) {
       this.consoleLoggerService.log('ERROR:CREATE_V2_ARGOCD_DEPLOYMENT', { error })
       return { status: 'ERROR', error: error }
     }
@@ -70,8 +71,7 @@ export class ArgocdConnector implements CdConnector {
 
   public async createUndeployment(
     deployment: Deployment,
-    activeComponents: Component[],
-    configuration: ConnectorConfiguration
+    activeComponents: Component[]
   ): Promise<ConnectorResult | ConnectorResultError> {
 
     try {
@@ -82,20 +82,67 @@ export class ArgocdConnector implements CdConnector {
       // await this.octopipeApi.undeploy(argocdUndeployment, configuration.incomingCircleId).toPromise()
       this.consoleLoggerService.log('FINISH:CREATE_V2_ARGOCD_UNDEPLOYMENT')
       return { status: 'SUCCEEDED' }
-    } catch(error) {
+    } catch (error) {
       this.consoleLoggerService.log('ERROR:CREATE_V2_ARGOCD_UNDEPLOYMENT', { error })
       return { status: 'ERROR', error: error }
     }
   }
 
-  // private async startHealthJob(argocdDeployment: ArgocdDeploymentRequest): void {
-  //   const applicationsStatus = argocdDeployment.newDeploys.reduce((acc, argocdApplication) => {
-  //     acc[argocdApplication.metadata.name] = false
-  //     return acc
-  //   }, {} as Record<string, boolean>)
-  //   const applicationNames = Object.keys(applicationsStatus)
-  //   while (applicationNames.filter(name => !applicationsStatus[name]).length) {
-  //     const chamadas = applicationNames.map(name => this.argocdApi.checkStatusApplication(name).toPromise())
-  //   }
-  // }
+  public async startHealthJob_(argocdDeployment: ArgocdDeploymentRequest): Promise<boolean> {
+    const applicationsStatus = argocdDeployment.newDeploys.reduce((acc, argocdApplication) => {
+      acc[argocdApplication.metadata.name] = false
+      return acc
+    }, {} as Record<string, boolean>)
+    const applicationNames = Object.keys(applicationsStatus)
+    while (applicationNames.filter(name => !applicationsStatus[name]).length) {
+      const calls = applicationNames.map(name => this.argocdApi.checkStatusApplication(name).toPromise())
+      let result = await Promise.all(calls)
+
+      result.forEach(item => {
+        applicationsStatus[item.data.metadata.name] = item.data.status.health.status == 'Healthy'
+      })
+    }
+    return true
+  }
+
+  public async startHealthJob(argocdDeployment: ArgocdDeploymentRequest): Promise<void> {
+    const applicationsStatus = argocdDeployment.newDeploys.reduce((acc, argocdApplication) => {
+      acc[argocdApplication.metadata.name] = false
+      return acc
+    }, {} as Record<string, boolean>)
+    const applicationNames = Object.keys(applicationsStatus)
+
+    return new Promise((resolve, reject) => {
+      const healthCkeckJob = setInterval(async () => {
+        const unhealthy = applicationNames.find(name => !applicationsStatus[name])
+        if(!unhealthy) {
+          clearInterval(healthCkeckJob) 
+          clearTimeout(healthCkeckJobTimeout)
+          resolve()
+          return
+        }
+        
+        try {
+          const calls = applicationNames.map(name => this.argocdApi.checkStatusApplication(name).toPromise())
+          const result = await Promise.all(calls)
+
+          result.forEach(item => {
+            applicationsStatus[item.data.metadata.name] = item.data.status.health.status == 'Healthy'
+          })
+          console.log(applicationsStatus)
+        } catch(e) {
+          clearInterval(healthCkeckJob) 
+          clearTimeout(healthCkeckJobTimeout)
+          reject(e)
+        }
+      }, 1000)
+
+      const healthCkeckJobTimeout = setTimeout(async () => {
+        console.log('timeout')
+        console.log(applicationsStatus)
+        clearInterval(healthCkeckJob) 
+        resolve()
+      }, 5000)
+    })
+  }
 }
