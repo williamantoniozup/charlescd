@@ -88,23 +88,6 @@ export class ArgocdConnector implements CdConnector {
     }
   }
 
-  public async startHealthJob_(argocdDeployment: ArgocdDeploymentRequest): Promise<boolean> {
-    const applicationsStatus = argocdDeployment.newDeploys.reduce((acc, argocdApplication) => {
-      acc[argocdApplication.metadata.name] = false
-      return acc
-    }, {} as Record<string, boolean>)
-    const applicationNames = Object.keys(applicationsStatus)
-    while (applicationNames.filter(name => !applicationsStatus[name]).length) {
-      const calls = applicationNames.map(name => this.argocdApi.checkStatusApplication(name).toPromise())
-      let result = await Promise.all(calls)
-
-      result.forEach(item => {
-        applicationsStatus[item.data.metadata.name] = item.data.status.health.status == 'Healthy'
-      })
-    }
-    return true
-  }
-
   public async startHealthJob(argocdDeployment: ArgocdDeploymentRequest): Promise<void> {
     const applicationsStatus = argocdDeployment.newDeploys.reduce((acc, argocdApplication) => {
       acc[argocdApplication.metadata.name] = false
