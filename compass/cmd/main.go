@@ -22,13 +22,15 @@ import (
 	"compass/internal/action"
 	"compass/internal/configuration"
 	"compass/internal/datasource"
-	"compass/internal/dispatcher"
+	"compass/internal/github"
+	"compass/internal/gitlab"
 	"compass/internal/health"
 	"compass/internal/metric"
 	"compass/internal/metricsgroup"
 	"compass/internal/metricsgroupaction"
 	"compass/internal/moove"
 	"compass/internal/plugin"
+	"fmt"
 	"log"
 	"time"
 
@@ -51,7 +53,15 @@ func main() {
 		db.LogMode(true)
 	}
 
-	pluginMain := plugin.NewMain()
+	repoTimeout := configuration.GetConfiguration("REPO_TIMEOUT")
+	timeoutDuration, err := time.ParseDuration(fmt.Sprintf("%ss", repoTimeout))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	gitlabMain := gitlab.NewMain(timeoutDuration)
+	githubMain := github.NewMain(timeoutDuration)
+	pluginMain := plugin.NewMain(gitlabMain, githubMain)
 	datasourceMain := datasource.NewMain(db, pluginMain)
 	metricMain := metric.NewMain(db, datasourceMain, pluginMain)
 	actionMain := action.NewMain(db, pluginMain)
@@ -59,12 +69,12 @@ func main() {
 	metricsgroupMain := metricsgroup.NewMain(db, metricMain, datasourceMain, pluginMain, metricsGroupActionMain)
 	mooveMain := moove.NewAPIClient(configuration.GetConfiguration("MOOVE_URL"), 15*time.Second)
 	healthMain := health.NewMain(db, datasourceMain, pluginMain, mooveMain)
-	metricDispatcher := dispatcher.NewDispatcher(metricMain)
-	actionDispatcher := dispatcher.NewActionDispatcher(metricsgroupMain, actionMain, pluginMain, metricMain, metricsGroupActionMain)
-
-	stopChan := make(chan bool, 0)
-	go metricDispatcher.Start(stopChan)
-	go actionDispatcher.Start(stopChan)
+	//metricDispatcher := dispatcher.NewDispatcher(metricMain)
+	//actionDispatcher := dispatcher.NewActionDispatcher(metricsgroupMain, actionMain, pluginMain, metricMain, metricsGroupActionMain)
+	//
+	//stopChan := make(chan bool, 0)
+	//go metricDispatcher.Start(stopChan)
+	//go actionDispatcher.Start(stopChan)
 
 	v1Api := v1.NewV1()
 	v1Api.NewPluginApi(pluginMain)

@@ -19,15 +19,20 @@
 package plugin
 
 import (
+	"bytes"
 	"compass/internal/configuration"
 	"compass/internal/util"
 	"compass/pkg/logger"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/google/uuid"
+	"io"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"plugin"
+	"time"
 )
 
 type Input struct {
@@ -47,6 +52,31 @@ type Plugin struct {
 	Description     string          `json:"description"`
 	InputParameters InputParameters `json:"inputParameters"`
 }
+
+type ImportRequest struct {
+	Kind        string          `json:"kind"`
+	RepoData    json.RawMessage `json:"repoData"`
+	Credentials json.RawMessage `json:"credentials"`
+}
+
+type PluginsImportExecs struct {
+	util.BaseModel
+	RepoURL       string
+	User          string
+	ImportResults []PluginsImportsResults
+}
+
+type PluginsImportsResults struct {
+	util.BaseModel
+	ExecID     uuid.UUID
+	PluginName string
+	Result     string
+}
+
+const (
+	GITHUB = "GITHUB"
+	GITLAB = "GITLAB"
+)
 
 func getPluginsDirectoriesByCategory(categoryName string) ([]Plugin, error) {
 	var plugins []Plugin
@@ -110,4 +140,61 @@ func (main Main) FindAll(category string) ([]Plugin, error) {
 func (main Main) GetPluginBySrc(src string) (*plugin.Plugin, error) {
 	pluginsDir := configuration.GetConfiguration("PLUGINS_DIR")
 	return plugin.Open(filepath.Join(fmt.Sprintf("%s/%s.so", pluginsDir, src)))
+}
+
+func (main Main) ImportPlugin(userID string, importRequest ImportRequest) error {
+	var err error
+	var repoReader []byte
+	switch importRequest.Kind {
+	case GITHUB:
+		repoReader, err = main.GithubClient.DownloadRepo(importRequest.RepoData, importRequest.Credentials)
+	case GITLAB:
+		repoReader, err = main.GitlabClient.DownloadRepo(importRequest.RepoData, importRequest.Credentials)
+	default:
+		return errors.New("invalid repository kind")
+	}
+	if err != nil {
+		logger.Error(util.DownloadPluginError, "ImportPlugin", err, fmt.Sprintf("RepoData: %s", importRequest.RepoData))
+		return err
+	}
+
+	err = writeFile(repoReader)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func writeFile(file []byte) error {
+	now := time.Now()
+	date := fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d", now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second())
+	fileName := fmt.Sprintf("plugins-%s.tar.gz", date)
+
+	newFile, err := os.Create(fmt.Sprintf("./tmp/%s", fileName))
+	if err != nil {
+		return nil
+	}
+	defer newFile.Close()
+
+	_, err = io.Copy(newFile, bytes.NewReader(file))
+	if err != nil {
+		logger.Error(util.WritePluginFileError, "writeFile", err, nil)
+		return err
+	}
+
+	return nil
+}
+
+func (main Main) ParseImportRequest(importRequest io.ReadCloser) (ImportRequest, error) {
+	var req *ImportRequest
+
+	err := json.NewDecoder(importRequest).Decode(&req)
+	if err != nil {
+		logger.Error(util.GeneralParseError, "ParseImportRequest", err, importRequest)
+		return ImportRequest{}, err
+	}
+
+	return *req, nil
+
 }

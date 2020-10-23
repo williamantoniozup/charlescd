@@ -16,30 +16,30 @@
  *
  */
 
-package plugin
+package gitlab
 
 import (
-	"compass/internal/github"
-	"compass/internal/gitlab"
-	"io"
-	"plugin"
+	"encoding/json"
+	"net/http"
+	"time"
 )
 
+type APIClient struct {
+	httpClient *http.Client
+}
+
 type UseCases interface {
-	FindAll(category string) ([]Plugin, error)
-	GetPluginBySrc(id string) (*plugin.Plugin, error)
-	ImportPlugin(userID string, importRequest ImportRequest) error
-	ParseImportRequest(importRequest io.ReadCloser) (ImportRequest, error)
+	DownloadRepo(repoData, credentials json.RawMessage) ([]byte, error)
 }
 
-type Main struct {
-	GitlabClient gitlab.UseCases
-	GithubClient github.UseCases
+func NewMain(timeout time.Duration) UseCases {
+	return newAPIClient(timeout)
 }
 
-func NewMain(gitlab gitlab.UseCases, github github.UseCases) UseCases {
-	return Main{
-		GitlabClient: gitlab,
-		GithubClient: github,
+func newAPIClient(timeout time.Duration) APIClient {
+	return APIClient{
+		httpClient: &http.Client{
+			Timeout: timeout,
+		},
 	}
 }

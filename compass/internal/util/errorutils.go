@@ -64,8 +64,10 @@ const (
 )
 
 const (
-	FindPluginError    = "FIND_PLUGIN_ERROR"
-	GetPluginByIdError = "GET_PLUGIN_BY_ID_ERROR"
+	FindPluginError      = "FIND_PLUGIN_ERROR"
+	GetPluginByIdError   = "GET_PLUGIN_BY_ID_ERROR"
+	DownloadPluginError  = "DOWNLOAD_PLUGIN_ERROR"
+	WritePluginFileError = "WRITE_PLUGIN_FILE_ERROR"
 )
 
 const (

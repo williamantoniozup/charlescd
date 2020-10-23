@@ -20,7 +20,9 @@ package v1
 
 import (
 	"compass/internal/plugin"
+	"compass/pkg/logger"
 	"compass/web/api"
+	"errors"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -34,10 +36,11 @@ func (v1 V1) NewPluginApi(pluginMain plugin.UseCases) PluginApi {
 	apiPath := "/plugins"
 	pluginApi := PluginApi{pluginMain}
 	v1.Router.GET(v1.getCompletePath(apiPath), api.HttpValidator(pluginApi.list))
+	v1.Router.POST(v1.getCompletePath(apiPath)+"/import", api.HttpValidator(pluginApi.importPlugins))
 	return pluginApi
 }
 
-func (pluginApi PluginApi) list(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
+func (pluginApi PluginApi) list(w http.ResponseWriter, r *http.Request, _ httprouter.Params, _ string) {
 	category := r.URL.Query().Get("category")
 
 	circles, err := pluginApi.pluginMain.FindAll(category)
@@ -47,4 +50,20 @@ func (pluginApi PluginApi) list(w http.ResponseWriter, r *http.Request, _ httpro
 	}
 
 	api.NewRestSuccess(w, http.StatusOK, circles)
+}
+
+func (pluginApi PluginApi) importPlugins(w http.ResponseWriter, r *http.Request, _ httprouter.Params, _ string) {
+	req, err := pluginApi.pluginMain.ParseImportRequest(r.Body)
+	if err != nil {
+		logger.Error("error importing plugins", "importPlugins", err, nil)
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error importing plugins")})
+	}
+
+	err = pluginApi.pluginMain.ImportPlugin("user123", req)
+	if err != nil {
+		logger.Error("error importing plugins", "importPlugins", err, nil)
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error importing plugins")})
+	}
+
+	api.NewRestSuccess(w, http.StatusNoContent, nil)
 }
