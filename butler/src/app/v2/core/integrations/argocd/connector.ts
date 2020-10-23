@@ -15,16 +15,12 @@
  */
 
 import { Injectable } from '@nestjs/common'
-import { resolve } from 'dns'
-import { application } from 'express'
-import { reject } from 'lodash'
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { CdConnector } from '../interfaces/cd-connector.interface'
-import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
 import { ConnectorResult, ConnectorResultError } from '../spinnaker/interfaces'
 import { ArgocdApi } from './argocd-api'
-import { ArgocdDeploymentRequest } from './interfaces/argocd-deployment.interface'
+import { ArgocdDeploymentRequest, ArgocdHealthCheck } from './interfaces/argocd-deployment.interface'
 import { ArgoCdRequestBuilder } from './request-builder'
 
 @Injectable()
@@ -109,10 +105,9 @@ export class ArgocdConnector implements CdConnector {
           const calls = applicationNames.map(name => this.argocdApi.checkStatusApplication(name).toPromise())
           const result = await Promise.all(calls)
 
-          result.forEach(item => {
-            applicationsStatus[item.data.metadata.name] = item.data.status.health.status == 'Healthy'
+          result.forEach(response => {
+            applicationsStatus[response.data.metadata.name] = response.data.status.health.status == 'Healthy'
           })
-          console.log(applicationsStatus)
         } catch(e) {
           clearInterval(healthCkeckJob) 
           clearTimeout(healthCkeckJobTimeout)
@@ -121,8 +116,6 @@ export class ArgocdConnector implements CdConnector {
       }, 1000)
 
       const healthCkeckJobTimeout = setTimeout(async () => {
-        console.log('timeout')
-        console.log(applicationsStatus)
         clearInterval(healthCkeckJob) 
         resolve()
       }, 5000)

@@ -21,6 +21,7 @@ import { IoCTokensConstants } from '../../../../v1/core/constants/ioc'
 import { Observable } from 'rxjs'
 import { AxiosResponse } from 'axios'
 import { ArgocdApplication } from './interfaces/argocd-application.interface'
+import { ArgocdHealthCheck } from './interfaces/argocd-deployment.interface'
 
 @Injectable()
 export class ArgocdApi {
@@ -88,7 +89,7 @@ export class ArgocdApi {
     )
   }
 
-  public checkStatusApplication(applicationName: string): Observable<AxiosResponse> {
+  public checkStatusApplication(applicationName: string): Observable<AxiosResponse<ArgocdHealthCheck>> {
     return this.httpService.get(
       `${this.envConfiguration.argocdUrl}/api/v1/applications/${applicationName}`,
     )
