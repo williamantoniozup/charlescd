@@ -9,6 +9,7 @@ GOTOOL=$(GOCMD) tool
 
 DIST_PATH=dist
 CMD_PATH=cmd/*.go
+CMD_SIDECAR_PATH=sidecar/*.go
 BINARY_NAME=compass
 
 COMPOSE_TESTS=./test/docker-compose.test.yaml
@@ -17,6 +18,8 @@ COMPOSE_TESTS=./test/docker-compose.test.yaml
 start:
 				sh build-plugins.sh
 				$(GORUN) $(CMD_PATH)
+start-sidecar:
+				$(GORUN) $(CMD_SIDECAR_PATH)
 build: 
 				$(GOBUILD) -o $(DIST_PATH)/$(BINARY_NAME) $(CMD_PATH)
 

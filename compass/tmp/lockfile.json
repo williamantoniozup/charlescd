@@ -1,9 +1,0 @@
-{
-  "datasource": {
-    "prometheus": 12.0,
-    "googleanalytics": 12.0
-  },
-  "action": {
-    "circledeployment": 12.0
-  }
-}

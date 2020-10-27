@@ -1,1 +1,9 @@
-{}
+{
+  "action": {
+    "circledeployment": 2
+  },
+  "datasource": {
+    "googleanalytics": 1,
+    "prometheus": 1
+  }
+}
