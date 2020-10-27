@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"os/exec"
 	"time"
 
@@ -12,7 +13,7 @@ import (
 )
 
 const (
-	tmpDir = "tmp"
+	lockfileName = "lockfile.json"
 )
 
 func readLockfile(path string) (map[string]map[string]float32, error) {
@@ -62,10 +63,11 @@ func diffLockfiles(pvcLockfile, localLockfile map[string]map[string]float32) (ma
 }
 
 func buildPlugins(plugins map[string]map[string]float32) error {
+	buildScriptName := "build.sh"
 
 	for category, plugins := range plugins {
 		for plugin := range plugins {
-			out, err := exec.Command("/bin/sh", "./sidecar/build.sh", category, plugin).Output()
+			out, err := exec.Command("/bin/sh", fmt.Sprintf("%s/%s", getEnv("SCRIPTS_DIR"), buildScriptName), category, plugin).Output()
 			if err != nil {
 				fmt.Println(err)
 				return err
@@ -79,10 +81,12 @@ func buildPlugins(plugins map[string]map[string]float32) error {
 }
 
 func removePlugins(plugins map[string]map[string]float32) error {
+	name := "/bin/sh"
+	removeScriptName := "remove.sh"
 
 	for category, plugins := range plugins {
 		for plugin := range plugins {
-			out, err := exec.Command("/bin/sh", "./sidecar/remove.sh", category, plugin).Output()
+			out, err := exec.Command(name, fmt.Sprintf("%s/%s", getEnv("SCRIPTS_DIR"), removeScriptName), category, plugin).Output()
 			if err != nil {
 				fmt.Println(err)
 				return err
@@ -113,25 +117,54 @@ func writeLockfile(localLockfile, pvcLockfile, removePlugins map[string]map[stri
 		return err
 	}
 
-	return ioutil.WriteFile("./sidecar/lockfile.json", fileContent, 0644)
+	return ioutil.WriteFile(fmt.Sprintf("%s/%s", getEnv("DIST_DIR"), lockfileName), fileContent, 0644)
+}
+
+func getEnv(key string) string {
+	defaultEnvs := map[string]string{
+		"DIST_DIR":    "./dist",
+		"PLUGINS_DIR": "./plugins",
+		"SCRIPTS_DIR": "sidecar/scripts",
+	}
+
+	if env := os.Getenv(key); env != "" {
+		return env
+	}
+
+	return defaultEnvs[key]
+}
+
+func createDistLockfile() error {
+	lockfilePath := fmt.Sprintf("%s/%s", getEnv("DIST_DIR"), lockfileName)
+	if _, err := os.Stat(lockfilePath); err != nil {
+		if os.IsNotExist(err) {
+			err = os.Mkdir(getEnv("DIST_DIR"), 0755)
+			if err != nil {
+				return err
+			}
+
+			return ioutil.WriteFile(lockfilePath, []byte("{}"), 0644)
+		}
+	}
+	return nil
 }
 
 func main() {
-	// TODO: Criar /health para health check k8s
-	// TODO: Escutar mudancas na pasta de plugins no PVC
-	// TODO: Buildar plugins e mover para a pasta dist
-	// TODO: Fazer o diff da pasta plugins do PVC com a dist local
+	err := createDistLockfile()
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	ticker := time.NewTicker(5 * time.Second)
 	for {
 		select {
 		case <-ticker.C:
-			pvcLockfile, err := readLockfile("plugins/lockfile.json")
+			pvcLockfile, err := readLockfile(fmt.Sprintf("%s/%s", getEnv("PLUGINS_DIR"), lockfileName))
 			if err != nil {
 				panic(err)
 			}
 
-			localLockfile, err := readLockfile("sidecar/lockfile.json")
+			localLockfile, err := readLockfile(fmt.Sprintf("%s/%s", getEnv("DIST_DIR"), lockfileName))
 			if err != nil {
 				panic(err)
 			}
