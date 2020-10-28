@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -199,6 +200,14 @@ func managePlugins() error {
 	return nil
 }
 
+type Server struct{}
+
+func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(`:)`))
+}
+
 func main() {
 
 	err := managePlugins()
@@ -218,15 +227,20 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	for {
-		select {
-		case event := <-watcher.Events:
-			log.Println("PVC changes detected: ", event)
-			err := managePlugins()
-			if err != nil {
-				log.Fatalln(err)
+	go func() {
+		for {
+			select {
+			case event := <-watcher.Events:
+				log.Println("PVC changes detected: ", event)
+				err := managePlugins()
+				if err != nil {
+					log.Fatalln(err)
+				}
 			}
 		}
-	}
+	}()
 
+	s := &Server{}
+	http.Handle("/health", s)
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
