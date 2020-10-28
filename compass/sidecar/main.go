@@ -201,12 +201,12 @@ func managePlugins() error {
 
 func main() {
 
-	err = createDistLockfile()
+	err := createDistLockfile()
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	err := managePlugins()
+	err = managePlugins()
 	if err != nil {
 		log.Fatalln(err)
 	}
