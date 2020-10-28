@@ -3,13 +3,14 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/fsnotify/fsnotify"
-	"github.com/imdario/mergo"
 	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/fsnotify/fsnotify"
+	"github.com/imdario/mergo"
 )
 
 const (
@@ -159,7 +160,48 @@ func watchDir(path string, fi os.FileInfo, err error) error {
 	return nil
 }
 
+func managePlugins() error {
+	pvcLockfile, err := readLockfile(fmt.Sprintf("%s/%s", getEnv("PLUGINS_DIR"), lockfileName))
+	if err != nil {
+		return err
+	}
+
+	localLockfile, err := readLockfile(fmt.Sprintf("%s/%s", getEnv("DIST_DIR"), lockfileName))
+	if err != nil {
+		return err
+	}
+
+	addPlugins, pluginsForRemotion, isDiff := diffLockfiles(pvcLockfile, localLockfile)
+	if err != nil {
+		return err
+	}
+
+	if isDiff {
+		err = buildPlugins(addPlugins)
+		if err != nil {
+			return err
+		}
+
+		err = removePlugins(pluginsForRemotion)
+		if err != nil {
+			return err
+		}
+
+		err = writeLockfile(localLockfile, pvcLockfile, pluginsForRemotion)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func main() {
+
+	err := managePlugins()
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	watcher, _ = fsnotify.NewWatcher()
 	defer watcher.Close()
@@ -168,7 +210,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	err := createDistLockfile()
+	err = createDistLockfile()
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -176,37 +218,10 @@ func main() {
 	for {
 		select {
 		case event := <-watcher.Events:
-			fmt.Println("PVC changes detected: ", event)
-			pvcLockfile, err := readLockfile(fmt.Sprintf("%s/%s", getEnv("PLUGINS_DIR"), lockfileName))
+			log.Println("PVC changes detected: ", event)
+			err := managePlugins()
 			if err != nil {
-				panic(err)
-			}
-
-			localLockfile, err := readLockfile(fmt.Sprintf("%s/%s", getEnv("DIST_DIR"), lockfileName))
-			if err != nil {
-				panic(err)
-			}
-
-			addPlugins, pluginsForRemotion, isDiff := diffLockfiles(pvcLockfile, localLockfile)
-			if err != nil {
-				panic(err)
-			}
-
-			if isDiff {
-				err = buildPlugins(addPlugins)
-				if err != nil {
-					log.Fatalln(err)
-				}
-
-				err = removePlugins(pluginsForRemotion)
-				if err != nil {
-					log.Fatalln(err)
-				}
-
-				err = writeLockfile(localLockfile, pvcLockfile, pluginsForRemotion)
-				if err != nil {
-					log.Fatalln(err)
-				}
+				log.Fatalln(err)
 			}
 		}
 	}
