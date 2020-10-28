@@ -34,6 +34,10 @@ describe('ArgoCD Deployment Health Check Job', async () => {
 
   it('Check deployment of one application', async () => {
 
+    const aplicationNames = [
+      'circle-id-A-v2'
+    ]
+
     const httpService = new HttpService()
     jest.spyOn(httpService, 'get')
       .mockImplementation(() => of(createCheckStatusResponse('circle-id-A-v2')))
@@ -43,7 +47,7 @@ describe('ArgoCD Deployment Health Check Job', async () => {
 
     const result = await healthCheckJob.execute(aplicationNames)
 
-    expect(result).toEqual(true)
+    expect(result).resolves.toBeUndefined
   })
 })
 
