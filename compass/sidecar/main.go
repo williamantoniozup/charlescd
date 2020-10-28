@@ -3,18 +3,20 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/fsnotify/fsnotify"
+	"github.com/imdario/mergo"
 	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
-	"time"
-
-	"github.com/imdario/mergo"
+	"path/filepath"
 )
 
 const (
 	lockfileName = "lockfile.json"
 )
+
+var watcher *fsnotify.Watcher
 
 func readLockfile(path string) (map[string]map[string]float32, error) {
 	file, err := ioutil.ReadFile(path)
@@ -149,16 +151,32 @@ func createDistLockfile() error {
 	return nil
 }
 
+func watchDir(path string, fi os.FileInfo, err error) error {
+	if fi.Mode().IsDir() {
+		return watcher.Add(path)
+	}
+
+	return nil
+}
+
 func main() {
+
+	watcher, _ = fsnotify.NewWatcher()
+	defer watcher.Close()
+
+	if err := filepath.Walk(fmt.Sprintf("%s", getEnv("PLUGINS_DIR")), watchDir); err != nil {
+		log.Fatalln(err)
+	}
+
 	err := createDistLockfile()
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	ticker := time.NewTicker(5 * time.Second)
 	for {
 		select {
-		case <-ticker.C:
+		case event := <-watcher.Events:
+			fmt.Println("PVC changes detected: ", event)
 			pvcLockfile, err := readLockfile(fmt.Sprintf("%s/%s", getEnv("PLUGINS_DIR"), lockfileName))
 			if err != nil {
 				panic(err)
