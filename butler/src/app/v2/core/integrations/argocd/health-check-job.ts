@@ -36,7 +36,7 @@ export class HealthCheckJob {
       const healthCkeckJobTimeout = setTimeout(async () => {
         clearInterval(healthCkeckJob)
         reject('Timeout Error')
-      }, 5000) // TODO: alterar para obter da configuracao
+      }, 3000) // TODO: alterar para obter da configuracao
     })
   }
 

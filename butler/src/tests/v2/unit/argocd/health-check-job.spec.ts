@@ -26,12 +26,6 @@ import { HealthCheckJob } from '../../../../app/v2/core/integrations/argocd/heal
 
 describe('ArgoCD Deployment Health Check Job', async () => {
 
-  const aplicationNames = [
-    'circle-id-A-v2',
-    'circle-id-B-v2',
-    'circle-id-C-v2'
-  ]
-
   it('Check deployment of one application', async () => {
 
     const aplicationNames = [
@@ -45,9 +39,71 @@ describe('ArgoCD Deployment Health Check Job', async () => {
     const argocdApi = new ArgocdApi(httpService, {} as IEnvConfiguration)
     const healthCheckJob = new HealthCheckJob(new ConsoleLoggerService(), argocdApi)
 
-    const result = await healthCheckJob.execute(aplicationNames)
+    const result = healthCheckJob.execute(aplicationNames)
 
     expect(result).resolves.toBeUndefined
+  })
+
+  it('Check deployment of two applications', async () => {
+
+    const aplicationNames = [
+      'circle-id-A-v2',
+      'circle-id-B-v2'
+    ]
+
+    const httpService = new HttpService()
+    jest.spyOn(httpService, 'get')
+      .mockImplementationOnce(() => of(createCheckStatusResponse('circle-id-A-v2')))
+      .mockImplementationOnce(() => of(createCheckStatusResponse('circle-id-B-v2')))
+
+    const argocdApi = new ArgocdApi(httpService, {} as IEnvConfiguration)
+    const healthCheckJob = new HealthCheckJob(new ConsoleLoggerService(), argocdApi)
+
+    const result = healthCheckJob.execute(aplicationNames)
+
+    expect(result).resolves.toBeUndefined
+  })
+
+  it('Check deployment of three applications and one error', async () => {
+
+    const aplicationNames = [
+      'circle-id-A-v2',
+      'circle-id-B-v2',
+      'circle-id-C-v2'
+    ]
+
+    const httpService = new HttpService()
+    jest.spyOn(httpService, 'get')
+      .mockImplementationOnce(() => of(createCheckStatusResponse('circle-id-A-v2')))
+      .mockImplementationOnce(() => of(createCheckStatusResponse('circle-id-B-v2')))
+      .mockImplementation(() => of(createCheckStatusResponse('circle-id-C-v2', 'Degraded')))
+
+    const argocdApi = new ArgocdApi(httpService, {} as IEnvConfiguration)
+    const healthCheckJob = new HealthCheckJob(new ConsoleLoggerService(), argocdApi)
+    const result = healthCheckJob.execute(aplicationNames)
+
+    return expect(result)
+      .rejects
+      .toEqual('Timeout Error')
+  })
+
+  it('Error when trying to call argocd for health checking', async () => {
+
+    const aplicationNames = [
+      'circle-id-A-v2'
+    ]
+
+    const httpService = new HttpService()
+    jest.spyOn(httpService, 'get')
+      .mockImplementation(() => { throw 'Error' } )
+
+    const argocdApi = new ArgocdApi(httpService, {} as IEnvConfiguration)
+    const healthCheckJob = new HealthCheckJob(new ConsoleLoggerService(), argocdApi)
+    const result = healthCheckJob.execute(aplicationNames)
+
+    return expect(result)
+      .rejects
+      .toEqual('Error')
   })
 })
 
