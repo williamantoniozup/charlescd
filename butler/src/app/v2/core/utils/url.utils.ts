@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { Configuration } from '../../../v1/core/config/configurations'
 
 const UrlUtils = {

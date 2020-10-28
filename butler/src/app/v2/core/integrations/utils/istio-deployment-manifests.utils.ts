@@ -15,7 +15,6 @@
  */
 
 import { Http, K8sManifest, Subset } from '../interfaces/k8s-manifest.interface'
-import { ISpinnakerConfigurationData } from '../../../../v1/api/configurations/interfaces'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { IstioManifestsUtils } from './istio-manifests.utilts'
 
@@ -27,7 +26,7 @@ const IstioDeploymentManifestsUtils = {
       kind: 'VirtualService',
       metadata: {
         name: `${component.name}`,
-        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
+        namespace: `${component.namespace}`
       },
       spec: {
         gateways: component.gatewayName ? [component.gatewayName] : [],
@@ -45,7 +44,7 @@ const IstioDeploymentManifestsUtils = {
       kind: 'DestinationRule',
       metadata: {
         name: component.name,
-        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
+        namespace: `${component.namespace}`
       },
       spec: {
         host: component.name,

@@ -92,7 +92,6 @@ describe('Octopipe Service', () => {
         awsSecret: 'secret',
         gitProvider: GitProvidersEnum.GITHUB,
         gitToken: 'some-github-token',
-        namespace: 'some-app-namespace'
       }
 
       const connectorConfiguration: IConnectorConfiguration = {
@@ -111,7 +110,7 @@ describe('Octopipe Service', () => {
 
       const expectedPayload: IOctopipePayload = {
         appName: 'some-app-name',
-        appNamespace: 'some-app-namespace',
+        appNamespace: 'sandbox',
         git: {
           provider: GitProvidersEnum.GITHUB,
           token: 'some-github-token',
@@ -189,7 +188,6 @@ describe('Octopipe Service', () => {
         awsSecret: 'secret',
         gitProvider: GitProvidersEnum.GITHUB,
         gitToken: 'some-github-token',
-        namespace: 'some-app-namespace'
       }
 
       const connectorConfiguration: IConnectorConfiguration = {
@@ -208,7 +206,7 @@ describe('Octopipe Service', () => {
 
       const expectedPayload: IOctopipePayload = {
         appName: 'some-app-name',
-        appNamespace: 'some-app-namespace',
+        appNamespace: 'sandbox',
         git: {
           provider: GitProvidersEnum.GITHUB,
           token: 'some-github-token'
@@ -230,7 +228,7 @@ describe('Octopipe Service', () => {
             kind: 'VirtualService',
             metadata: {
               name: 'some-app-name',
-              namespace: 'some-app-namespace'
+              namespace: 'sandbox'
             },
             spec: {
               gateways: [],
@@ -308,7 +306,7 @@ describe('Octopipe Service', () => {
             kind: 'DestinationRule',
             metadata: {
               name: 'some-app-name',
-              namespace: 'some-app-namespace'
+              namespace: 'sandbox'
             },
             spec: {
               host: 'some-app-name',
@@ -379,7 +377,6 @@ describe('Octopipe Service', () => {
         caData: 'ca-data',
         gitToken: 'some-github-token',
         host: 'https://k8s.com',
-        namespace: 'some-app-namespace'
       }
 
       const connectorConfiguration: IConnectorConfiguration = {
@@ -398,7 +395,7 @@ describe('Octopipe Service', () => {
 
       const expectedPayload: IOctopipePayload = {
         appName: 'some-app-name',
-        appNamespace: 'some-app-namespace',
+        appNamespace: 'sandbox',
         git: {
           provider: GitProvidersEnum.GITHUB,
           token: 'some-github-token',
@@ -475,8 +472,7 @@ describe('Octopipe Service', () => {
         gitProvider: GitProvidersEnum.GITHUB,
         caData: 'ca-data',
         gitToken: 'some-github-token',
-        host: 'https://k8s.com',
-        namespace: 'some-app-namespace'
+        host: 'https://k8s.com'
       }
 
       const connectorConfiguration: IConnectorConfiguration = {
@@ -495,7 +491,7 @@ describe('Octopipe Service', () => {
 
       const expectedPayload: IOctopipePayload = {
         appName: 'some-app-name',
-        appNamespace: 'some-app-namespace',
+        appNamespace: 'sandbox',
         git: {
           provider: GitProvidersEnum.GITHUB,
           token: 'some-github-token'
@@ -517,7 +513,7 @@ describe('Octopipe Service', () => {
             kind: 'VirtualService',
             metadata: {
               name: 'some-app-name',
-              namespace: 'some-app-namespace'
+              namespace: 'sandbox'
             },
             spec: {
               gateways: [],
@@ -595,7 +591,7 @@ describe('Octopipe Service', () => {
             kind: 'DestinationRule',
             metadata: {
               name: 'some-app-name',
-              namespace: 'some-app-namespace'
+              namespace: 'sandbox'
             },
             spec: {
               host: 'some-app-name',
@@ -661,8 +657,7 @@ describe('Octopipe Service', () => {
       const octopipeConfiguration: OctopipeConfigurationData = {
         provider: ClusterProviderEnum.DEFAULT,
         gitProvider: GitProvidersEnum.GITHUB,
-        gitToken: 'some-github-token',
-        namespace: 'some-app-namespace'
+        gitToken: 'some-github-token'
       }
 
       const connectorConfiguration: IConnectorConfiguration = {
@@ -681,7 +676,7 @@ describe('Octopipe Service', () => {
 
       const expectedPayload: IOctopipePayload = {
         appName: 'some-app-name',
-        appNamespace: 'some-app-namespace',
+        appNamespace: 'sandbox',
         git: {
           provider: GitProvidersEnum.GITHUB,
           token: 'some-github-token',
@@ -744,7 +739,6 @@ describe('Octopipe Service', () => {
         provider: ClusterProviderEnum.DEFAULT,
         gitProvider: GitProvidersEnum.GITHUB,
         gitToken: 'some-github-token',
-        namespace: 'some-app-namespace'
       }
 
       const connectorConfiguration: IConnectorConfiguration = {
@@ -765,7 +759,7 @@ describe('Octopipe Service', () => {
 
       const expectedPayload: IOctopipePayload = {
         appName: 'some-app-name',
-        appNamespace: 'some-app-namespace',
+        appNamespace: 'sandbox',
         git: {
           provider: GitProvidersEnum.GITHUB,
           token: 'some-github-token'
@@ -787,7 +781,7 @@ describe('Octopipe Service', () => {
             kind: 'VirtualService',
             metadata: {
               name: 'some-app-name',
-              namespace: 'some-app-namespace'
+              namespace: 'sandbox'
             },
             spec: {
               gateways: [
@@ -867,7 +861,7 @@ describe('Octopipe Service', () => {
             kind: 'DestinationRule',
             metadata: {
               name: 'some-app-name',
-              namespace: 'some-app-namespace'
+              namespace: 'sandbox'
             },
             spec: {
               host: 'hostValue',
@@ -928,7 +922,6 @@ describe('Octopipe Service', () => {
         provider: ClusterProviderEnum.DEFAULT,
         gitProvider: GitProvidersEnum.GITHUB,
         gitToken: 'some-github-token',
-        namespace: 'some-app-namespace'
       }
 
       const connectorConfiguration: IConnectorConfiguration = {
@@ -947,7 +940,7 @@ describe('Octopipe Service', () => {
 
       const expectedPayload: IOctopipePayload = {
         appName: 'some-app-name',
-        appNamespace: 'some-app-namespace',
+        appNamespace: 'sandbox',
         git: {
           provider: GitProvidersEnum.GITHUB,
           token: 'some-github-token'
@@ -969,7 +962,7 @@ describe('Octopipe Service', () => {
             kind: 'VirtualService',
             metadata: {
               name: 'some-app-name',
-              namespace: 'some-app-namespace'
+              namespace: 'sandbox'
             },
             spec: {
               gateways: [],
@@ -1047,7 +1040,7 @@ describe('Octopipe Service', () => {
             kind: 'DestinationRule',
             metadata: {
               name: 'some-app-name',
-              namespace: 'some-app-namespace'
+              namespace: 'sandbox'
             },
             spec: {
               host: 'some-app-name',
@@ -1109,8 +1102,7 @@ describe('Octopipe Service', () => {
         awsSID: 'sid',
         awsSecret: 'secret',
         gitProvider: GitProvidersEnum.GITHUB,
-        gitToken: 'some-github-token',
-        namespace: 'some-app-namespace'
+        gitToken: 'some-github-token'
       }
 
       const connectorConfiguration: IConnectorConfiguration = {
@@ -1132,7 +1124,7 @@ describe('Octopipe Service', () => {
 
       const expectedPayload = {
         appName: 'some-app-name',
-        appNamespace: 'some-app-namespace',
+        appNamespace: 'sandbox',
         circleId: 'circle-id',
         git: {
           provider: 'GITHUB',

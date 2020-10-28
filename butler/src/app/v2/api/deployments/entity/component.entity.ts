@@ -49,11 +49,14 @@ export class ComponentEntityV2 implements Component {
   public componentId!: string
 
   @Column({ name: 'merged' })
-  public merged! : boolean
+  public merged!: boolean
 
   @JoinColumn({ name: 'deployment_id' })
   @ManyToOne(() => DeploymentEntity, deployment => deployment.components)
   public deployment!: DeploymentEntity
+
+  @Column({ name: 'namespace', nullable: false })
+  public namespace!: string
 
   constructor(
     helmUrl: string,
@@ -63,6 +66,7 @@ export class ComponentEntityV2 implements Component {
     componentId: string,
     hostValue: string | null,
     gatewayName: string | null,
+    namespace: string,
     merged = false
   ) {
     this.helmUrl = helmUrl
@@ -72,6 +76,7 @@ export class ComponentEntityV2 implements Component {
     this.componentId = componentId
     this.hostValue = hostValue
     this.gatewayName = gatewayName
+    this.namespace = namespace
     this.merged = merged
   }
 
@@ -84,6 +89,7 @@ export class ComponentEntityV2 implements Component {
       this.componentId,
       this.hostValue,
       this.gatewayName,
+      this.namespace,
       true
     )
   }

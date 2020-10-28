@@ -42,7 +42,6 @@ const deploymentWith3Components: Deployment = {
     configurationData: {
       gitAccount: 'github-artifact',
       account: 'default',
-      namespace: 'sandbox',
       url: 'spinnaker-url'
     },
     name: 'spinnakerconfiguration',
@@ -62,6 +61,7 @@ const deploymentWith3Components: Deployment = {
       name: 'A',
       running: false,
       gatewayName: null,
+      namespace: 'sandbox',
       hostValue: null
     },
     {
@@ -72,7 +72,8 @@ const deploymentWith3Components: Deployment = {
       name: 'B',
       running: false,
       gatewayName: null,
-      hostValue: null
+      hostValue: null,
+      namespace: 'sandbox',
     },
     {
       id: 'component-id-3',
@@ -82,7 +83,8 @@ const deploymentWith3Components: Deployment = {
       name: 'C',
       running: false,
       gatewayName: null,
-      hostValue: null
+      hostValue: null,
+      namespace: 'sandbox',
     }
   ]
 }
@@ -97,7 +99,6 @@ const deploymentWith1ComponentCircle1: Deployment = {
     configurationData: {
       gitAccount: 'github-artifact',
       account: 'default',
-      namespace: 'sandbox',
       url: 'spinnaker-url'
     },
     name: 'spinnakerconfiguration',
@@ -117,7 +118,8 @@ const deploymentWith1ComponentCircle1: Deployment = {
       name: 'A',
       running: false,
       gatewayName: null,
-      hostValue: null
+      hostValue: null,
+      namespace: 'sandbox'
     }
   ]
 }
@@ -132,7 +134,6 @@ const deploymentWith1ComponentCircle2: Deployment = {
     configurationData: {
       gitAccount: 'github-artifact',
       account: 'default',
-      namespace: 'sandbox',
       url: 'spinnaker-url'
     },
     name: 'spinnakerconfiguration',
@@ -152,7 +153,8 @@ const deploymentWith1ComponentCircle2: Deployment = {
       name: 'A',
       running: false,
       gatewayName: null,
-      hostValue: null
+      hostValue: null,
+      namespace: 'sandbox'
     }
   ]
 }
@@ -167,7 +169,6 @@ const deploymentWith1ComponentOpenSea: Deployment = {
     configurationData: {
       gitAccount: 'github-artifact',
       account: 'default',
-      namespace: 'sandbox',
       url: 'spinnaker-url'
     },
     name: 'spinnakerconfiguration',
@@ -187,7 +188,8 @@ const deploymentWith1ComponentOpenSea: Deployment = {
       name: 'A',
       running: false,
       gatewayName: null,
-      hostValue: null
+      hostValue: null,
+      namespace: 'sandbox'
     }
   ]
 }
@@ -202,7 +204,6 @@ const deploymentWith1ComponentCircle1HostGateway: Deployment = {
     configurationData: {
       gitAccount: 'github-artifact',
       account: 'default',
-      namespace: 'sandbox',
       url: 'spinnaker-url'
     },
     name: 'spinnakerconfiguration',
@@ -222,7 +223,8 @@ const deploymentWith1ComponentCircle1HostGateway: Deployment = {
       name: 'A',
       running: false,
       hostValue: 'host-value-1',
-      gatewayName: 'gateway-name-1'
+      gatewayName: 'gateway-name-1',
+      namespace: 'sandbox'
     }
   ]
 }
@@ -237,7 +239,6 @@ const deploymentWith1ComponentCircle1CustomNamespace: Deployment = {
     configurationData: {
       gitAccount: 'github-artifact',
       account: 'default',
-      namespace: 'custom-namespace',
       url: 'spinnaker-url'
     },
     name: 'spinnakerconfiguration',
@@ -257,7 +258,8 @@ const deploymentWith1ComponentCircle1CustomNamespace: Deployment = {
       name: 'A',
       running: false,
       gatewayName: null,
-      hostValue: null
+      hostValue: null,
+      namespace: 'custom-namespace'
     }
   ]
 }
@@ -288,7 +290,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -297,7 +298,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           }
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-5',
@@ -320,7 +322,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -328,8 +329,9 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             workspaceId: 'workspace-id',
             createdAt: new Date(),
             deployments: null
-          },
-        }
+          }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-6',
@@ -352,7 +354,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -360,8 +361,9 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             workspaceId: 'workspace-id',
             createdAt: new Date(),
             deployments: null
-          },
-        }
+          }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-7',
@@ -384,7 +386,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -393,7 +394,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-8',
@@ -416,7 +418,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -425,7 +426,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       }
     ]
 
@@ -458,7 +460,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -467,7 +468,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-7',
@@ -490,7 +492,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -499,7 +500,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-8',
@@ -522,7 +524,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -531,8 +532,9 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
-      }
+        },
+        namespace: 'sandbox'
+      },
     ]
 
     expect(
@@ -564,16 +566,16 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
             authorId: 'user-2',
             workspaceId: 'workspace-id',
             createdAt: new Date(),
-            deployments: null
+            deployments: null,
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-7',
@@ -596,7 +598,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -605,7 +606,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-8',
@@ -628,7 +630,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -637,7 +638,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       }
     ]
 
@@ -670,7 +672,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -679,7 +680,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-10',
@@ -702,7 +704,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -711,7 +712,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-7',
@@ -734,7 +736,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -743,7 +744,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-8',
@@ -766,7 +768,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -775,7 +776,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       }
     ]
 
@@ -808,7 +810,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -817,7 +818,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-2',
@@ -840,7 +842,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -849,7 +850,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-3',
@@ -872,7 +874,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -881,7 +882,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-4',
@@ -904,7 +906,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -913,7 +914,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
     ]
 
@@ -946,7 +948,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -955,7 +956,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-2',
@@ -978,7 +980,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -987,7 +988,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-3',
@@ -1010,7 +1012,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -1019,7 +1020,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-4',
@@ -1042,7 +1044,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -1051,10 +1052,10 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
-      },
+        },
+        namespace: 'sandbox'
+      }
     ]
-
     expect(
       new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle2, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
     ).toEqual(oneComponentWithUnused)
@@ -1084,7 +1085,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -1093,7 +1093,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-6',
@@ -1116,7 +1117,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -1124,8 +1124,9 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             workspaceId: 'workspace-id',
             createdAt: new Date(),
             deployments: null
-          },
-        }
+          }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-7',
@@ -1148,7 +1149,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -1157,7 +1157,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-2',
@@ -1180,7 +1181,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -1189,7 +1189,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-3',
@@ -1212,7 +1213,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -1221,7 +1221,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-4',
@@ -1244,7 +1245,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -1253,7 +1253,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       }
     ]
 
@@ -1286,7 +1287,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -1295,7 +1295,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-7',
@@ -1318,7 +1319,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -1327,7 +1327,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-2',
@@ -1350,7 +1351,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -1359,7 +1359,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-3',
@@ -1382,7 +1383,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -1391,7 +1391,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-4',
@@ -1414,7 +1415,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -1423,7 +1423,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       }
     ]
 
@@ -1456,7 +1457,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -1465,7 +1465,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-10',
@@ -1488,7 +1489,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -1497,7 +1497,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-7',
@@ -1520,7 +1521,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -1529,7 +1529,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-8',
@@ -1552,7 +1553,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -1561,7 +1561,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox',
       }
     ]
 
@@ -1597,7 +1598,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'sandbox',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -1606,7 +1606,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       }
     ]
 
@@ -1639,7 +1640,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'custom-namespace',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -1648,7 +1648,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'custom-namespace'
       },
       {
         id: 'component-id-7',
@@ -1671,7 +1672,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'custom-namespace',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -1680,7 +1680,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'custom-namespace',
       },
       {
         id: 'component-id-8',
@@ -1703,7 +1704,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             configurationData: {
               gitAccount: 'github-artifact',
               account: 'default',
-              namespace: 'custom-namespace',
               url: 'spinnaker-url'
             },
             name: 'spinnakerconfiguration',
@@ -1712,7 +1712,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'custom-namespace'
       }
     ]
 

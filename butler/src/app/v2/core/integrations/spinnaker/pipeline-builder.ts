@@ -216,4 +216,5 @@ export class SpinnakerPipelineBuilder {
   private getUndeploymentSuccessWebhookStage(deployment: Deployment, configuration: ConnectorConfiguration): Stage[] {
     return [getUndeploymentsSuccessWebhookStage(deployment, this.currentStageId++, configuration)]
   }
+
 }

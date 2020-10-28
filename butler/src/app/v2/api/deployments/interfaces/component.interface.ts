@@ -29,6 +29,8 @@ export interface Component {
 
     gatewayName: string | null
 
+    namespace: string
+
     name: string
 
     running: boolean

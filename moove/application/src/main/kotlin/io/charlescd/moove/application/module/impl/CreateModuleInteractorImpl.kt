@@ -30,6 +30,7 @@ import io.charlescd.moove.domain.exceptions.BusinessException
 import java.util.*
 import javax.inject.Named
 import javax.transaction.Transactional
+import org.springframework.dao.DuplicateKeyException
 
 @Named
 open class CreateModuleInteractorImpl(
@@ -47,15 +48,18 @@ open class CreateModuleInteractorImpl(
         if (workspace.status == WorkspaceStatusEnum.INCOMPLETE) {
             throw BusinessException.of(MooveErrorCode.CANNOT_CREATE_MODULES_IN_A_INCOMPLETE_WORKSPACE)
         }
-
-        return ModuleResponse.from(
-            moduleService.create(
-                request.toDomain(
-                    UUID.randomUUID().toString(),
-                    workspace.id,
-                    userService.find(request.authorId)
+        return try {
+            ModuleResponse.from(
+                moduleService.create(
+                    request.toDomain(
+                        UUID.randomUUID().toString(),
+                        workspace.id,
+                        userService.find(request.authorId)
+                    )
                 )
             )
-        )
+        } catch (exception: DuplicateKeyException) {
+            throw BusinessException.of(MooveErrorCode.COMPONENT_NAME_ALREADY_REGISTERED_IN_THIS_WORKSPACE_WITH_THIS_NAMESPACE)
+        }
     }
 }

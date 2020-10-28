@@ -54,13 +54,19 @@ export class CreateComponentRequestDto {
   @IsNotEmpty()
   public readonly gatewayName!: string | undefined
 
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  public namespace: string
+
   constructor(
     componentId: string,
     buildImageUrl: string,
     buildImageTag: string,
     componentName: string,
     hostValue: string | undefined,
-    gatewayName: string | undefined
+    gatewayName: string | undefined,
+    namespace: string,
   ) {
     this.componentId = componentId
     this.buildImageUrl = buildImageUrl
@@ -68,6 +74,7 @@ export class CreateComponentRequestDto {
     this.componentName = componentName
     this.hostValue = hostValue
     this.gatewayName = gatewayName
+    this.namespace = namespace
   }
 
   public toEntity(helmRepositoryUrl: string): ComponentEntity {
@@ -78,7 +85,8 @@ export class CreateComponentRequestDto {
       this.componentName,
       this.componentId,
       this.hostValue ? this.hostValue : null,
-      this.gatewayName ? this.gatewayName : null
+      this.gatewayName ? this.gatewayName : null,
+      this.namespace
     )
   }
 }

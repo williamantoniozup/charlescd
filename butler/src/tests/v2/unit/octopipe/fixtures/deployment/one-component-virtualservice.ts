@@ -19,14 +19,13 @@ import { GitProvidersEnum } from '../../../../../../app/v1/core/integrations/con
 import { AppConstants } from '../../../../../../app/v1/core/constants'
 
 export const oneComponentVSOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
-  namespace: 'sandbox',
   deployments: [
     {
       componentName: 'A',
       helmRepositoryConfig: {
         type: GitProvidersEnum.GITHUB,
         url: 'http://localhost:2222/helm',
-        token: 'git-token'
+        token: 'git-token',
       },
       helmConfig: {
         overrideValues: {
@@ -37,7 +36,8 @@ export const oneComponentVSOctopipeDeploymentRequest: OctopipeDeploymentRequest 
           circleId: 'circle-id'
         }
       },
-      rollbackIfFailed: true
+      rollbackIfFailed: true,
+      namespace: 'sandbox'
     }
   ],
   unusedDeployments: [],

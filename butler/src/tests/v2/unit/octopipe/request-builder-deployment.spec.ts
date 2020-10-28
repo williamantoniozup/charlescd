@@ -45,7 +45,6 @@ const deploymentWith3Components: Deployment = {
       gitProvider: GitProvidersEnum.GITHUB,
       gitToken: 'git-token',
       provider: ClusterProviderEnum.DEFAULT,
-      namespace: 'sandbox'
     },
     name: 'octopipeconfiguration',
     authorId: 'user-2',
@@ -64,7 +63,8 @@ const deploymentWith3Components: Deployment = {
       name: 'A',
       running: false,
       gatewayName: null,
-      hostValue: null
+      hostValue: null,
+      namespace: 'sandbox'
     },
     {
       id: 'component-id-2',
@@ -74,7 +74,8 @@ const deploymentWith3Components: Deployment = {
       name: 'B',
       running: false,
       gatewayName: null,
-      hostValue: null
+      hostValue: null,
+      namespace: 'sandbox'
     },
     {
       id: 'component-id-3',
@@ -84,7 +85,8 @@ const deploymentWith3Components: Deployment = {
       name: 'C',
       running: false,
       gatewayName: null,
-      hostValue: null
+      hostValue: null,
+      namespace: 'sandbox'
     }
   ]
 }
@@ -100,7 +102,6 @@ const deploymentWith1ComponentCircle1: Deployment = {
       gitProvider: GitProvidersEnum.GITHUB,
       gitToken: 'git-token',
       provider: ClusterProviderEnum.DEFAULT,
-      namespace: 'sandbox'
     },
     name: 'octopipeconfiguration',
     authorId: 'user-2',
@@ -119,7 +120,8 @@ const deploymentWith1ComponentCircle1: Deployment = {
       name: 'A',
       running: false,
       gatewayName: null,
-      hostValue: null
+      hostValue: null,
+      namespace: 'sandbox'
     }
   ]
 }
@@ -135,7 +137,6 @@ const deploymentWith1ComponentCircle2: Deployment = {
       gitProvider: GitProvidersEnum.GITHUB,
       gitToken: 'git-token',
       provider: ClusterProviderEnum.DEFAULT,
-      namespace: 'sandbox'
     },
     name: 'octopipeconfiguration',
     authorId: 'user-2',
@@ -154,7 +155,8 @@ const deploymentWith1ComponentCircle2: Deployment = {
       name: 'A',
       running: false,
       gatewayName: null,
-      hostValue: null
+      hostValue: null,
+      namespace: 'sandbox'
     }
   ]
 }
@@ -170,7 +172,6 @@ const deploymentWith1ComponentOpenSea: Deployment = {
       gitProvider: GitProvidersEnum.GITHUB,
       gitToken: 'git-token',
       provider: ClusterProviderEnum.DEFAULT,
-      namespace: 'sandbox'
     },
     name: 'octopipeconfiguration',
     authorId: 'user-2',
@@ -189,7 +190,8 @@ const deploymentWith1ComponentOpenSea: Deployment = {
       name: 'A',
       running: false,
       gatewayName: null,
-      hostValue: null
+      hostValue: null,
+      namespace: 'sandbox'
     }
   ]
 }
@@ -205,7 +207,6 @@ const deploymentWith1ComponentCircle1HostGateway: Deployment = {
       gitProvider: GitProvidersEnum.GITHUB,
       gitToken: 'git-token',
       provider: ClusterProviderEnum.DEFAULT,
-      namespace: 'sandbox'
     },
     name: 'octopipeconfiguration',
     authorId: 'user-2',
@@ -224,7 +225,8 @@ const deploymentWith1ComponentCircle1HostGateway: Deployment = {
       name: 'A',
       running: false,
       hostValue: 'host-value-1',
-      gatewayName: 'gateway-name-1'
+      gatewayName: 'gateway-name-1',
+      namespace: 'sandbox'
     }
   ]
 }
@@ -240,7 +242,6 @@ const deploymentWith1ComponentCircle1CustomNamespace: Deployment = {
       gitProvider: GitProvidersEnum.GITHUB,
       gitToken: 'git-token',
       provider: ClusterProviderEnum.DEFAULT,
-      namespace: 'custom-namespace'
     },
     name: 'octopipeconfiguration',
     authorId: 'user-2',
@@ -259,7 +260,8 @@ const deploymentWith1ComponentCircle1CustomNamespace: Deployment = {
       name: 'A',
       running: false,
       gatewayName: null,
-      hostValue: null
+      hostValue: null,
+      namespace: 'custom-namespace'
     }
   ]
 }
@@ -279,7 +281,6 @@ const deploymentWith1ComponentCircle1EKS: Deployment = {
       awsClusterName: 'aws-cluster-name',
       gitProvider: GitProvidersEnum.GITHUB,
       gitToken: 'git-token',
-      namespace: 'sandbox'
     },
     name: 'octopipeconfiguration',
     authorId: 'user-2',
@@ -298,7 +299,8 @@ const deploymentWith1ComponentCircle1EKS: Deployment = {
       name: 'A',
       running: false,
       gatewayName: null,
-      hostValue: null
+      hostValue: null,
+      namespace: 'sandbox'
     }
   ]
 }
@@ -318,7 +320,6 @@ const deploymentWith1ComponentCircle1GENERIC: Deployment = {
       clientKey: 'client-key',
       gitProvider: GitProvidersEnum.GITHUB,
       gitToken: 'git-token',
-      namespace: 'sandbox'
     },
     name: 'octopipeconfiguration',
     authorId: 'user-2',
@@ -337,7 +338,8 @@ const deploymentWith1ComponentCircle1GENERIC: Deployment = {
       name: 'A',
       running: false,
       gatewayName: null,
-      hostValue: null
+      hostValue: null,
+      namespace: 'sandbox'
     }
   ]
 }
@@ -356,6 +358,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id4',
           authorId: 'user-1',
@@ -369,7 +372,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -388,6 +390,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id5',
           authorId: 'user-1',
@@ -401,7 +404,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -420,6 +422,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -433,7 +436,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -452,6 +454,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -465,7 +468,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -484,6 +486,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -497,7 +500,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -526,6 +528,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -539,7 +542,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -571,7 +573,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -579,7 +580,8 @@ describe('V2 Octopipe Deployment Request Builder', () => {
             createdAt: new Date(),
             deployments: null
           },
-        }
+        },
+        namespace: 'sandbox'
       },
       {
         id: 'component-id-8',
@@ -590,6 +592,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -603,7 +606,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -632,6 +634,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -645,7 +648,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -664,6 +666,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -677,7 +680,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -696,6 +698,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -709,7 +712,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -738,6 +740,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -751,7 +754,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -770,6 +772,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -782,8 +785,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
             configurationData: {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
-              provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
+              provider: ClusterProviderEnum.DEFAULT
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -802,6 +804,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -814,8 +817,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
             configurationData: {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
-              provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
+              provider: ClusterProviderEnum.DEFAULT
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -834,6 +836,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -847,7 +850,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -876,6 +878,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -889,7 +892,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -908,6 +910,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -921,7 +924,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -940,6 +942,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -953,7 +956,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -972,6 +974,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -985,7 +988,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1014,6 +1016,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1027,7 +1030,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1046,6 +1048,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -1059,7 +1062,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1078,6 +1080,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -1091,7 +1094,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1110,6 +1112,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1123,7 +1126,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1152,6 +1154,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1165,7 +1168,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1184,6 +1186,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1197,7 +1200,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1216,6 +1218,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1229,7 +1232,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1248,6 +1250,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -1261,7 +1264,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1280,6 +1282,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -1293,7 +1296,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1312,6 +1314,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1325,7 +1328,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1354,6 +1356,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1367,7 +1370,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1386,6 +1388,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1399,7 +1402,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1418,6 +1420,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -1431,7 +1434,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1450,6 +1452,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -1463,7 +1466,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1482,6 +1484,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1495,7 +1498,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1524,6 +1526,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1537,7 +1540,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1556,6 +1558,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1569,7 +1572,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1588,6 +1590,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -1601,7 +1604,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1620,6 +1622,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -1633,7 +1636,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1665,6 +1667,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1678,7 +1681,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1707,6 +1709,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'custom-namespace',
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1719,8 +1722,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
             configurationData: {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
-              provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
+              provider: ClusterProviderEnum.DEFAULT
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1739,6 +1741,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'custom-namespace',
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -1752,7 +1755,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1771,6 +1773,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'custom-namespace',
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -1784,7 +1787,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1817,6 +1819,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1830,7 +1833,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1849,6 +1851,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -1862,7 +1865,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1881,6 +1883,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -1894,7 +1897,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1923,6 +1925,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1936,7 +1939,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1955,6 +1957,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -1968,7 +1971,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',
@@ -1987,6 +1989,7 @@ describe('V2 Octopipe Deployment Request Builder', () => {
         running: true,
         gatewayName: null,
         hostValue: null,
+        namespace: 'sandbox',
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -2000,7 +2003,6 @@ describe('V2 Octopipe Deployment Request Builder', () => {
               gitProvider: GitProvidersEnum.GITHUB,
               gitToken: 'git-token',
               provider: ClusterProviderEnum.DEFAULT,
-              namespace: 'sandbox'
             },
             name: 'octopipeconfiguration',
             authorId: 'user-2',

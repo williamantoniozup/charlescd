@@ -82,7 +82,6 @@ export class DeploymentHandlerUseCase {
     }
     const activeComponents = await this.componentsRepository.findActiveComponents()
     this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents: activeComponents.map(c => c.id) })
-
     try {
       await this.updateComponentsRunningStatus(deployment, true)
       const cdConnector = this.cdStrategy.create(deployment.cdConfiguration.type)

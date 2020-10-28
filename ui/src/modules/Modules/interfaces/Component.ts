@@ -17,6 +17,7 @@
 export interface Component {
   id?: string;
   name?: string;
+  namespace?: string;
   latencyThreshold?: string;
   errorThreshold?: string;
   hostValue?: string;
