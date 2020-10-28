@@ -22,6 +22,11 @@ export interface ArgocdDeploymentRequest {
   proxyDeployments: ArgocdApplication[]
 }
 
+export interface ArgocdUndeploymentRequest {
+  deleteApplications: string[]
+  proxyUndeployments?: ArgocdApplication[]
+}
+
 export interface ArgocdHealthCheck {
   metadata: ArgocdMetadata
   status: ArgocdDataStatus

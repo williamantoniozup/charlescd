@@ -19,7 +19,7 @@ import { DeploymentUtils } from '../utils/deployment.utils'
 import { AppConstants } from '../../../../v1/core/constants'
 import { stringify } from 'yaml'
 import { ArgocdAppEntries, ArgocdApplication, ArgocdCharlesValues } from './interfaces/argocd-application.interface'
-import { ArgocdDeploymentRequest } from './interfaces/argocd-deployment.interface'
+import { ArgocdDeploymentRequest, ArgocdUndeploymentRequest } from './interfaces/argocd-deployment.interface'
 
 const createSubstring = (applicationName: string): string => {
     return applicationName.substring(0, 53)
@@ -42,13 +42,12 @@ export class ArgoCdRequestBuilder {
   public buildUndeploymentRequest(
     deployment: Deployment,
     activeComponents: Component[],
-  ): unknown {
+  ): ArgocdUndeploymentRequest {
 
     return { 
       deleteApplications: this.getUndeploymentsArray(deployment),
       proxyUndeployments: this.getProxyUndeploymentsArray(deployment, activeComponents)
     }
-
   }
 
   private getDeploymentsArray(deployment: Deployment, activeComponents: Component[]): ArgocdApplication[]{
@@ -165,7 +164,6 @@ export class ArgoCdRequestBuilder {
       circleProxy: [],
       defaultProxy: undefined,
     }
-    // deployment.components?.map(component => {
     const activeByName: Component[] = DeploymentUtils.getActiveComponentsByName(activeComponents, component.name)
     if (!circleId) {
       activeByName.map(component => appEntries.circleProxy.push({
@@ -203,7 +201,6 @@ export class ArgoCdRequestBuilder {
         }
       }
     }
-    // })
     return appEntries
   }
 
@@ -248,9 +245,9 @@ export class ArgoCdRequestBuilder {
     return deployment.components.map(component => `${component.name}-${component.imageTag}-${component.deployment?.circleId}`)
   }
 
-  private getProxyUndeploymentsArray(deployment: Deployment, activeComponents: Component[]): unknown {
+  private getProxyUndeploymentsArray(deployment: Deployment, activeComponents: Component[]): ArgocdApplication[] | undefined {
     // TODO: add prefix option
-    return deployment.components?.forEach(component => {
+    return deployment.components?.map(component => {
       const appEntries = this.getUndeployAppEntries(deployment, activeComponents)
       const proxyValues = {
         componentName: component.name,
@@ -292,7 +289,6 @@ export class ArgoCdRequestBuilder {
         }
       }
     })
-
   }
 
   private getUnusedDeploymentsArray(deployment: Deployment, activeComponents: Component[]): string[] {

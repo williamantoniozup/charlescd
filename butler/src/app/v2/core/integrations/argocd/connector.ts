@@ -20,7 +20,7 @@ import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { CdConnector } from '../interfaces/cd-connector.interface'
 import { ConnectorResult, ConnectorResultError } from '../spinnaker/interfaces'
 import { ArgocdApi } from './argocd-api'
-import { ArgocdDeploymentRequest, ArgocdHealthCheck } from './interfaces/argocd-deployment.interface'
+import { ArgocdDeploymentRequest } from './interfaces/argocd-deployment.interface'
 import { ArgoCdRequestBuilder } from './request-builder'
 
 @Injectable()
@@ -72,8 +72,7 @@ export class ArgocdConnector implements CdConnector {
 
     try {
       this.consoleLoggerService.log('START:CREATE_V2_OCTOPIPE_UNDEPLOYMENT', { deployment: deployment.id, activeComponents: activeComponents.map(c => c.id) })
-      const argocdUndeployment =
-        new ArgoCdRequestBuilder().buildUndeploymentRequest(deployment, activeComponents)
+      const argocdUndeployment = new ArgoCdRequestBuilder().buildUndeploymentRequest(deployment, activeComponents)
       this.consoleLoggerService.log('GET:OCTOPIPE_UNDEPLOYMENT_OBJECT', { argocdUndeployment })
       // await this.octopipeApi.undeploy(argocdUndeployment, configuration.incomingCircleId).toPromise()
       this.consoleLoggerService.log('FINISH:CREATE_V2_ARGOCD_UNDEPLOYMENT')
