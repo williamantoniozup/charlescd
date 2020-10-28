@@ -242,6 +242,6 @@ func main() {
 
 	s := &Server{}
 	http.Handle("/health", s)
-	log.Println("Start server on 8080...")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Println("Start server on 9000...")
+	log.Fatal(http.ListenAndServe(":9000", nil))
 }

@@ -13,11 +13,11 @@ services:
 
     sidecar:
         build:
-            dockerfile: ./test/Dockerfile.test
+            dockerfile: ./sidecar/Dockerfile
             context: ../
-        image: compass
+        image: sidecar
         ports:
-            - 8080:8080
+            - 9000:9000
         environment:
             - DB_NAME=charlescd_compass
             - DB_USER=charlescd_compass
