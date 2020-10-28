@@ -55,7 +55,7 @@ async function bootstrap() {
     .setDescription('Charles butler documentation')
     .build()
   const document = SwaggerModule.createDocument(app, options)
-
+  console.log(process.env)
   app.use(morgan('dev'))
   app.use(morgan('X-Circle-Id: :req[x-circle-id]'))
   app.useGlobalFilters(new EntityNotFoundExceptionFilter(logger))
