@@ -203,7 +203,6 @@ func managePlugins() error {
 type Server struct{}
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(`:)`))
 }
@@ -227,6 +226,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
+	log.Println("Start lockfile verifier...")
 	go func() {
 		for {
 			select {
@@ -242,5 +242,6 @@ func main() {
 
 	s := &Server{}
 	http.Handle("/health", s)
+	log.Println("Start server on 8080...")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
