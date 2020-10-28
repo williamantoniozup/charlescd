@@ -201,6 +201,11 @@ func managePlugins() error {
 
 func main() {
 
+	err = createDistLockfile()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	err := managePlugins()
 	if err != nil {
 		log.Fatalln(err)
@@ -210,11 +215,6 @@ func main() {
 	defer watcher.Close()
 
 	if err := filepath.Walk(fmt.Sprintf("%s", getEnv("PLUGINS_DIR")), watchDir); err != nil {
-		log.Fatalln(err)
-	}
-
-	err = createDistLockfile()
-	if err != nil {
 		log.Fatalln(err)
 	}
 
