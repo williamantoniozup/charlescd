@@ -41,6 +41,7 @@ import { OctopipeConnector } from '../../core/integrations/octopipe/connector'
 import { OctopipeApi } from '../../core/integrations/octopipe/octopipe-api'
 import { ArgocdConnector } from '../../core/integrations/argocd/connector'
 import { ArgocdApi } from '../../core/integrations/argocd/argocd-api'
+import { HealthCheckJob } from '../../core/integrations/argocd/health-check-job'
 
 @Module({
   imports: [
@@ -75,7 +76,8 @@ import { ArgocdApi } from '../../core/integrations/argocd/argocd-api'
     OctopipeConnector,
     ArgocdConnector,
     OctopipeApi,
-    ArgocdApi
+    ArgocdApi,
+    HealthCheckJob
   ],
   exports: [
   ]
