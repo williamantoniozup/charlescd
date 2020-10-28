@@ -11,8 +11,6 @@ RUN go mod download
 
 COPY . .
 
-RUN chmod a+rx build-plugins.sh
-RUN sh build-plugins.sh
 RUN go build -o ./out/compass cmd/*.go
 
 # -----------------------------------------------
