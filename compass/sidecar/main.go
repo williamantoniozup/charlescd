@@ -137,16 +137,19 @@ func getEnv(key string) string {
 }
 
 func createDistLockfile() error {
-	lockfilePath := fmt.Sprintf("%s/%s", getEnv("DIST_DIR"), lockfileName)
-	if _, err := os.Stat(lockfilePath); err != nil {
-		if os.IsNotExist(err) {
-			err = os.Mkdir(getEnv("DIST_DIR"), 0755)
-			if err != nil {
-				return err
-			}
+	lockFolderPath := fmt.Sprintf("%s", getEnv("DIST_DIR"))
+	lockFilePath := fmt.Sprintf("%s/%s", getEnv("DIST_DIR"), lockfileName)
 
-			return ioutil.WriteFile(lockfilePath, []byte("{}"), 0644)
+	if _, err := os.Stat(lockFolderPath); os.IsNotExist(err) {
+		err = os.Mkdir(getEnv("DIST_DIR"), 0755)
+		if err != nil {
+			return err
 		}
+
+		return ioutil.WriteFile(lockFilePath, []byte("{}"), 0644)
+
+	} else if _, err := os.Stat(lockFilePath); os.IsNotExist(err) {
+		return ioutil.WriteFile(lockFilePath, []byte("{}"), 0644)
 	}
 	return nil
 }
