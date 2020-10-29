@@ -18,6 +18,7 @@ RUN go build -o ./out/sidecar sidecar/*.go
 FROM alpine:3.12.0
 
 COPY --from=builder /app/sidecar/out/sidecar .
+COPY --from=builder /app/sidecar/sidecar/scripts /scripts
 
 EXPOSE 8080
 

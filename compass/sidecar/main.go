@@ -138,18 +138,16 @@ func getEnv(key string) string {
 	return defaultEnvs[key]
 }
 
-func createDistLockfile() error {
-	lockFolderPath := fmt.Sprintf("%s", getEnv("DIST_DIR"))
-	lockFilePath := fmt.Sprintf("%s/%s", getEnv("DIST_DIR"), lockfileName)
+func createLockfile(lockFolderPath string) error {
+	lockFilePath := fmt.Sprintf("%s/%s", lockFolderPath, lockfileName)
 
 	if _, err := os.Stat(lockFolderPath); os.IsNotExist(err) {
-		err = os.Mkdir(getEnv("DIST_DIR"), 0755)
+		err = os.Mkdir(lockFolderPath, 0755)
 		if err != nil {
 			return err
 		}
 
 		return ioutil.WriteFile(lockFilePath, []byte("{}"), 0644)
-
 	} else if _, err := os.Stat(lockFilePath); os.IsNotExist(err) {
 		return ioutil.WriteFile(lockFilePath, []byte("{}"), 0644)
 	}
@@ -209,7 +207,12 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
-	err := createDistLockfile()
+	err := createLockfile(getEnv("DIST_DIR"))
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	err = createLockfile(getEnv("PLUGINS_DIR"))
 	if err != nil {
 		log.Fatalln(err)
 	}
