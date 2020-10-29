@@ -11,7 +11,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o ./out/sidecar cmd/*.go
+RUN go build -o ./out/sidecar sidecar/*.go
 
 # -----------------------------------------------
 
