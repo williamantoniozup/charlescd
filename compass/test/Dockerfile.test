@@ -9,8 +9,8 @@ COPY ./go.sum .
 
 COPY . .
 
-RUN chmod a+rx build-plugins.sh
-RUN sh build-plugins.sh
+RUN chmod a+rx ./test/build-plugins.test.sh
+RUN sh ./test/build-plugins.test.sh
 
 CMD CGO_ENABLED=0 go test -v -coverpkg ./... ./...
 

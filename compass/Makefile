@@ -16,7 +16,6 @@ COMPOSE_TESTS=./test/docker-compose.test.yaml
 
 
 start:
-				sh build-plugins.sh
 				$(GORUN) $(CMD_PATH)
 start-sidecar:
 				$(GORUN) $(CMD_SIDECAR_PATH)
@@ -31,7 +30,6 @@ tests:
 tests-dep-up:
 				docker-compose -f $(COMPOSE_TESTS) up -d --build db provider
 				sh ./test/build-plugins.test.sh
-				sh ./build-plugins.sh
 tests-dep-down:
 				docker-compose -f $(COMPOSE_TESTS) down
 cover:
