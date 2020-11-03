@@ -27,7 +27,6 @@ import (
 )
 
 type Credentials struct {
-	User  string `json:"user"`
 	Token string `json:"token"`
 }
 
@@ -57,9 +56,7 @@ func (client APIClient) DownloadRepo(repoData, credentials json.RawMessage) ([]b
 	}
 
 	if cred != (Credentials{}) {
-		query := req.URL.Query()
-		query.Add("login", cred.User)
-		query.Add("token", cred.Token)
+		req.Header.Add("Authorization", fmt.Sprintf("token %s", cred.Token))
 	}
 
 	resp, err := client.httpClient.Do(req)

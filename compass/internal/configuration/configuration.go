@@ -44,6 +44,8 @@ var initialValues = map[string]string{
 	"MOOVE_PATH":          "http://charlescd-moove:8080",
 	"MOOVE_AUTH":          "Bearer 123",
 	"REPO_TIMEOUT":        "30",
+	"TMP_PATH":            "./tmp",
+	"PLUGINS_SOURCE_PATH": "./dist",
 }
 
 func GetDBConnection(migrationsPath string) (*gorm.DB, error) {

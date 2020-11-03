@@ -19,19 +19,22 @@
 package plugin
 
 import (
+	"archive/tar"
 	"bytes"
 	"compass/internal/configuration"
 	"compass/internal/util"
 	"compass/pkg/logger"
+	"compress/gzip"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/google/uuid"
 	"io"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"plugin"
+	"strings"
 	"time"
 )
 
@@ -59,18 +62,9 @@ type ImportRequest struct {
 	Credentials json.RawMessage `json:"credentials"`
 }
 
-type PluginsImportExecs struct {
-	util.BaseModel
-	RepoURL       string
-	User          string
-	ImportResults []PluginsImportsResults
-}
-
-type PluginsImportsResults struct {
-	util.BaseModel
-	ExecID     uuid.UUID
-	PluginName string
-	Result     string
+type LockFileFormat struct {
+	Actions     map[string]string `json:"actions"`
+	Datasources map[string]string `json:"datasources"`
 }
 
 const (
@@ -142,7 +136,7 @@ func (main Main) GetPluginBySrc(src string) (*plugin.Plugin, error) {
 	return plugin.Open(filepath.Join(fmt.Sprintf("%s/%s.so", pluginsDir, src)))
 }
 
-func (main Main) ImportPlugin(userID string, importRequest ImportRequest) error {
+func (main Main) ImportPlugin(_ string, importRequest ImportRequest) error {
 	var err error
 	var repoReader []byte
 	switch importRequest.Kind {
@@ -153,25 +147,63 @@ func (main Main) ImportPlugin(userID string, importRequest ImportRequest) error 
 	default:
 		return errors.New("invalid repository kind")
 	}
+
 	if err != nil {
 		logger.Error(util.DownloadPluginError, "ImportPlugin", err, fmt.Sprintf("RepoData: %s", importRequest.RepoData))
 		return err
 	}
 
-	err = writeFile(repoReader)
+	tmpPath := configuration.GetConfiguration("TMP_PATH")
+	distPath := configuration.GetConfiguration("PLUGINS_SOURCE_PATH")
+	err = writeTarFile(repoReader, tmpPath)
 	if err != nil {
 		return err
+	}
+
+	rootFolder, err := Untar(tmpPath, bytes.NewReader(repoReader))
+	if err != nil {
+		return err
+	}
+
+	tmpSrcPath := fmt.Sprintf("%s/%s", tmpPath, rootFolder)
+	out, err := exec.Command("./internal/plugin/plugin_copy.sh", tmpSrcPath, distPath, "action", "datasource").Output()
+	if err != nil {
+		return err
+	}
+	sOut := string(out)
+	result := strings.Split(sOut, ";")
+	logger.Info("Result", result)
+
+	lock := LockFileFormat{
+		Actions:     make(map[string]string, 0),
+		Datasources: make(map[string]string, 0),
+	}
+
+	for _, log := range result {
+		sLog := strings.Split(log, ":")
+		if len(sLog) != 4 || sLog[0] == "Error" {
+			logger.Error("error", "importPlugin", nil, nil)
+		} else {
+			switch {
+			case sLog[1] == "Action":
+				lock.Actions[sLog[2]] = sLog[3]
+			case sLog[1] == "Datasource":
+				lock.Datasources[sLog[2]] = sLog[3]
+			default:
+				fmt.Print(fmt.Sprintf("%s.%s:%s", sLog[1], sLog[2], sLog[3]))
+			}
+		}
 	}
 
 	return nil
 }
 
-func writeFile(file []byte) error {
+func writeTarFile(file []byte, folder string) error {
 	now := time.Now()
 	date := fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d", now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second())
 	fileName := fmt.Sprintf("plugins-%s.tar.gz", date)
 
-	newFile, err := os.Create(fmt.Sprintf("./tmp/%s", fileName))
+	newFile, err := os.Create(fmt.Sprintf("%s/%s", folder, fileName))
 	if err != nil {
 		return nil
 	}
@@ -179,7 +211,7 @@ func writeFile(file []byte) error {
 
 	_, err = io.Copy(newFile, bytes.NewReader(file))
 	if err != nil {
-		logger.Error(util.WritePluginFileError, "writeFile", err, nil)
+		logger.Error(util.WritePluginFileError, "writeTarFile", err, nil)
 		return err
 	}
 
@@ -196,5 +228,56 @@ func (main Main) ParseImportRequest(importRequest io.ReadCloser) (ImportRequest,
 	}
 
 	return *req, nil
+}
 
+func Untar(dst string, r io.Reader) (string, error) {
+
+	gzr, err := gzip.NewReader(r)
+	if err != nil {
+		return "", err
+	}
+	defer gzr.Close()
+
+	tr := tar.NewReader(gzr)
+
+	var rootFolder string
+	for {
+		header, err := tr.Next()
+
+		switch {
+		case err == io.EOF:
+			return rootFolder, nil
+		case err != nil:
+			return "", err
+		case header == nil:
+			continue
+		case header.Typeflag == 103:
+			continue
+		}
+
+		if rootFolder == "" {
+			rootFolder = header.Name
+		}
+
+		target := filepath.Join(dst, header.Name)
+
+		switch header.Typeflag {
+		case tar.TypeDir:
+			if _, err := os.Stat(target); err != nil {
+				if err := os.MkdirAll(target, 0755); err != nil {
+					return "", err
+				}
+			}
+		case tar.TypeReg:
+			f, err := os.OpenFile(target, os.O_CREATE|os.O_RDWR, os.FileMode(header.Mode))
+			if err != nil {
+				return "", err
+			}
+
+			if _, err := io.Copy(f, tr); err != nil {
+				return "", err
+			}
+			f.Close()
+		}
+	}
 }

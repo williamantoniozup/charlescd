@@ -65,5 +65,5 @@ func (pluginApi PluginApi) importPlugins(w http.ResponseWriter, r *http.Request,
 		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error importing plugins")})
 	}
 
-	api.NewRestSuccess(w, http.StatusNoContent, nil)
+	api.NewRestSuccess(w, http.StatusNoContent, "")
 }
