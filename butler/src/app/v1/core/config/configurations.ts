@@ -72,4 +72,8 @@ export const Configuration: IEnvConfiguration = {
 
   argocdPassword: process.env.ARGOCD_PASSWORD || ConfigurationConstants.ARGOCD_PASSWORD,
 
+  argocdHealthCheckInterval: Number(process.env.ARGOCD_HEALTHCHECK_INTERVAL) || ConfigurationConstants.ARGOCD_HEALTHCHECK_INTERVAL,
+
+  argocdHealthCheckTimeout: Number(process.env.ARGOCD_HEALTHCHECK_TIMEOUT) || ConfigurationConstants.ARGOCD_HEALTHCHECK_TIMEOUT,
+
 }

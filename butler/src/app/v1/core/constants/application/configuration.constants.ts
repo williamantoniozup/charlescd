@@ -66,6 +66,10 @@ export const ConfigurationConstants = {
 
   ARGOCD_USERNAME: 'example',
 
+  ARGOCD_HEALTHCHECK_INTERVAL: 1000,
+
+  ARGOCD_HEALTHCHECK_TIMEOUT: 15000,
+
   DEPLOYMENT_EXPIRE_TIME: 25,
 
   BUTLER_URL: 'http://localhost:8883/butler'

@@ -26,6 +26,15 @@ import { HealthCheckJob } from '../../../../app/v2/core/integrations/argocd/heal
 
 describe('ArgoCD Deployment Health Check Job', async () => {
 
+  let envConfiguration: IEnvConfiguration
+
+  beforeEach(async () => {
+    envConfiguration = { 
+      argocdHealthCheckInterval: 1000,
+      argocdHealthCheckTimeout: 3000
+     } as IEnvConfiguration
+  })
+
   it('Check deployment of one application', async () => {
 
     const aplicationNames = [
@@ -36,8 +45,8 @@ describe('ArgoCD Deployment Health Check Job', async () => {
     jest.spyOn(httpService, 'get')
       .mockImplementation(() => of(createCheckStatusResponse('circle-id-A-v2')))
 
-    const argocdApi = new ArgocdApi(httpService, {} as IEnvConfiguration)
-    const healthCheckJob = new HealthCheckJob(new ConsoleLoggerService(), argocdApi)
+    const argocdApi = new ArgocdApi(httpService, envConfiguration)
+    const healthCheckJob = new HealthCheckJob(new ConsoleLoggerService(), argocdApi, envConfiguration)
 
     const result = healthCheckJob.execute(aplicationNames)
 
@@ -56,8 +65,8 @@ describe('ArgoCD Deployment Health Check Job', async () => {
       .mockImplementationOnce(() => of(createCheckStatusResponse('circle-id-A-v2')))
       .mockImplementationOnce(() => of(createCheckStatusResponse('circle-id-B-v2')))
 
-    const argocdApi = new ArgocdApi(httpService, {} as IEnvConfiguration)
-    const healthCheckJob = new HealthCheckJob(new ConsoleLoggerService(), argocdApi)
+    const argocdApi = new ArgocdApi(httpService, envConfiguration)
+    const healthCheckJob = new HealthCheckJob(new ConsoleLoggerService(), argocdApi, envConfiguration)
 
     const result = healthCheckJob.execute(aplicationNames)
 
@@ -78,8 +87,8 @@ describe('ArgoCD Deployment Health Check Job', async () => {
       .mockImplementationOnce(() => of(createCheckStatusResponse('circle-id-B-v2')))
       .mockImplementation(() => of(createCheckStatusResponse('circle-id-C-v2', 'Degraded')))
 
-    const argocdApi = new ArgocdApi(httpService, {} as IEnvConfiguration)
-    const healthCheckJob = new HealthCheckJob(new ConsoleLoggerService(), argocdApi)
+    const argocdApi = new ArgocdApi(httpService, envConfiguration)
+    const healthCheckJob = new HealthCheckJob(new ConsoleLoggerService(), argocdApi, envConfiguration)
     const result = healthCheckJob.execute(aplicationNames)
 
     return expect(result)
@@ -97,8 +106,8 @@ describe('ArgoCD Deployment Health Check Job', async () => {
     jest.spyOn(httpService, 'get')
       .mockImplementation(() => { throw 'Error' } )
 
-    const argocdApi = new ArgocdApi(httpService, {} as IEnvConfiguration)
-    const healthCheckJob = new HealthCheckJob(new ConsoleLoggerService(), argocdApi)
+    const argocdApi = new ArgocdApi(httpService, envConfiguration)
+    const healthCheckJob = new HealthCheckJob(new ConsoleLoggerService(), argocdApi, envConfiguration)
     const result = healthCheckJob.execute(aplicationNames)
 
     return expect(result)

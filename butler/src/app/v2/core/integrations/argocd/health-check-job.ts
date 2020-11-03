@@ -1,14 +1,18 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
 
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 import { ArgocdApi } from './argocd-api'
+import { IoCTokensConstants } from '../../../../v1/core/constants/ioc'
+import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface'
 
 @Injectable()
 export class HealthCheckJob {
 
   constructor(
     private consoleLoggerService: ConsoleLoggerService,
-    private argocdApi: ArgocdApi
+    private argocdApi: ArgocdApi,
+    @Inject(IoCTokensConstants.ENV_CONFIGURATION)
+    private readonly envConfiguration: IEnvConfiguration
   ) { }
 
   public async execute(applicationNames: string[]): Promise<void> {
@@ -31,12 +35,12 @@ export class HealthCheckJob {
           clearTimeout(healthCkeckJobTimeout)
           reject(error)
         }
-      }, 1000) // TODO: alterar para obter da configuracao
+      }, this.envConfiguration.argocdHealthCheckInterval)
 
       const healthCkeckJobTimeout = setTimeout(async () => {
         clearInterval(healthCkeckJob)
         reject('Timeout Error')
-      }, 3000) // TODO: alterar para obter da configuracao
+      }, this.envConfiguration.argocdHealthCheckTimeout)
     })
   }
 

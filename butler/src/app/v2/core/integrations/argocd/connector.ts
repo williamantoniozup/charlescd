@@ -20,15 +20,16 @@ import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { CdConnector } from '../interfaces/cd-connector.interface'
 import { ConnectorResult, ConnectorResultError } from '../spinnaker/interfaces'
 import { ArgocdApi } from './argocd-api'
-import { ArgocdDeploymentRequest } from './interfaces/argocd-deployment.interface'
 import { ArgoCdRequestBuilder } from './request-builder'
+import { HealthCheckJob } from './health-check-job'
 
 @Injectable()
 export class ArgocdConnector implements CdConnector {
 
   constructor(
     private consoleLoggerService: ConsoleLoggerService,
-    private argocdApi: ArgocdApi
+    private argocdApi: ArgocdApi,
+    private healthCheckJob: HealthCheckJob
   ) { }
 
   public async createDeployment(
@@ -48,7 +49,8 @@ export class ArgocdConnector implements CdConnector {
       let result = await Promise.all(argocdPromises) //lidar com sucesso de forma mais elegante
         .then(async success => {
           this.consoleLoggerService.log('POST:ARGOCD_CREATE_APPLICATION_SUCCESS')
-          await this.startHealthJob(argocdDeployment)
+          const applicationNames = argocdDeployment.newDeploys.map(application => application.metadata.name)
+          await this.healthCheckJob.execute(applicationNames)
           return { status: 'SUCCEEDED' } as ConnectorResult
         })
         .catch(error => {
@@ -56,7 +58,6 @@ export class ArgocdConnector implements CdConnector {
           return { status: 'ERROR', error: error } as ConnectorResultError
         })
 
-      // trigger job
       return result
 
     } catch (error) {
@@ -81,43 +82,5 @@ export class ArgocdConnector implements CdConnector {
       this.consoleLoggerService.log('ERROR:CREATE_V2_ARGOCD_UNDEPLOYMENT', { error })
       return { status: 'ERROR', error: error }
     }
-  }
-
-  public async startHealthJob(argocdDeployment: ArgocdDeploymentRequest): Promise<void> {
-    const applicationsStatus = argocdDeployment.newDeploys.reduce((acc, argocdApplication) => {
-      acc[argocdApplication.metadata.name] = false
-      return acc
-    }, {} as Record<string, boolean>)
-    const applicationNames = Object.keys(applicationsStatus)
-
-    return new Promise((resolve, reject) => {
-      const healthCkeckJob = setInterval(async () => {
-        const unhealthy = applicationNames.find(name => !applicationsStatus[name])
-        if(!unhealthy) {
-          clearInterval(healthCkeckJob) 
-          clearTimeout(healthCkeckJobTimeout)
-          resolve()
-          return
-        }
-        
-        try {
-          const calls = applicationNames.map(name => this.argocdApi.checkStatusApplication(name).toPromise())
-          const result = await Promise.all(calls)
-
-          result.forEach(response => {
-            applicationsStatus[response.data.metadata.name] = response.data.status.health.status == 'Healthy'
-          })
-        } catch(e) {
-          clearInterval(healthCkeckJob) 
-          clearTimeout(healthCkeckJobTimeout)
-          reject(e)
-        }
-      }, 1000)
-
-      const healthCkeckJobTimeout = setTimeout(async () => {
-        clearInterval(healthCkeckJob) 
-        resolve()
-      }, 5000)
-    })
   }
 }

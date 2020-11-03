@@ -48,6 +48,10 @@ export default interface IEnvConfiguration {
 
   argocdPassword: string
 
+  argocdHealthCheckInterval: number
+
+  argocdHealthCheckTimeout: number
+
   spinnakerGithubAccount: string
 
   helmTemplateUrl: string
