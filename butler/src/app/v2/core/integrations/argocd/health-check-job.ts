@@ -16,12 +16,16 @@ export class HealthCheckJob {
   ) { }
 
   public async execute(applicationNames: string[]): Promise<void> {
+    this.consoleLoggerService.log('START:RUN_HEALTHCHECK_JOB_EXECUTION', { applicationNames })
+
     let applicationsStatus = this.toApplicationStatus(applicationNames)
 
     return new Promise((resolve, reject) => {
       const healthCkeckJob = setInterval(async () => {
+        this.consoleLoggerService.log('START:RUN_HEALTHCHECK', { applicationNames })
         const healthy = this.isAllApplicationsHealthy(applicationsStatus)
         if (healthy) {
+          this.consoleLoggerService.log('ALL APPLICATIONS ARE HEALTHY', { applicationNames })
           clearInterval(healthCkeckJob)
           clearTimeout(healthCkeckJobTimeout)
           resolve()
@@ -31,6 +35,7 @@ export class HealthCheckJob {
         try {
           applicationsStatus = await this.healthCheck(applicationNames)
         } catch (error) {
+          this.consoleLoggerService.error('ERROR:HEALTHCHECK_JOB_EXECUTION', { error })
           clearInterval(healthCkeckJob)
           clearTimeout(healthCkeckJobTimeout)
           reject(error)
@@ -38,6 +43,7 @@ export class HealthCheckJob {
       }, this.envConfiguration.argocdHealthCheckInterval)
 
       const healthCkeckJobTimeout = setTimeout(async () => {
+        this.consoleLoggerService.error('ERROR:HEALTHCHECK_JOB_EXECUTION_TIMEOUT')
         clearInterval(healthCkeckJob)
         reject('Timeout Error')
       }, this.envConfiguration.argocdHealthCheckTimeout)
@@ -45,12 +51,18 @@ export class HealthCheckJob {
   }
 
   private async healthCheck(applicationNames: string[]): Promise<Record<string, boolean>> {
-    const healthCheckCalls = applicationNames.map(name => this.argocdApi.checkStatusApplication(name).toPromise())
+    const healthCheckCalls = applicationNames.map(name => {
+      this.consoleLoggerService.log(`HEALTHCHECK_ARGOCD_APPLICATION: ${name}`)
+      return this.argocdApi.checkStatusApplication(name).toPromise() 
+    })
     const result = await Promise.all(healthCheckCalls)
 
     const applicationsStatus = this.toApplicationStatus(applicationNames)
     result.forEach(response => {
-      applicationsStatus[response.data.metadata.name] = response.data.status.health.status == 'Healthy'
+      const applicationName = response.data.metadata.name
+      const healthCheckStatus = response.data.status.health.status
+      this.consoleLoggerService.log(`APPLICATION ${applicationName} STATUS ${healthCheckStatus}`)
+      applicationsStatus[applicationName] = healthCheckStatus == 'Healthy'
     })
     return applicationsStatus
   }

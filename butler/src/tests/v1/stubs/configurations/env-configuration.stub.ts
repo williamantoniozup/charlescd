@@ -65,9 +65,13 @@ export const EnvConfigurationStub: IEnvConfiguration = {
 
   butlerUrl: 'http://butler-url:3000',
 
-  argocdUrl: 'http://localhost:3000',
+  argocdUrl: 'http://localhost:3001',
 
   argocdUsername: 'example',
 
-  argocdPassword: 'example'
+  argocdPassword: 'example',
+
+  argocdHealthCheckInterval: 1000,
+
+  argocdHealthCheckTimeout: 15000
 }

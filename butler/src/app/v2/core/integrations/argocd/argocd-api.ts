@@ -90,8 +90,17 @@ export class ArgocdApi {
   }
 
   public checkStatusApplication(applicationName: string): Observable<AxiosResponse<ArgocdHealthCheck>> {
+    const agent = new Agent({  
+      rejectUnauthorized: false
+    })
     return this.httpService.get(
       `${this.envConfiguration.argocdUrl}/api/v1/applications/${applicationName}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        httpsAgent: agent,
+      }
     )
   }
 }
