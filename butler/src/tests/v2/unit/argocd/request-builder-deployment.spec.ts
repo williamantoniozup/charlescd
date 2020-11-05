@@ -35,6 +35,17 @@ describe('V2 Argocd Deployment Request Builder', () => {
     expect(deploymentRequest.newDeploys).toHaveLength(0)
   })
 
+  it('should ignore deployment components when already exists', async() => {
+    const deployment = createDeploymentFixture('deployment-id', [createComponentFixture('component-id-1', 'A', 'v1')])
+    const activeComponents: Component[] = [
+      createComponentFixture('component-id-2', 'A', 'v1', createDeploymentFixture('deployment-id1'))
+    ]
+
+    const deploymentRequest = new ArgoCdRequestBuilder().buildDeploymentRequest(deployment, activeComponents)
+
+    expect(deploymentRequest.newDeploys).toHaveLength(0)
+  })
+
   it('should create the correct complete request object with 3 new components and some unused components', async() => {
 
     const activeComponents: Component[] = [

@@ -22,7 +22,7 @@ import { ArgocdAppEntries, ArgocdApplication, ArgocdCharlesValues } from './inte
 import { ArgocdDeploymentRequest, ArgocdUndeploymentRequest } from './interfaces/argocd-deployment.interface'
 
 const createSubstring = (applicationName: string): string => {
-    return applicationName.substring(0, 53)
+  return applicationName.substring(0, 53)
 }
 
 export class ArgoCdRequestBuilder {
@@ -44,20 +44,20 @@ export class ArgoCdRequestBuilder {
     activeComponents: Component[],
   ): ArgocdUndeploymentRequest {
 
-    return { 
+    return {
       deleteApplications: this.getUndeploymentsArray(deployment),
       proxyUndeployments: this.getProxyUndeploymentsArray(deployment, activeComponents)
     }
   }
 
-  private getDeploymentsArray(deployment: Deployment, activeComponents: Component[]): ArgocdApplication[]{
+  private getDeploymentsArray(deployment: Deployment, activeComponents: Component[]): ArgocdApplication[] {
     if (!deployment?.components) {
       return []
     }
     const applications: ArgocdApplication[] = []
-    deployment.components.forEach((component: Component): ArgocdApplication | undefined=>  {
+    deployment.components.forEach((component: Component): ArgocdApplication | undefined => {
       if (DeploymentUtils.getActiveSameCircleTagComponent(activeComponents, component, deployment.circleId)) {
-        return 
+        return
       }
       const values: ArgocdCharlesValues = {
         image: {
@@ -83,12 +83,12 @@ export class ArgoCdRequestBuilder {
           destination: {
             name: '',
             namespace: deployment.cdConfiguration.configurationData.namespace,
-            server: 'https://kubernetes.default.svc' // mudar
+            server: 'https://kubernetes.default.svc' // TODO: mudar
           },
           source: {
             path: component.name,
             repoURL: component.helmUrl,
-            targetRevision: 'master', // mudar?
+            targetRevision: 'master', // TODO: mudar?
             helm: {
               valueFiles: [
                 `${component.name}.yaml`
@@ -96,7 +96,7 @@ export class ArgoCdRequestBuilder {
               values: stringify(values)
             }
           },
-          project: 'default', // mudar
+          project: 'default', // TODO: mudar
           syncPolicy: {
             automated: {
               prune: true,
@@ -117,7 +117,7 @@ export class ArgoCdRequestBuilder {
       const appEntries = this.getAppEntries(component, activeComponents, deployment.circleId)
       const proxyValues = {
         componentName: component.name,
-        hostname:component.hostValue ? [component.hostValue, component.name] : [component.name],
+        hostname: component.hostValue ? [component.hostValue, component.name] : [component.name],
         virtualGateway: component.gatewayName ? [component.gatewayName] : [],
         appEntries: appEntries.circleProxy,
         defaultVersion: appEntries.defaultProxy
@@ -194,7 +194,7 @@ export class ArgoCdRequestBuilder {
       })
       const defaultComponent: Component | undefined = activeByName.find(component => component.deployment && !component.deployment.circleId)
       if (defaultComponent) {
-        appEntries.defaultProxy ={
+        appEntries.defaultProxy = {
           componentName: defaultComponent.name,
           imageTag: defaultComponent.imageTag,
           circleId: AppConstants.DEFAULT_CIRCLE_ID,
@@ -227,13 +227,13 @@ export class ArgoCdRequestBuilder {
       })
       const defaultComponent: Component | undefined = activeByName.find(component => component.deployment && !component.deployment.circleId)
       if (defaultComponent) {
-        appEntries.defaultProxy ={
+        appEntries.defaultProxy = {
           componentName: component.name,
           imageTag: component.imageTag,
           circleId: AppConstants.DEFAULT_CIRCLE_ID,
         }
       }
-      
+
     })
     return appEntries
   }
@@ -251,7 +251,7 @@ export class ArgoCdRequestBuilder {
       const appEntries = this.getUndeployAppEntries(deployment, activeComponents)
       const proxyValues = {
         componentName: component.name,
-        hostname:component.hostValue ? [component.hostValue, component.name] : [component.name],
+        hostname: component.hostValue ? [component.hostValue, component.name] : [component.name],
         virtualGateway: component.gatewayName ? [component.gatewayName] : [],
         appEntries: appEntries.circleProxy,
         defaultVersion: appEntries.defaultProxy
