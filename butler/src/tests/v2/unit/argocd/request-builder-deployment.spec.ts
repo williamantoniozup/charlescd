@@ -27,6 +27,13 @@ const deploymentWith3Components = createDeploymentFixture('deployment-id', [
 ])
 
 describe('V2 Argocd Deployment Request Builder', () => {
+  
+  it('should return empty newDeploys list when there is no components', async() => {
+    const deployment = createDeploymentFixture('deployment-id')
+    const deploymentRequest = new ArgoCdRequestBuilder().buildDeploymentRequest(deployment, [])
+
+    expect(deploymentRequest.newDeploys).toHaveLength(0)
+  })
 
   it('should create the correct complete request object with 3 new components and some unused components', async() => {
 
@@ -38,8 +45,9 @@ describe('V2 Argocd Deployment Request Builder', () => {
       createComponentFixture('component-id-8', 'C', 'v0', createDeploymentFixture('deployment-id8'))
     ]
     const deploymentRequest = new ArgoCdRequestBuilder().buildDeploymentRequest(deploymentWith3Components, activeComponents)
-    expect(deploymentRequest.newDeploys.length).toEqual(3)
-    expect(deploymentRequest.deleteDeploys.length).toEqual(3)
-    expect(deploymentRequest.proxyDeployments.length).toEqual(3)
+    
+    expect(deploymentRequest.newDeploys).toHaveLength(3)
+    expect(deploymentRequest.deleteDeploys).toHaveLength(3)
+    expect(deploymentRequest.proxyDeployments).toHaveLength(3)
   })
 })
