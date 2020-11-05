@@ -16,7 +16,6 @@
 
 package io.charlescd.moove.infrastructure.service
 
-import feign.FeignException
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.service.DeployService
@@ -36,17 +35,10 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
     }
 
     override fun deploy(deployment: Deployment, build: Build, isDefaultCircle: Boolean, cdConfigurationId: String) {
-        try{
-            when (isDefaultCircle) {
-                true -> deployInDefaultCircle(build, deployment, cdConfigurationId)
-                else -> deployInSegmentedCircle(build, deployment, cdConfigurationId)
-            }
-        }catch(exception: FeignException){
-            exception.contentUTF8()?.let{
-                throw BusinessException.of(MooveErrorCode.CANNOT_DEPLOY_RELEASE).withParameters(it)
-            } ?: throw BusinessException.of(MooveErrorCode.CANNOT_DEPLOY_RELEASE)
+        when (isDefaultCircle) {
+            true -> deployInDefaultCircle(build, deployment, cdConfigurationId)
+            else -> deployInSegmentedCircle(build, deployment, cdConfigurationId)
         }
-
     }
 
     private fun deployInSegmentedCircle(
