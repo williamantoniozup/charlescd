@@ -21,10 +21,6 @@ import { stringify } from 'yaml'
 import { ArgocdAppEntries, ArgocdApplication, ArgocdCharlesValues } from './interfaces/argocd-application.interface'
 import { ArgocdDeploymentRequest, ArgocdUndeploymentRequest } from './interfaces/argocd-deployment.interface'
 
-const createSubstring = (applicationName: string): string => {
-  return applicationName.substring(0, 53)
-}
-
 export class ArgoCdRequestBuilder {
 
   public buildDeploymentRequest(
@@ -72,7 +68,7 @@ export class ArgoCdRequestBuilder {
         apiVersion: 'argoproj.io/v2alpha1',
         kind: 'Application',
         metadata: {
-          name: createSubstring(`${deployment.circleId}-${component.name}-${component.imageTag}`),
+          name: this.createApplicationName(component, deployment.circleId),
           labels: {
             circleId: deployment.circleId,
             imageTag: component.imageTag,
@@ -108,6 +104,16 @@ export class ArgoCdRequestBuilder {
       applications.push(argocdApplication)
     })
     return applications
+  }
+
+  private createApplicationName(component: Component, circleId: string | null) {
+    const MAX_NAME_SIZE = 53
+    let applicationName = `${component.name}-${component.imageTag}`
+    if(circleId) {
+      return `${applicationName.substring(0, (MAX_NAME_SIZE - circleId.length))}-${circleId}`
+    } else {
+      return applicationName.substring(0, MAX_NAME_SIZE)
+    }
   }
 
   private getProxyArgocdJson(deployment: Deployment, activeComponents: Component[]): ArgocdApplication[] {

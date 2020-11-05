@@ -46,6 +46,28 @@ describe('V2 Argocd Deployment Request Builder', () => {
     expect(deploymentRequest.newDeploys).toHaveLength(0)
   })
 
+  it('should format application name with the correct size', async() => {
+    const deployment = createDeploymentFixture('deployment-id', [createComponentFixture('component-id-1', 'unit-test-application', 'v1')])
+    const activeComponents: Component[] = [
+      createComponentFixture('component-id-2', 'B', 'v1', createDeploymentFixture('deployment-id1'))
+    ]
+
+    const deploymentRequest = new ArgoCdRequestBuilder().buildDeploymentRequest(deployment, activeComponents)
+
+    expect(deploymentRequest.newDeploys[0].metadata.name).toEqual('unit-test-applica-b46fd548-0082-4021-ba80-a50703c44a3b')
+  })
+
+  it('should format application name with the correct size when there is not circleId', async() => {
+    const deployment = createDeploymentFixture('deployment-id', [createComponentFixture('component-id-1', 'unit-test-application', 'v1')], null)
+    const activeComponents: Component[] = [
+      createComponentFixture('component-id-2', 'B', 'v1', createDeploymentFixture('deployment-id1'))
+    ]
+
+    const deploymentRequest = new ArgoCdRequestBuilder().buildDeploymentRequest(deployment, activeComponents)
+
+    expect(deploymentRequest.newDeploys[0].metadata.name).toEqual('unit-test-application-v1')
+  })
+
   it('should create the correct complete request object with 3 new components and some unused components', async() => {
 
     const activeComponents: Component[] = [

@@ -19,12 +19,12 @@ import { Component, Deployment } from '../../../../../app/v2/api/deployments/int
 import { GitProvidersEnum } from '../../../../../app/v1/core/integrations/configuration/interfaces'
 import { ClusterProviderEnum } from '../../../../../app/v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 
-const createDeploymentFixture = (id: string, components?: Component[]) => {
+const createDeploymentFixture = (id: string, components?: Component[], circleId: string | null = 'b46fd548-0082-4021-ba80-a50703c44a3b') => {
   return {
     id: id,
     authorId: 'user-1',
     callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=1',
-    circleId: 'circle-id',
+    circleId: circleId,
     createdAt: new Date(),
     components: components,
     cdConfiguration: {
