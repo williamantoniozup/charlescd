@@ -17,6 +17,7 @@
 package io.charlescd.moove.infrastructure.service
 
 import io.charlescd.moove.domain.*
+import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.service.DeployService
 import io.charlescd.moove.infrastructure.service.client.*
 import io.charlescd.moove.infrastructure.service.client.request.*
@@ -34,10 +35,17 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
     }
 
     override fun deploy(deployment: Deployment, build: Build, isDefaultCircle: Boolean, cdConfigurationId: String) {
-        when (isDefaultCircle) {
-            true -> deployInDefaultCircle(build, deployment, cdConfigurationId)
-            else -> deployInSegmentedCircle(build, deployment, cdConfigurationId)
+        try{
+            when (isDefaultCircle) {
+                true -> deployInDefaultCircle(build, deployment, cdConfigurationId)
+                else -> deployInSegmentedCircle(build, deployment, cdConfigurationId)
+            }
+        }catch(exception: Exception){
+            exception.message?.let{
+                throw BusinessException.of(MooveErrorCode.CANNOT_DEPLOY_RELEASE).withParameters(it)
+            } ?: throw BusinessException.of(MooveErrorCode.CANNOT_DEPLOY_RELEASE)
         }
+
     }
 
     private fun deployInSegmentedCircle(
