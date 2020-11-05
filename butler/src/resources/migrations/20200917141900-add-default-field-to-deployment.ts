@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-import { DeploymentComponent } from '../../../../api/deployments/interfaces/deployment.interface'
+import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
-const DeploymentTemplateUtils = {
-  getDeploymentEvalStageId: (components: DeploymentComponent[]): number => {
-    return (components.length * 4) + 1
-  },
+export class AddDefaultFieldToDeployment20200917141900 implements MigrationInterface {
 
-  getProxyEvalStageId: (components: DeploymentComponent[]): number => {
-    return (components.length * 4) + 2
+  public async up(queryRunner: QueryRunner) : Promise<void> {
+    await queryRunner.addColumn('v2deployments', new TableColumn({
+      name: 'default_circle',
+      type: 'boolean',
+      isNullable: false
+    }))
+  }
+
+  public async down(queryRunner: QueryRunner) : Promise<void> {
+    await queryRunner.dropColumn('v2deployments', 'default')
   }
 }
-
-export { DeploymentTemplateUtils }
