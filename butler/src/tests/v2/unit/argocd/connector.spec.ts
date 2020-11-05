@@ -15,6 +15,9 @@
  */
 
 import 'jest'
+import { of } from 'rxjs'
+import { HttpService } from '@nestjs/common'
+import { AxiosResponse } from 'axios'
 import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
 import { Component, Deployment } from '../../../../app/v2/api/deployments/interfaces'
 import { GitProvidersEnum } from '../../../../app/v1/core/integrations/configuration/interfaces'
@@ -23,10 +26,7 @@ import { ArgocdConnector } from '../../../../app/v2/core/integrations/argocd/con
 import { ConsoleLoggerService } from '../../../../app/v1/core/logs/console'
 import { ArgocdApi } from '../../../../app/v2/core/integrations/argocd/argocd-api'
 import IEnvConfiguration from '../../../../app/v1/core/integrations/configuration/interfaces/env-configuration.interface'
-import { ArgoCdRequestBuilder } from '../../../../app/v2/core/integrations/argocd/request-builder'
-import { of } from 'rxjs'
-import { HttpService } from '@nestjs/common'
-import { AxiosResponse } from 'axios'
+import { HealthCheckJob } from '../../../../app/v2/core/integrations/argocd/health-check-job'
 
 const deploymentWith3Components: Deployment = {
   id: 'deployment-id',
@@ -245,6 +245,15 @@ describe('ArgoCD Deployment', async () => {
     }
   ]
 
+  let envConfiguration: IEnvConfiguration
+
+  beforeEach(async () => {
+    envConfiguration = { 
+      argocdHealthCheckInterval: 1000,
+      argocdHealthCheckTimeout: 3000
+     } as IEnvConfiguration
+  })
+
   it('should create a deployment with success', async () => {
 
     const httpService = new HttpService()
@@ -252,29 +261,12 @@ describe('ArgoCD Deployment', async () => {
     jest.spyOn(httpService, 'get')
       .mockImplementationOnce(() => of(createCheckStatusResponse('circle-id-A-v2')))
       .mockImplementationOnce(() => of(createCheckStatusResponse('circle-id-B-v2')))
-      .mockImplementation(() => of(createCheckStatusResponse('circle-id-C-v2', 'Error')))
-
-    const argocdApi = new ArgocdApi(httpService, {} as IEnvConfiguration)
-    const connector = new ArgocdConnector(new ConsoleLoggerService(), argocdApi)
-    const result = await connector.createDeployment(deploymentWith3Components, activeComponents)
-
-    expect(
-      result
-    ).toEqual({ status: "SUCCEEDED" })
-  })
-
-  it('check deployment status', async () => {
-
-    const httpService = new HttpService()
-    jest.spyOn(httpService, 'get')
-      .mockImplementationOnce(() => of(createCheckStatusResponse('circle-id-A-v2')))
-      .mockImplementationOnce(() => of(createCheckStatusResponse('circle-id-B-v2')))
       .mockImplementationOnce(() => of(createCheckStatusResponse('circle-id-C-v2')))
 
-    const argocdApi = new ArgocdApi(httpService, {} as IEnvConfiguration)
-    const connector = new ArgocdConnector(new ConsoleLoggerService(), argocdApi)
-    const request = new ArgoCdRequestBuilder().buildDeploymentRequest(deploymentWith3Components, activeComponents)
-    const result = await connector.startHealthJob(request)
+    const argocdApi = new ArgocdApi(httpService, envConfiguration)
+    const healthCheckJob = new HealthCheckJob(new ConsoleLoggerService(), argocdApi, envConfiguration)
+    const connector = new ArgocdConnector(new ConsoleLoggerService(), argocdApi, healthCheckJob)
+    const result = await connector.createDeployment(deploymentWith3Components, activeComponents)
 
     expect(
       result

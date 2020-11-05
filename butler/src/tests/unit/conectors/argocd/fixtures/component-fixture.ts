@@ -14,38 +14,9 @@
  * limitations under the License.
  */
 
-import { CdTypeEnum } from '../../../../../app/v1/api/configurations/enums'
 import { Component, Deployment } from '../../../../../app/v2/api/deployments/interfaces'
-import { GitProvidersEnum } from '../../../../../app/v1/core/integrations/configuration/interfaces'
-import { ClusterProviderEnum } from '../../../../../app/v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 
 const createComponentFixture = (id: string, name: string, imageTag: string, deployment?: Deployment) => {
-
-  if(!deployment) {
-    deployment = {
-      id: '', //deploymentId,
-      authorId: 'user-1',
-      callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
-      circleId: 'circle-id',
-      createdAt: new Date(),
-      cdConfiguration: {
-        id: 'cd-configuration-id',
-        type: CdTypeEnum.ARGOCD,
-        configurationData: {
-          gitProvider: GitProvidersEnum.GITHUB,
-          gitToken: 'git-token',
-          provider: ClusterProviderEnum.DEFAULT,
-          namespace: 'sandbox'
-        },
-        name: 'argocdconfiguration',
-        authorId: 'user-2',
-        workspaceId: 'workspace-id',
-        createdAt: new Date(),
-        deployments: null
-      }
-    }
-  }
-
   return {
     id: id,
     helmUrl: 'http://localhost:2222/helm',
