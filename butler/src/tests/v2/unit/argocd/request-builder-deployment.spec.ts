@@ -19,6 +19,7 @@ import { Component } from '../../../../app/v2/api/deployments/interfaces'
 import { ArgoCdRequestBuilder } from '../../../../app/v2/core/integrations/argocd/request-builder'
 import { createComponentFixture } from '../../../unit/conectors/argocd/fixtures/component-fixture'
 import { createDeploymentFixture } from '../../../unit/conectors/argocd/fixtures/deployment-fixture'
+import { createArgoApplicationFixture } from '../../../unit/conectors/argocd/fixtures/argocd-application-fixture'
 
 const deploymentWith3Components = createDeploymentFixture('deployment-id', [
   createComponentFixture('component-id-1', 'A', 'v2'),
@@ -54,7 +55,7 @@ describe('V2 Argocd Deployment Request Builder', () => {
 
     const deploymentRequest = new ArgoCdRequestBuilder().buildDeploymentRequest(deployment, activeComponents)
 
-    expect(deploymentRequest.newDeploys[0].metadata.name).toEqual('unit-test-applica-b46fd548-0082-4021-ba80-a50703c44a3b')
+    expect(deploymentRequest.newDeploys[0].metadata.name).toEqual('unit-test-applic-b46fd548-0082-4021-ba80-a50703c44a3b')
   })
 
   it('should format application name with the correct size when there is not circleId', async() => {
@@ -82,5 +83,17 @@ describe('V2 Argocd Deployment Request Builder', () => {
     expect(deploymentRequest.newDeploys).toHaveLength(3)
     expect(deploymentRequest.deleteDeploys).toHaveLength(3)
     expect(deploymentRequest.proxyDeployments).toHaveLength(3)
+  })
+
+  it('should create correct request for new deploys', async() => {
+    const deployment = createDeploymentFixture('deployment-id', [createComponentFixture('component-id-1', 'A', 'v1')])
+    const activeComponents: Component[] = [
+      createComponentFixture('component-id-2', 'B', 'v1', createDeploymentFixture('deployment-id1'))
+    ]
+
+    const deploymentRequest = new ArgoCdRequestBuilder().buildDeploymentRequest(deployment, activeComponents)
+    
+    const expected = createArgoApplicationFixture(deployment, deployment.components?.[0] ?? {} as Component)
+    expect(deploymentRequest.newDeploys).toEqual([expected])
   })
 })

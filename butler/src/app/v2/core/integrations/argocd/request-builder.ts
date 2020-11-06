@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
+import { stringify } from 'yaml'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { DeploymentUtils } from '../utils/deployment.utils'
 import { AppConstants } from '../../../../v1/core/constants'
-import { stringify } from 'yaml'
-import { ArgocdAppEntries, ArgocdApplication, ArgocdCharlesValues } from './interfaces/argocd-application.interface'
+import { ArgocdAppEntries, ArgocdApplication, ArgocdCharlesValues, ArgocdHelm } from './interfaces/argocd-application.interface'
 import { ArgocdDeploymentRequest, ArgocdUndeploymentRequest } from './interfaces/argocd-deployment.interface'
+import { applicationNameStrategy, proxyNameStrategy } from './argocd-application-name-strategy'
 
 export class ArgoCdRequestBuilder {
 
@@ -55,7 +56,7 @@ export class ArgoCdRequestBuilder {
       if (DeploymentUtils.getActiveSameCircleTagComponent(activeComponents, component, deployment.circleId)) {
         return
       }
-      const values: ArgocdCharlesValues = {
+      const helmValues: ArgocdCharlesValues = {
         image: {
           tag: component.imageUrl
         },
@@ -64,56 +65,17 @@ export class ArgoCdRequestBuilder {
         deploymentName: `${component.name}-${component.imageTag}-${deployment.circleId?.substring(24)}`,
         circleId: deployment.circleId
       }
-      const argocdApplication: ArgocdApplication = {
-        apiVersion: 'argoproj.io/v2alpha1',
-        kind: 'Application',
-        metadata: {
-          name: this.createApplicationName(component, deployment.circleId),
-          labels: {
-            circleId: deployment.circleId,
-            imageTag: component.imageTag,
-            componentName: component.name,
-          }
-        },
-        spec: {
-          destination: {
-            name: '',
-            namespace: deployment.cdConfiguration.configurationData.namespace,
-            server: 'https://kubernetes.default.svc' // TODO: mudar
-          },
-          source: {
-            path: component.name,
-            repoURL: component.helmUrl,
-            targetRevision: 'master', // TODO: mudar?
-            helm: {
-              valueFiles: [
-                `${component.name}.yaml`
-              ],
-              values: stringify(values)
-            }
-          },
-          project: 'default', // TODO: mudar
-          syncPolicy: {
-            automated: {
-              prune: true,
-              selfHeal: false
-            }
-          }
-        }
+      const helm: ArgocdHelm = {
+        valueFiles: [
+          `${component.name}.yaml`
+        ],
+        values: stringify(helmValues)
       }
+      const namespace = deployment.cdConfiguration.configurationData.namespace
+      const argocdApplication = new ArgocdApplication(component, namespace, deployment.circleId, helm, applicationNameStrategy)
       applications.push(argocdApplication)
     })
     return applications
-  }
-
-  private createApplicationName(component: Component, circleId: string | null) {
-    const MAX_NAME_SIZE = 53
-    let applicationName = `${component.name}-${component.imageTag}`
-    if(circleId) {
-      return `${applicationName.substring(0, (MAX_NAME_SIZE - circleId.length))}-${circleId}`
-    } else {
-      return applicationName.substring(0, MAX_NAME_SIZE)
-    }
   }
 
   private getProxyArgocdJson(deployment: Deployment, activeComponents: Component[]): ArgocdApplication[] {
@@ -128,38 +90,16 @@ export class ArgoCdRequestBuilder {
         appEntries: appEntries.circleProxy,
         defaultVersion: appEntries.defaultProxy
       }
-      const argocdProxyApplication: ArgocdApplication = {
-        apiVersion: 'argoproj.io/v2alpha1',
-        kind: 'Application',
-        metadata: {
-          name: component.name
-        },
-        spec: {
-          destination: {
-            name: '',
-            namespace: deployment.cdConfiguration.configurationData.namespace,
-            server: 'https://kubernetes.default.svc'
-          },
-          source: {
-            path: component.name,
-            repoURL: component.helmUrl,
-            targetRevision: 'master',
-            helm: {
-              valueFiles: [
-                'values.yaml'
-              ],
-              values: stringify(proxyValues),
-            }
-          },
-          project: 'default',
-          syncPolicy: {
-            automated: {
-              prune: true,
-              selfHeal: false
-            }
-          }
-        }
+      const helm: ArgocdHelm = {
+        valueFiles: [
+          'values.yaml'
+        ],
+        values: stringify(proxyValues),
       }
+
+      const namespace = deployment.cdConfiguration.configurationData.namespace
+      const argocdProxyApplication = new ArgocdApplication(component, namespace, deployment.circleId, helm, proxyNameStrategy)
+
       proxys.push(argocdProxyApplication)
     })
     return proxys
@@ -262,38 +202,14 @@ export class ArgoCdRequestBuilder {
         appEntries: appEntries.circleProxy,
         defaultVersion: appEntries.defaultProxy
       }
-      return {
-        apiVersion: 'argoproj.io/v2alpha1',
-        kind: 'Application',
-        metadata: {
-          name: component.name
-        },
-        spec: {
-          destination: {
-            name: '',
-            namespace: deployment.cdConfiguration.configurationData.namespace,
-            server: 'https://kubernetes.default.svc'
-          },
-          source: {
-            path: component.name,
-            repoURL: component.helmUrl,
-            targetRevision: 'master',
-            helm: {
-              valueFiles: [
-                'values.yaml'
-              ],
-              values: stringify(proxyValues),
-            }
-          },
-          project: 'default',
-          syncPolicy: {
-            automated: {
-              prune: true,
-              selfHeal: false
-            }
-          }
-        }
+      const helm: ArgocdHelm = {
+        valueFiles: [
+          'values.yaml'
+        ],
+        values: stringify(proxyValues),
       }
+      const namespace = deployment.cdConfiguration.configurationData.namespace
+      return new ArgocdApplication(component, namespace, deployment.circleId, helm, proxyNameStrategy)
     })
   }
 
