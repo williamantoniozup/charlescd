@@ -4,8 +4,9 @@ go 1.14
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
+	github.com/gabrielleitezup/grpc-plugin-server v0.0.0-20201105193712-72a73deb0e7f
 	github.com/golang-migrate/migrate/v4 v4.12.2
-	github.com/google/uuid v1.1.1
+	github.com/google/uuid v1.1.2
 	github.com/iancoleman/strcase v0.1.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/joho/godotenv v1.3.0
@@ -17,5 +18,6 @@ require (
 	github.com/stretchr/testify v1.5.1
 	golang.org/x/oauth2 v0.0.0-20200902213428-5d25da1a8d43 // indirect
 	google.golang.org/api v0.31.0
+	google.golang.org/grpc v1.33.1
 	gopkg.in/yaml.v2 v2.3.0
 )

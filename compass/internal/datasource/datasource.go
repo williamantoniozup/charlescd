@@ -22,12 +22,16 @@ import (
 	"compass/internal/util"
 	"compass/pkg/datasource"
 	"compass/pkg/logger"
+	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"google.golang.org/grpc"
 	"io"
 	"strconv"
 	"time"
 
+	bielDatasource "github.com/gabrielleitezup/grpc-plugin-server/pkg/datasource"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 )
@@ -133,26 +137,45 @@ func (main Main) GetMetrics(dataSourceID, name string) (datasource.MetricList, e
 		return datasource.MetricList{}, errors.New("Not found data source: " + dataSourceID)
 	}
 
-	plugin, err := main.pluginMain.GetPluginBySrc(dataSourceResult.PluginSrc)
-	if err != nil {
-		logger.Error(util.OpenPluginGetMetricsError, "GetMetrics", err, plugin)
-		return datasource.MetricList{}, err
-	}
-
-	getList, err := plugin.Lookup("GetMetrics")
-	if err != nil {
-		logger.Error(util.PluginLookupError, "GetMetrics", err, plugin)
-		return datasource.MetricList{}, err
-	}
+	//plugin, err := main.pluginMain.GetPluginBySrc(dataSourceResult.PluginSrc)
+	//if err != nil {
+	//	logger.Error(util.OpenPluginGetMetricsError, "GetMetrics", err, plugin)
+	//	return datasource.MetricList{}, err
+	//}
+	//
+	//getList, err := plugin.Lookup("GetMetrics")
+	//if err != nil {
+	//	logger.Error(util.PluginLookupError, "GetMetrics", err, plugin)
+	//	return datasource.MetricList{}, err
+	//}
 
 	configurationData, _ := json.Marshal(dataSourceResult.Data)
-	list, err := getList.(func(configurationData []byte) (datasource.MetricList, error))(configurationData)
+	list, err := main.callPlugin(configurationData)
 	if err != nil {
 		logger.Error(util.PluginListError, "GetMetrics", err, configurationData)
 		return datasource.MetricList{}, err
 	}
 
-	return list, nil
+	return list.Metrics, nil
+}
+
+func (main Main) callPlugin(configuration []byte) (*bielDatasource.MetricList, error) {
+	conn, err := grpc.Dial(fmt.Sprintf("localhost:9000"), grpc.WithInsecure())
+	if err != nil {
+		logger.Error("fail to dial: %v", "callPlugin", err, conn)
+	}
+	defer conn.Close()
+
+	client := bielDatasource.NewDatasourceClient(conn)
+
+	metricRequest := bielDatasource.MetricsRequest{Configuration: configuration}
+
+	metricList, err := client.GetMetrics(context.Background(), &metricRequest)
+	if err != nil {
+		logger.Error("fail to dial: %v and call prometheus", "callPlugin", err, metricList)
+	}
+
+	return metricList, err
 }
 
 func (main Main) TestConnection(pluginSrc string, datasourceData json.RawMessage) error {
