@@ -112,7 +112,7 @@ export class ArgoCdRequestBuilder {
     }
     const activeByName: Component[] = DeploymentUtils.getActiveComponentsByName(activeComponents, component.name)
     if (!circleId) {
-      activeByName.map(component => appEntries.circleProxy.push({
+      activeByName.forEach(component => appEntries.circleProxy.push({
         componentName: component.name,
         imageTag: component.imageTag,
         circleId: component.deployment?.circleId,
@@ -128,7 +128,7 @@ export class ArgoCdRequestBuilder {
         imageTag: component.imageTag,
         circleId: circleId,
       })
-      activeByName.map(component => {
+      activeByName.forEach(component => {
         const activeCircleId = component.deployment?.circleId
         if (activeCircleId && activeCircleId !== circleId) {
           appEntries.circleProxy.push({

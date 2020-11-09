@@ -19,6 +19,7 @@ import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { CdConnector } from '../interfaces/cd-connector.interface'
 import { ConnectorResult, ConnectorResultError } from '../spinnaker/interfaces'
+import { ArgocdDeploymentRequest, ArgocdUndeploymentRequest } from './interfaces/argocd-deployment.interface'
 import { ArgocdApi } from './argocd-api'
 import { ArgoCdRequestBuilder } from './request-builder'
 import { HealthCheckJob } from './health-check-job'
@@ -39,31 +40,31 @@ export class ArgocdConnector implements CdConnector {
 
     try {
       this.consoleLoggerService.log('START:CREATE_V2_ARGOCD_DEPLOYMENT', { deployment: deployment.id, activeComponents: activeComponents.map(c => c.id) })
-      const argocdDeployment =
-        new ArgoCdRequestBuilder().buildDeploymentRequest(deployment, activeComponents)
+      const argocdDeployment = new ArgoCdRequestBuilder().buildDeploymentRequest(deployment, activeComponents)
       this.consoleLoggerService.log('GET:ARGOCD_DEPLOYMENT_OBJECT', { argocdDeployment })
-      const argocdRequests = argocdDeployment.newDeploys.map((application) => {
-        return this.argocdApi.createApplication(application)
-      })
-      const argocdPromises = argocdRequests.map(async (response) => response.toPromise())
-      let result = await Promise.all(argocdPromises) //lidar com sucesso de forma mais elegante
-        .then(async success => {
-          this.consoleLoggerService.log('POST:ARGOCD_CREATE_APPLICATION_SUCCESS')
-          const applicationNames = argocdDeployment.newDeploys.map(application => application.metadata.name)
-          await this.healthCheckJob.execute(applicationNames)
-          return { status: 'SUCCEEDED' } as ConnectorResult
-        })
-        .catch(error => {
-          this.consoleLoggerService.log('POST:ARGOCD_CREATE_APPLICATION_ERROR', { error })
-          return { status: 'ERROR', error: error } as ConnectorResultError
-        })
-
-      return result
-
+      await this.createComponentDeployments(argocdDeployment)
+      return { status: 'SUCCEEDED' } as ConnectorResult
     } catch (error) {
       this.consoleLoggerService.log('ERROR:CREATE_V2_ARGOCD_DEPLOYMENT', { error })
-      return { status: 'ERROR', error: error }
+      return { status: 'ERROR', error: error } as ConnectorResultError
     }
+  }
+
+  private async createComponentDeployments(argocdDeployment: ArgocdDeploymentRequest): Promise<void> {
+    const argocdRequests = argocdDeployment.newDeploys.map((application) => {
+      return this.argocdApi.createApplication(application)
+    })
+    const componentDeployments = argocdRequests.map(async (response) => response.toPromise())
+    return await Promise.all(componentDeployments) // TODO: createApplication retornar promise?
+      .then(async () => {
+        this.consoleLoggerService.log('POST:ARGOCD_CREATE_APPLICATION_SUCCESS')
+        const applicationNames = argocdDeployment.newDeploys.map(application => application.metadata.name)
+        await this.healthCheckJob.execute(applicationNames)
+      })
+      .catch(error => {
+        this.consoleLoggerService.log('POST:ARGOCD_CREATE_APPLICATION_ERROR', { error })
+        return error
+      })
   }
 
   public async createUndeployment(
