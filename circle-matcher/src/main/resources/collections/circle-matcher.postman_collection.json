@@ -1,0 +1,347 @@
+{
+	"info": {
+		"_postman_id": "3df1a912-a276-443d-b8d0-f73835e066ff",
+		"name": "Circle-Matcher",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Default segmentation",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "87f7e6b6-3fb0-4c29-82bc-c8bf460e6b9b",
+						"exec": [
+							"var uuid = require('uuid');",
+							"var moment = require('moment');",
+							"",
+							"",
+							"var workspaceId = pm.globals.get(\"workspaceId\");",
+							"if(!workspaceId) {",
+							" postman.setGlobalVariable('workspaceId', uuid.v4());",
+							"}",
+							"postman.setGlobalVariable('reference', uuid.v4());",
+							"postman.setGlobalVariable('circleId', uuid.v4());",
+							"postman.setGlobalVariable('createdAt', moment(new Date()).format('yyyy-MM-DDTHH:mm:ss') );"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"name\":\"Default\",\n   \"reference\":\"{{reference}}\",\n   \"node\":{\n      \"type\":\"CLAUSE\",\n      \"logicalOperator\":\"OR\",\n      \"clauses\":[\n         {\n            \"type\":\"RULE\",\n            \"logicalOperator\":\"OR\",\n            \"clauses\":null,\n            \"content\":{\n                \"key\":\"exampleId\",\n                \"condition\":\"EQUAL\",\n                \"value\":[\n                \"3456\"\n                ]\n            }\n         }\n      ],\n      \"content\":null\n   },\n   \"circleId\":\"{{circleId}}\",\n   \"type\":\"REGULAR\",\n   \"previousReference\": null,\n   \"workspaceId\":\"{{workspaceId}}\",\n   \"isDefault\":true,\n   \"createdAt\":\"{{createdAt}}\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/segmentation",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"segmentation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Identify",
+			"event": [
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"workspaceId\": \"{{workspaceId}}\",\n    \"requestData\": {\n        \"exampleId\": \"3456\"\n    }\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/identify",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"identify"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Circle Segmentation",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "34e25b22-4ee1-40be-873b-a4e014749165",
+						"exec": [
+							"var uuid = require('uuid');",
+							"var moment = require('moment');",
+							"",
+							"var workspaceId = pm.globals.get(\"workspaceId\");",
+							"if(!workspaceId) {",
+							" postman.setGlobalVariable('workspaceId', uuid.v4());",
+							"}",
+							"postman.setGlobalVariable('reference', uuid.v4());",
+							"postman.setGlobalVariable('circleId', uuid.v4());",
+							"postman.setGlobalVariable('createdAt', moment(new Date()).format('yyyy-MM-DDTHH:mm:ss') );"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"name\":\"Circle\",\n   \"reference\":\"{{reference}}\",\n   \"node\":{\n      \"type\":\"CLAUSE\",\n      \"logicalOperator\":\"OR\",\n      \"clauses\":[\n         {\n            \"type\":\"RULE\",\n            \"logicalOperator\":\"OR\",\n            \"clauses\":null,\n            \"content\":{\n                \"key\":\"exampleId\",\n                \"condition\":\"EQUAL\",\n                \"value\":[\n                \"3456\"\n                ]\n            }\n         }\n      ],\n      \"content\":null\n   },\n   \"circleId\":\"{{circleId}}\",\n   \"type\":\"REGULAR\",\n   \"previousReference\": null,\n   \"workspaceId\":\"{{workspaceId}}\",\n   \"isDefault\":false,\n   \"createdAt\":\"{{createdAt}}\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/segmentation",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"segmentation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Circle Segmentation with 2 rules",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "3ecc9719-4c04-498e-a6b3-486772fa4ab9",
+						"exec": [
+							"var uuid = require('uuid');",
+							"var moment = require('moment');",
+							"",
+							"",
+							"var workspaceId = pm.globals.get(\"workspaceId\");",
+							"if(!workspaceId) {",
+							" postman.setGlobalVariable('workspaceId', uuid.v4());",
+							"}",
+							"postman.setGlobalVariable('reference', uuid.v4());",
+							"postman.setGlobalVariable('circleId', uuid.v4());",
+							"postman.setGlobalVariable('createdAt', moment(new Date()).format('yyyy-MM-DDTHH:mm:ss') );"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"name\":\"Circle\",\n   \"reference\":\"{{reference}}\",\n   \"node\":{\n      \"type\":\"CLAUSE\",\n      \"logicalOperator\":\"OR\",\n      \"clauses\":[\n         {\n            \"type\":\"RULE\",\n            \"logicalOperator\":\"OR\",\n            \"clauses\":null,\n            \"content\":{\n                \"key\":\"exampleId\",\n                \"condition\":\"EQUAL\",\n                \"value\":[\n                \"3456\"\n                ]\n            }\n         },\n          {\n            \"type\":\"RULE\",\n            \"logicalOperator\":\"OR\",\n            \"clauses\":null,\n            \"content\":{\n                \"key\":\"exampleId\",\n                \"condition\":\"EQUAL\",\n                \"value\":[\n                \"5678\"\n                ]\n            }\n         }\n      ],\n      \"content\":null\n   },\n   \"circleId\":\"{{circleId}}\",\n   \"type\":\"REGULAR\",\n   \"previousReference\": null,\n   \"workspaceId\":\"{{workspaceId}}\",\n   \"isDefault\":false,\n   \"createdAt\":\"{{createdAt}}\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/segmentation",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"segmentation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Circle",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "55f7e962-cb4f-4712-b933-4912bb7909e5",
+						"exec": [
+							"var uuid = require('uuid');",
+							"postman.setGlobalVariable('previousReference', uuid.v4());"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"name\":\"new Circle Name\",\n   \"reference\":\"{{reference}}\",\n   \"node\":{\n      \"type\":\"CLAUSE\",\n      \"logicalOperator\":\"OR\",\n      \"clauses\":[\n         {\n            \"type\":\"RULE\",\n            \"logicalOperator\":\"OR\",\n            \"clauses\":null,\n            \"content\":{\n                \"key\":\"exampleId\",\n                \"condition\":\"EQUAL\",\n                \"value\":[\n                \"9999\"\n                ]\n            }\n         }\n      ],\n      \"content\":null\n   },\n   \"circleId\":\"{{circleId}}\",\n   \"type\":\"REGULAR\",\n   \"previousReference\": \"{{previousReference}}\",\n   \"workspaceId\":\"{{workspaceId}}\",\n   \"isDefault\":false,\n   \"createdAt\":\"{{createdAt}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/segmentation/{{reference}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"segmentation",
+						"{{reference}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Circle",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/segmentation/{{reference}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"segmentation",
+						"{{reference}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Circle Csv",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n        \"name\":\"Circle Csv\",\n        \"reference\":\"{{reference}}\",\n        \"node\":{\n            \"type\":\"RULE\",\n            \"logicalOperator\":\"OR\",\n            \"clauses\": null,\n            \"content\":{\n                \"key\":\"exampleId\",\n                \"condition\":\"EQUAL\",\n                \"value\":[\n                \"3456\"\n                ]\n            }\n        },\n        \"circleId\":\"{{circleId}}\",\n        \"type\":\"SIMPLE_KV\",\n        \"previousReference\": null,\n        \"workspaceId\":\"{{workspaceId}}\",\n        \"isDefault\":false,\n        \"createdAt\":\"{{createdAt}}\"\n    }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/segmentation/import",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"segmentation",
+						"import"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Circle Csv",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "1c1d5566-435e-4928-aca3-cfb1e52d36fa",
+						"exec": [
+							"var uuid = require('uuid');",
+							"postman.setGlobalVariable('previousReference', uuid.v4());"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n        \"name\":\"new Circle Csv\",\n        \"reference\":\"{{reference}}\",\n        \"node\":{\n            \"type\":\"RULE\",\n            \"logicalOperator\":\"OR\",\n            \"clauses\": null,\n            \"content\":{\n                \"key\":\"exampleId\",\n                \"condition\":\"EQUAL\",\n                \"value\":[\n                \"3456\"\n                ]\n            }\n        },\n        \"circleId\":\"{{circleId}}\",\n        \"type\":\"SIMPLE_KV\",\n        \"previousReference\": \"{{previousReference}}\",\n        \"workspaceId\":\"{{workspaceId}}\",\n        \"isDefault\":false,\n        \"createdAt\":\"{{createdAt}}\"\n    }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/segmentation/import",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"segmentation",
+						"import"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
