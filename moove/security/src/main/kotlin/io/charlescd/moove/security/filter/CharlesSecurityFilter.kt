@@ -16,7 +16,6 @@
 
 package io.charlescd.moove.security.filter
 
-import feign.FeignException
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.WorkspacePermissions
 import io.charlescd.moove.domain.exceptions.BusinessException
@@ -24,13 +23,9 @@ import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.security.SecurityConstraints
 import io.charlescd.moove.security.config.Constants
 import io.charlescd.moove.security.utils.FileUtils
-import javax.servlet.FilterChain
-import javax.servlet.ServletRequest
-import javax.servlet.ServletResponse
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 import org.keycloak.TokenVerifier
 import org.keycloak.representations.AccessToken
+import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
@@ -38,6 +33,11 @@ import org.springframework.util.AntPathMatcher
 import org.springframework.web.filter.GenericFilterBean
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
+import javax.servlet.FilterChain
+import javax.servlet.ServletRequest
+import javax.servlet.ServletResponse
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 @Component
 @Profile("!local")
@@ -52,6 +52,7 @@ class CharlesSecurityFilter(val userRepository: UserRepository) : GenericFilterB
     companion object {
         const val X_WORKSPACE_ID = "X-Workspace-Id"
         const val AUTHORIZATION = "Authorization"
+        val log = LoggerFactory.getLogger(this::class.java)!!
     }
 
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
@@ -65,11 +66,11 @@ class CharlesSecurityFilter(val userRepository: UserRepository) : GenericFilterB
         try {
             doAuthorization(workspaceId, authorization, path, method)
             chain.doFilter(request, response)
-        } catch (feignException: FeignException) {
-            createResponse(response, feignException.contentUTF8(), HttpStatus.UNAUTHORIZED)
         } catch (businessException: BusinessException) {
+            log.error("User not allowed", businessException)
             createResponse(response, businessException.message, HttpStatus.FORBIDDEN)
         } catch (exception: Exception) {
+            log.error("Failed Authorizing user", exception)
             createResponse(response, exception.message, HttpStatus.UNAUTHORIZED)
         }
     }
