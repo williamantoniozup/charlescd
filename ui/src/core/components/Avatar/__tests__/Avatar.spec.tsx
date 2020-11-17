@@ -27,12 +27,12 @@ const profile = {
   }
 }
 
-test('render Avatar with photo', () => {
+test('render Avatar with photo', async () => {
   const props = { ...profile, photoUrl: 'https://photo.png' };
 
   render(<Avatar { ...props } />);
 
-  const element = screen.getByTestId('avatar')
+  const element = await screen.findByTestId('avatar')
   expect(element).toHaveStyle(`width: ${profile.size};`);
 });
 
@@ -43,10 +43,10 @@ test('render Avatar with initial content', () => {
   expect(element).toBeInTheDocument();
 });
 
-test('render Avatar and click to edit', () => {
+test('render Avatar and click to edit', async () => {
   render(<Avatar {...profile} />);
 
-  const element = screen.getByTestId('avatar')
+  const element = await screen.findByTestId('avatar')
   expect(element).toHaveStyle(`width: ${profile.size};`);
 
   const editIcon = screen.getByTestId('icon-edit-avatar');
