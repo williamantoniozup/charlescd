@@ -14,27 +14,13 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import Text from 'core/components/Text';
-import Styled from './styled';
+package io.charlescd.moove.application.user
 
-interface Props {
-  id: string;
-  name: string;
-  isActive: boolean;
-  onSelect: () => void;
+import io.charlescd.moove.application.user.request.PatchUserRequest
+import io.charlescd.moove.application.user.response.UserResponse
+import java.util.*
+
+interface PatchUserInteractor {
+
+    fun execute(id: UUID, patchUserRequest: PatchUserRequest, authorization: String): UserResponse
 }
-
-const MenuItem = ({ id, name, isActive, onSelect }: Props) => (
-  <Styled.Link
-    onClick={onSelect}
-    isActive={isActive}
-    data-testid={`menu-users-${id}`}
-  >
-    <Styled.ListItem icon="user">
-      <Text.h4 color="light">{name}</Text.h4>
-    </Styled.ListItem>
-  </Styled.Link>
-);
-
-export default MenuItem;
