@@ -20,7 +20,6 @@ import filter from 'lodash/filter';
 import xor from 'lodash/xor';
 import isEmpty from 'lodash/isEmpty';
 import lowerCase from 'lodash/lowerCase';
-import kebabCase from 'lodash/kebabCase';
 import includes from 'lodash/includes';
 import Text from 'core/components/Text';
 import { Card } from 'modules/Hypotheses/Board/interfaces';
@@ -61,7 +60,7 @@ const Modal = ({ card, modules, allModules, onClose }: Props) => {
     const toggledModuleIds = xor(moduleIds, [id]);
     setModuleIds(toggledModuleIds);
     addModules(card.id, {
-      branchName: kebabCase(card.name),
+      branchName: card.name,
       description: card.description,
       labels: [],
       modules: toggledModuleIds,
