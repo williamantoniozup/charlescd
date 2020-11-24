@@ -9,7 +9,9 @@ const modules = {
       author: {
         id: 'c7e6dete-aa7a-4216-be1b-34eacd4c2915',
         name: 'User 1',
-        email: 'user.1@zup.com.br'
+        email: 'user.1@zup.com.br',
+        photoUrl:
+          'https://www.pavilionweb.com/wp-content/uploads/2017/03/man-300x300.png'
       },
       components: [
         {
@@ -29,7 +31,8 @@ const modules = {
       author: {
         id: '8b81e7a7-33f1-46cb-aedf-73222bf8769f',
         name: 'User 4',
-        email: 'user.4@zup.com.br'
+        email: 'user.4@zup.com.br',
+        photoUrl: ''
       },
       components: [
         {
@@ -49,7 +52,8 @@ const modules = {
       author: {
         id: 'd3123d52-b59u-4ee9-9f8f-8bf42c00dd45',
         name: 'User 5',
-        email: 'user.5@zup.com.br'
+        email: 'user.5@zup.com.br',
+        photoUrl: ''
       },
       components: [
         {
@@ -76,7 +80,8 @@ const defaultModule = {
   author: {
     id: 'a7c3e4b6-4qe3-4d62-8140-e2d23274d03f',
     name: 'User',
-    email: 'user@zup.com.br'
+    email: 'user@zup.com.br',
+    photoUrl: ''
   },
   components: [
     {

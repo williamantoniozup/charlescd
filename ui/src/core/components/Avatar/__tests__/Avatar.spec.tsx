@@ -27,12 +27,31 @@ const profile = {
   }
 }
 
-test('render Avatar with default props', () => {
+test('render Avatar with photo', () => {
+  const props = { ...profile, photoUrl: 'https://photo.png' };
+
+  render(<Avatar { ...props } />);
+
+  const element = screen.getByTestId('avatar')
+  expect(element).toHaveStyle(`width: ${profile.size};`);
+});
+
+test('render Avatar with initial content', () => {
   render(<Avatar { ...profile } />);
 
-  const element = screen.getByTestId('avatar');
-  const avatarInitial = screen.getByText('C');
+  const element = screen.getByText('C');
+  expect(element).toBeInTheDocument();
+});
 
+test('render Avatar and click to edit', () => {
+  render(<Avatar {...profile} />);
+
+  const element = screen.getByTestId('avatar')
   expect(element).toHaveStyle(`width: ${profile.size};`);
-  expect(avatarInitial).toBeInTheDocument();
+
+  const editIcon = screen.getByTestId('icon-edit-avatar');
+  userEvent.click(editIcon);
+
+  const inputURL = screen.getByTestId('input-text-photoUrl');
+  expect(inputURL).toBeInTheDocument();
 });

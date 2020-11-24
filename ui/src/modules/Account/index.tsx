@@ -61,7 +61,8 @@ const Account = () => {
     setCurrentUser(null);
     updateProfile(currentUser.id, {
       ...profile,
-      email: currentUser.email
+      email: currentUser.email,
+      photoUrl: currentUser.photoUrl
     });
   };
 
@@ -81,7 +82,12 @@ const Account = () => {
       {renderModal()}
       <Styled.Layer>
         <Styled.ContentIcon icon="picture">
-          <Avatar key={currentUser.id} size="68px" profile={currentUser} />
+          <Avatar
+            key={currentUser.photoUrl}
+            size="68px"
+            profile={currentUser}
+            onFinish={() => findByEmail(email)}
+          />
         </Styled.ContentIcon>
       </Styled.Layer>
       <Styled.Layer>

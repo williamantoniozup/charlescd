@@ -94,6 +94,7 @@ const CardBoard = forwardRef(
         <AvatarName
           key={`body-member-${member.name}`}
           size="25px"
+          src={member.photoUrl}
           name={member.name}
         />
       );
@@ -106,6 +107,7 @@ const CardBoard = forwardRef(
         return (
           <Styled.MembersEllipsis
             size="25px"
+            src="/"
             initials={`+${size(members) - MAX_MEMBERS}`}
           />
         );
@@ -120,6 +122,7 @@ const CardBoard = forwardRef(
             <AvatarName
               key={`body-member-${member.name}`}
               size="25px"
+              src={member.photoUrl}
               name={member.name}
             />
           )

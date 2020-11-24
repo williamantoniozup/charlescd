@@ -18,7 +18,6 @@ import React from 'react';
 import MutationObserver from 'mutation-observer'
 import { render, fireEvent, act, screen, waitFor } from 'unit-test/testUtils';
 import CreateUser from '..';
-import userEvent from '@testing-library/user-event';
 
 (global as any).MutationObserver = MutationObserver
 
@@ -61,7 +60,7 @@ test('close CreateUser component', async () => {
   const tabPanelCloseButton = screen.queryByTestId('icon-cancel');
   expect(tabPanelCloseButton).toBeInTheDocument();
 
-  act(() => (userEvent.click(tabPanelCloseButton)));
+  fireEvent.click(tabPanelCloseButton);
   waitFor(() => expect(screen.getByTestId('create-user')).not.toBeInTheDocument());
 });
 
@@ -84,10 +83,12 @@ test("render CreateUser Form component with empty fields", async () => {
 
   const InputName = screen.getByTestId("input-text-name");
   const InputEmail = screen.getByTestId("input-text-email");
+  const InputPhotourl = screen.getByTestId("input-text-photoUrl");
   const InputPassword = screen.getByTestId("input-password-password");
   
-  expect(InputName).toBeEmptyDOMElement();
+  expect(InputName).toBeEmptyDOMElement;
   expect(InputEmail).toBeEmptyDOMElement();
+  expect(InputPhotourl).toBeEmptyDOMElement();
   expect(InputPassword).toBeEmptyDOMElement();
 });
 
@@ -102,13 +103,13 @@ test("render CreateUser Form and submit when required fields filled", async () =
   const InputPassword = screen.getByTestId("input-password-password");
 
   await act(async () => {
-    userEvent.type(InputName, 'name');
-    userEvent.type(InputEmail, 'charles@zup.com.br');
-    userEvent.type(InputPassword, '1!@charles123');
+    fireEvent.change(InputName, { target: { value: 'name' }});
+    fireEvent.change(InputEmail, { target: { value: 'charles@zup.com.br' }});
+    fireEvent.change(InputPassword, { target: { value: '123457' }});
 
     expect(ButtonCreateUser).not.toBeDisabled();
 
-    userEvent.click(ButtonCreateUser);
+    fireEvent.click(ButtonCreateUser);
   })
 
   await waitFor(() => {

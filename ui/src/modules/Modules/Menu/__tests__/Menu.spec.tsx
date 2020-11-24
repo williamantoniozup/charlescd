@@ -28,7 +28,9 @@ const mockItem = [
     author: {
       id: 'c7e6dete-aa7a-4216-be1b-34eacd4c2915',
       name: 'User 1',
-      email: 'user.1@zup.com.br'
+      email: 'user.1@zup.com.br',
+      photoUrl:
+        'https://www.pavilionweb.com/wp-content/uploads/2017/03/man-300x300.png'
     },
     components: [
       {

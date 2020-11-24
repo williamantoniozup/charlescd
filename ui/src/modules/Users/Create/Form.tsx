@@ -18,15 +18,14 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
-import Icon from 'core/components/Icon';
 import Button from 'core/components/Button';
-import routes from 'core/constants/routes';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import { NewUser } from 'modules/Users/interfaces/User';
 import Styled from './styled';
 import { useCreateUser } from '../hooks';
 import { updateParam } from 'core/utils/path';
 import { useHistory } from 'react-router-dom';
+import routes from 'core/constants/routes';
 
 interface Props {
   onFinish: (createUserStatus: string) => void;
@@ -37,7 +36,6 @@ const FormUser = ({ onFinish }: Props) => {
   const {
     register,
     handleSubmit,
-    errors,
     formState: { isValid }
   } = useForm<NewUser>({ mode: 'onChange' });
   const { create, newUser } = useCreateUser();
@@ -69,27 +67,16 @@ const FormUser = ({ onFinish }: Props) => {
     >
       <Styled.Fields>
         <Form.Input
-          ref={register({ required: true, maxLength: 100 })}
+          ref={register({ required: true })}
           name="name"
           label="User name"
         />
         <Form.Input
-          ref={register({
-            required: true,
-            pattern: {
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: 'Entered value does not match email format'
-            }
-          })}
+          ref={register({ required: true })}
           name="email"
           label="E-mail"
         />
-        {!!errors.email && (
-          <Styled.FieldErrorWrapper>
-            <Icon name="error" color="error" />
-            <Text.h6 color="error">{errors.email.message}</Text.h6>
-          </Styled.FieldErrorWrapper>
-        )}
+        <Form.Input ref={register} name="photoUrl" label="Avatar URL" />
         <Form.Password
           ref={register({ required: true })}
           name="password"

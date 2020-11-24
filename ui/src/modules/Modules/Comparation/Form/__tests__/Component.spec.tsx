@@ -39,7 +39,8 @@ const fakeAuthor: Author = {
   createdAt: "fake-data",
   email: "pseudonym@gmail.com",
   id: "1",
-  name: "pseudonym"
+  name: "pseudonym",
+  photoUrl: "url-photo"
 }
 const fakeComponent: ComponentInterface = {
   id: "fake-id",

@@ -62,7 +62,14 @@ const MemberChecked = ({ checked }: UserCheckedProps) => (
   </Styled.Item.Checked>
 );
 
-const UserItem = ({ id, name, email, checked, onSelected }: UserItemProps) => {
+const UserItem = ({
+  id,
+  name,
+  email,
+  photoUrl,
+  checked,
+  onSelected
+}: UserItemProps) => {
   const [isChecked, setIsChecked] = useState(checked);
 
   const handleSelected = (id: string) => {
@@ -73,7 +80,7 @@ const UserItem = ({ id, name, email, checked, onSelected }: UserItemProps) => {
   return (
     <Styled.Item.Wrapper onClick={() => handleSelected(id)}>
       <Styled.Item.Profile>
-        <Styled.Item.Photo name={name} />
+        <Styled.Item.Photo src={photoUrl} name={name} />
         <div>
           <Styled.Item.Name>{name}</Styled.Item.Name>
           <Styled.Item.Email>{email}</Styled.Item.Email>
