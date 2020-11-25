@@ -17,6 +17,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Text from 'core/components/Text';
+import isEmpty from 'lodash/isEmpty';
 import Styled from './styled';
 import CircleRow from './CircleRow';
 import { useCirclesHistory } from '../hooks';
@@ -75,9 +76,17 @@ const HistoryComponent = () => {
             loader={<Loader.History />}
             height={500}
           >
-            {circles?.map(circle => (
-              <CircleRow circle={circle} key={circle.id} />
-            ))}
+            {isEmpty(circles) ? (
+              <Text.h3 color="dark">
+                Does not exist circle that meets your search parameter
+              </Text.h3>
+            ) : (
+              <>
+                {circles?.map(circle => (
+                  <CircleRow circle={circle} key={circle.id} />
+                ))}
+              </>
+            )}
           </InfiniteScroll>
         </Styled.CircleRowWrapper>
       </Styled.Table>

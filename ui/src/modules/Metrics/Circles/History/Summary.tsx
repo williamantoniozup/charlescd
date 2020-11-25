@@ -35,6 +35,7 @@ const Summary = ({ isLoading, onSearch }: Props) => {
           resume
           onSearch={onSearch}
           placeholder={'Search circle'}
+          maxLength={64}
         />
       </Styled.HistoryHeader>
       {isLoading ? (
