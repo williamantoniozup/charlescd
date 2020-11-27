@@ -10,19 +10,19 @@ services:
             - POSTGRES_USER=charlescd_compass
             - POSTGRES_PASSWORD=compass
             - MAX_CONNECTIONS=300
-
-    sidecar:
-        build:
-            dockerfile: ./sidecar/Dockerfile
-            context: ../
-        image: sidecar
-        ports:
-            - 9000:9000
-        environment:
-            - DB_NAME=charlescd_compass
-            - DB_USER=charlescd_compass
-            - DB_PASSWORD=compass
-            - DB_HOST=db
-            - ENV=PROD
-        networks:
-            - development
+#
+#    sidecar:
+#        build:
+#            dockerfile: ./sidecar/Dockerfile
+#            context: ../
+#        image: sidecar
+#        ports:
+#            - 9000:9000
+#        environment:
+#            - DB_NAME=charlescd_compass
+#            - DB_USER=charlescd_compass
+#            - DB_PASSWORD=compass
+#            - DB_HOST=db
+#            - ENV=PROD
+##        networks:
+##            - development
