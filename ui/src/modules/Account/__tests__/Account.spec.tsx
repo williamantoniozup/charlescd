@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, screen, act } from 'unit-test/testUtils';
+import { render, screen, act, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
@@ -35,16 +35,18 @@ beforeAll(() => {
   saveProfile({ id: '123', name: 'User', email: 'user@zup.com.br' });
 });
 
+const profile = {
+  id: '123',
+  name: 'User',
+  email: 'user@zup.com.br',
+  photoUrl: 'https://charlescd.io/avatar1'
+}
+
 test('render account tab profile', async () => {
   const history = createMemoryHistory();
   history.push(routes.accountProfile);
 
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({}));
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({
-    id: '123',
-    name: 'User',
-    email: 'user@zup.com.br'
-  }));
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(profile));
 
   render(<Router history={history}><Account /></Router>);
 
@@ -56,12 +58,7 @@ test('show change password modal', async () => {
   const history = createMemoryHistory();
   history.push(routes.accountProfile);
 
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({}));
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({
-    id: '123',
-    name: 'User',
-    email: 'user@zup.com.br'
-  }));
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(profile));
 
   render(<Router history={history}><Account /></Router>);
 
