@@ -24,8 +24,10 @@ import io.charlescd.villager.infrastructure.integration.registry.TagsResponse;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationRepository;
 import io.charlescd.villager.interactor.registry.ComponentTagDTO;
+import io.charlescd.villager.interactor.registry.ComponentTagListDTO;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInput;
 import io.charlescd.villager.interactor.registry.impl.GetDockerRegistryTagInteractorImpl;
+import io.charlescd.villager.service.DockerRegistryService;
 import org.jboss.resteasy.core.Headers;
 import org.jboss.resteasy.core.ServerResponse;
 import org.jboss.resteasy.specimpl.BuiltResponse;
@@ -55,12 +57,19 @@ public class GetDockerRegistryTagInteractorTest {
     @Mock
     private RegistryClient registryClient;
 
+    @Mock
+    private DockerRegistryService dockerRegistryService;
+
     @Test
     public void testContainsTag() throws IOException {
 
         var entity = generateDockerRegistryConfigurationEntity();
 
+        var componentTagListDTO = generateReturnComponentTagListDTO();
+
         when(dockerRegistryConfigurationRepository.findById("123")).thenReturn(Optional.of(entity));
+
+        when(dockerRegistryService.get("1a3d413d-2255-4a1b-94ba-82e7366e4342")).thenReturn(componentTagListDTO);
 
         when(registryClient.getImage("name", "test", entity.connectionData)).then(invocationOnMock -> {
 
@@ -84,7 +93,7 @@ public class GetDockerRegistryTagInteractorTest {
         });
 
         var interactor =
-                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient);
+                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient, dockerRegistryService);
 
         GetDockerRegistryTagInput input = GetDockerRegistryTagInput.builder()
                 .withArtifactName("name")
@@ -93,7 +102,7 @@ public class GetDockerRegistryTagInteractorTest {
                 .withName("test")
                 .build();
 
-        ComponentTagDTO component = interactor.execute(input).get();
+        ComponentTagDTO component = (ComponentTagDTO) interactor.execute(input).get();
 
         assertThat(component.getName(), is("test"));
         assertThat(component.getArtifact(), is("test.org/name:test"));
@@ -110,12 +119,16 @@ public class GetDockerRegistryTagInteractorTest {
 
         var entity = generateDockerRegistryConfigurationEntity();
 
+        var componentTagListDTO = generateReturnComponentTagListDTO();
+
         when(dockerRegistryConfigurationRepository.findById("123")).thenReturn(Optional.of(entity));
 
         when(registryClient.getImage("name", "test", entity.connectionData)).then(invocationOnMock -> Optional.empty());
 
+        when(dockerRegistryService.get("1a3d413d-2255-4a1b-94ba-82e7366e4342")).thenReturn(componentTagListDTO);
+
         var interactor =
-                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient);
+                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient, dockerRegistryService);
 
         GetDockerRegistryTagInput input = GetDockerRegistryTagInput.builder()
                 .withArtifactName("name")
@@ -140,7 +153,7 @@ public class GetDockerRegistryTagInteractorTest {
         when(dockerRegistryConfigurationRepository.findById("123")).thenReturn(Optional.of(entity));
 
         var interactor =
-                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient);
+                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient, dockerRegistryService);
 
         GetDockerRegistryTagInput input = GetDockerRegistryTagInput.builder()
                 .withArtifactName("name")
@@ -150,7 +163,7 @@ public class GetDockerRegistryTagInteractorTest {
                 .build();
 
         Exception exception = assertThrows(IllegalAccessResourceException.class, () -> {
-            ComponentTagDTO component = interactor.execute(input).get();
+            ComponentTagDTO component = (ComponentTagDTO) interactor.execute(input).get();
         });
 
         assertThat(exception.getMessage(), is("This docker registry does not belongs to the request application id."));
@@ -170,7 +183,7 @@ public class GetDockerRegistryTagInteractorTest {
         when(dockerRegistryConfigurationRepository.findById("123")).thenReturn(Optional.empty());
 
         var interactor =
-                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient);
+                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient, dockerRegistryService);
 
         GetDockerRegistryTagInput input = GetDockerRegistryTagInput.builder()
                 .withArtifactName("name")
@@ -180,7 +193,7 @@ public class GetDockerRegistryTagInteractorTest {
                 .build();
 
         Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
-            ComponentTagDTO component = interactor.execute(input).get();
+            ComponentTagDTO component = (ComponentTagDTO) interactor.execute(input).get();
         });
 
         assertThat(exception.getMessage(), is("Resource DOCKER_REGISTRY not found"));
@@ -203,5 +216,15 @@ public class GetDockerRegistryTagInteractorTest {
                 .AzureDockerRegistryConnectionData("http://test.org", "usertest", "userpass");
 
         return entity;
+    }
+
+    private ComponentTagListDTO generateReturnComponentTagListDTO() {
+        var componentTagListDTO = new ComponentTagListDTO();
+        componentTagListDTO.setName("testa");
+        componentTagListDTO.setTags(new ArrayList<>());
+        componentTagListDTO.getTags().add("test - 1");
+        componentTagListDTO.getTags().add("test - 2");
+
+        return componentTagListDTO;
     }
 }
