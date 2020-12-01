@@ -17,6 +17,7 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import map from 'lodash/map';
+import isEmpty from 'lodash/isEmpty';
 import Can from 'containers/Can';
 import { NEW_TAB } from 'core/components/TabPanel/constants';
 import LabeledIcon from 'core/components/LabeledIcon';
@@ -35,13 +36,18 @@ interface MenuProps {
   isLoading?: boolean;
 }
 
-const ModuleList = ({ items }: MenuProps) => (
-  <>
-    {map(items, item => (
-      <MenuItem key={item.id} id={item.id} name={item.name} />
-    ))}
-  </>
-);
+const ModuleList = ({ items }: MenuProps) =>
+  isEmpty(items) ? (
+    <Text.h3 data-testid={'empty-result-user'} color="dark">
+      No Modules found
+    </Text.h3>
+  ) : (
+    <>
+      {map(items, item => (
+        <MenuItem key={item.id} id={item.id} name={item.name} />
+      ))}
+    </>
+  );
 
 const ModuleMenu = ({ items, isLoading }: MenuProps) => {
   const { getAllModules } = useFindAllModules();
@@ -69,7 +75,7 @@ const ModuleMenu = ({ items, isLoading }: MenuProps) => {
         </Can>
       </Styled.Actions>
       <Styled.Content>
-        <Styled.SearchInput resume onSearch={onSearch} />
+        <Styled.SearchInput resume onSearch={onSearch} maxLength={64} />
         <Styled.List>
           {isLoading ? <Loader.List /> : <ModuleList items={items} />}
         </Styled.List>

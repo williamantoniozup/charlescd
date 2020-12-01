@@ -109,7 +109,6 @@ export default {
   ListItem,
   Content,
   Actions,
-  // Icon,
   Link,
   Button,
   Modal: {

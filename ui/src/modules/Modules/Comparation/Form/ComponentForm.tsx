@@ -1,7 +1,24 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import React, { useState } from 'react';
-import Styled from './styled';
 import { useFormContext, ArrayField } from 'react-hook-form';
+import { maxLength, isRequired } from 'core/utils/validations';
 import { Component } from 'modules/Modules/interfaces/Component';
+import Styled from './styled';
 
 interface Props {
   remove: (index?: number | number[] | undefined) => void;
@@ -11,7 +28,7 @@ interface Props {
 }
 
 const ComponentForm = ({ field, fields, index, remove }: Props) => {
-  const { register, unregister } = useFormContext();
+  const { register, unregister, errors } = useFormContext();
   const [editMoreOptions, setEditMoreOptions] = useState(false);
   const one = 1;
 
@@ -40,17 +57,19 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
         <Styled.Components.Input
           label="Enter name"
           name={`components[${index}].name`}
-          ref={register({ required: true })}
+          ref={register({ required: isRequired(), maxLength: maxLength() })}
         />
-        <Styled.Components.Number
+        <Styled.Components.Input
           name={`components[${index}].latencyThreshold`}
           label="Latency Threshold (ms)"
-          ref={register({ required: true })}
+          type="number"
+          ref={register({ required: isRequired() })}
         />
-        <Styled.Components.Number
+        <Styled.Components.Input
           name={`components[${index}].errorThreshold`}
           label="Http Error Threshold (%)"
-          ref={register({ required: true })}
+          type="number"
+          ref={register({ required: isRequired() })}
         />
       </Styled.Components.Wrapper>
       <Styled.Subtitle onClick={() => handleMoreOptions(index)} color="dark">
@@ -64,7 +83,9 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
             <Styled.Input
               label="Insert a host for virtual service use"
               name={`components[${index}].hostValue`}
-              ref={register({ required: true })}
+              // TO-DO
+              // error={errors?.components[`${index}`]?.hostValue?.message}
+              ref={register({ required: isRequired() })}
             />
             <Styled.Popover
               title="Host name"
@@ -74,12 +95,14 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
               linkLabel="View documentation"
               description="In some cases it will be necessary to change the host to expose your application, by default leave it empty.."
             />
-          </Styled.FieldPopover>{' '}
+          </Styled.FieldPopover>
           <Styled.FieldPopover>
             <Styled.Input
               label="Insert a ingress name if necessary"
               name={`components[${index}].gatewayName`}
-              ref={register({ required: true })}
+              // TO-DO
+              // error={errors?.components[`${index}`]?.gatewayName?.message}
+              ref={register({ required: isRequired() })}
             />
             <Styled.Popover
               title="Istio ingress"

@@ -49,3 +49,8 @@ export const emailPattern = () => ({
   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
   message: 'Entered value does not match email format.'
 });
+
+export const urlPattern = () => ({
+  value: /^(http:\/\/|https:\/\/)?([a-zA-Z0-9-_]+\.)*[a-zA-Z0-9][a-zA-Z0-9-_]+\.[a-zA-Z]{2,11}?$/i,
+  message: 'Entered value does not match url format.'
+});

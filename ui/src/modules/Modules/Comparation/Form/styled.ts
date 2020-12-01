@@ -87,6 +87,15 @@ const ComponentsWrapper = styled.div`
 const ComponentInput = styled(FormComponent.Input)`
   width: 155px;
   margin-right: 20px;
+
+  > input {
+    appearance: textfield;
+
+    ::-webkit-inner-spin-button,
+    ::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+    }
+  }
 `;
 
 const ComponentNumber = styled(FormComponent.Number)`

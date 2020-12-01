@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import isEqual from 'lodash/isEqual';
 import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
 import { useSaveModule, useUpdateModule } from 'modules/Modules/hooks/module';
 import { Module } from 'modules/Modules/interfaces/Module';
 import { getProfileByKey } from 'core/utils/profile';
+import { maxLength, isRequired, urlPattern } from 'core/utils/validations';
 import Can from 'containers/Can';
 import { updateParam } from 'core/utils/path';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
@@ -28,7 +28,6 @@ import routes from 'core/constants/routes';
 import isEmpty from 'lodash/isEmpty';
 import Components from './Components';
 import { component } from './constants';
-import { validFields } from './helpers';
 import Styled from './styled';
 
 interface Props {
@@ -49,28 +48,21 @@ const FormModule = ({ module, onChange }: Props) => {
   const { status: updateStatus, updateModule } = useUpdateModule();
   const authorId = getProfileByKey('id');
   const isEdit = !isEmpty(module);
-  const [isDisabled, setIsDisabled] = useState(true);
   const history = useHistory();
 
   const form = useForm<Module>({
-    defaultValues: formDefaultValues
+    defaultValues: formDefaultValues,
+    mode: 'onChange'
   });
 
-  const { register, control, getValues, handleSubmit, watch } = form;
+  const {
+    register,
+    control,
+    handleSubmit,
+    errors,
+    formState: { isValid }
+  } = form;
   const fieldArray = useFieldArray({ control, name: 'components' });
-  const watchFields = watch();
-
-  useEffect(() => {
-    const form = getValues();
-    const isInvalid = !validFields(form);
-    const mod = {
-      name: module?.name,
-      gitRepositoryAddress: module?.gitRepositoryAddress,
-      helmRepository: module?.helmRepository
-    };
-
-    setIsDisabled(isEqual(mod, form) || isInvalid);
-  }, [watchFields, getValues, module]);
 
   useEffect(() => {
     if (updateStatus === 'resolved') {
@@ -122,13 +114,22 @@ const FormModule = ({ module, onChange }: Props) => {
             label="Name the module"
             name="name"
             defaultValue={module?.name}
-            ref={register({ required: true })}
+            error={errors?.name?.message}
+            ref={register({
+              required: isRequired(),
+              maxLength: maxLength(64)
+            })}
           />
           <Styled.Input
             label="URL git"
             name="gitRepositoryAddress"
             defaultValue={module?.gitRepositoryAddress}
-            ref={register({ required: true })}
+            error={errors?.gitRepositoryAddress?.message}
+            ref={register({
+              required: isRequired(),
+              maxLength: maxLength(2048),
+              pattern: urlPattern()
+            })}
           />
           {!isEdit && <Components fieldArray={fieldArray} />}
           <Styled.FieldPopover>
@@ -136,7 +137,12 @@ const FormModule = ({ module, onChange }: Props) => {
               label="Insert a helm repository link"
               name="helmRepository"
               defaultValue={module?.helmRepository}
-              ref={register({ required: true })}
+              error={errors?.helmRepository?.message}
+              ref={register({
+                required: isRequired(),
+                maxLength: maxLength(2048),
+                pattern: urlPattern()
+              })}
             />
             <Styled.Popover
               title="Helm"
@@ -147,7 +153,7 @@ const FormModule = ({ module, onChange }: Props) => {
               description="Helm helps you manage Kubernetes applications"
             />
           </Styled.FieldPopover>
-          <Can I="write" a="modules" isDisabled={isDisabled} passThrough>
+          <Can I="write" a="modules" isDisabled={!isValid} passThrough>
             <Styled.Button
               type="submit"
               size="EXTRA_SMALL"
