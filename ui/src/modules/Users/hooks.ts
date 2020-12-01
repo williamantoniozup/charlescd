@@ -155,20 +155,39 @@ export const useDeleteUser = (): [Function, string] => {
   return [delUser, userStatus];
 };
 
-export const useUpdateProfile = (): [boolean, Function, User, string] => {
-  const [status, setStatus] = useState<string>('');
-  const [dataUpdate, , update] = useFetch<User>(updateProfileById);
-  const { response, loading: updateLoading } = dataUpdate;
+export const useUpdateProfile = (): {
+  updateProfile: (id: string, profile: Profile) => void;
+  response: User;
+  status: FetchStatus;
+} => {
+  const dispatch = useDispatch();
+  const status = useFetchStatus();
+  const [response, setResponse] = useState<User>();
+  const update = useFetchData<User>(updateProfileById);
 
-  const updateProfile = useCallback(
-    (id: string, profile: Profile) => {
-      setStatus('');
-      update(id, profile).then(() => setStatus('resolved'));
-    },
-    [update]
-  );
+  const updateProfile = async (id: string, profile: Profile) => {
+    try {
+      status.pending();
+      const data = await update(id, profile);
+      setResponse(data);
+      status.resolved();
 
-  return [updateLoading, updateProfile, response, status];
+      return data;
+    } catch (e) {
+      const error = await e.json();
+
+      dispatch(
+        toogleNotification({
+          text: error?.message,
+          status: 'error'
+        })
+      );
+
+      status.rejected();
+    }
+  };
+
+  return { updateProfile, response, status };
 };
 
 export const useResetPassword = (): {
@@ -188,9 +207,11 @@ export const useResetPassword = (): {
       setResponse(putResponse);
       status.resolved();
     } catch (e) {
+      const error = await e.json();
+
       dispatch(
         toogleNotification({
-          text: 'The password could not be reset.',
+          text: error?.message,
           status: 'error'
         })
       );
