@@ -18,7 +18,7 @@ package io.charlescd.moove.application.module.impl
 
 import io.charlescd.moove.application.ModuleService
 import io.charlescd.moove.application.WorkspaceService
-import io.charlescd.moove.application.module.FindComponentTagsInteractor
+import io.charlescd.moove.application.module.FindComponentTagsByNameInteractor
 import io.charlescd.moove.application.module.response.ComponentTagResponse
 import io.charlescd.moove.domain.Component
 import io.charlescd.moove.domain.Module
@@ -30,11 +30,11 @@ import io.charlescd.moove.domain.service.VillagerService
 import javax.inject.Named
 
 @Named
-class FindComponentTagsInteractorImpl(
+class FindComponentTagsByNameInteractorImpl(
     private val moduleService: ModuleService,
     private val workspaceService: WorkspaceService,
     private val villagerService: VillagerService
-) : FindComponentTagsInteractor {
+) : FindComponentTagsByNameInteractor {
 
     override fun execute(moduleId: String, componentId: String, name: String, workspaceId: String): List<ComponentTagResponse> {
         val workspace = workspaceService.find(workspaceId)

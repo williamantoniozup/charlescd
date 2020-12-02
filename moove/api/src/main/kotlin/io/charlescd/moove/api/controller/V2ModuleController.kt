@@ -47,7 +47,7 @@ class V2ModuleController(
     private val findModuleByIdInteractor: FindModuleByIdInteractor,
     private val findAllModulesInteractor: FindAllModulesInteractor,
     private val deleteModuleByIdInteractor: DeleteModuleByIdInteractor,
-    private val findComponentTagsInteractor: FindComponentTagsInteractor,
+    private val findComponentTagsByNameInteractor: FindComponentTagsByNameInteractor,
     private val findDeployedComponentsByCircleInteractor: FindDeployedComponentsByCircleInteractor
 ) {
 
@@ -169,7 +169,7 @@ class V2ModuleController(
         @NotBlank @PathVariable("componentId") componentId: String,
         @NotBlank @RequestParam("name") name: String
     ): List<ComponentTagResponse> {
-        return findComponentTagsInteractor.execute(moduleId, componentId, name, workspaceId)
+        return findComponentTagsByNameInteractor.execute(moduleId, componentId, name, workspaceId)
     }
 
     @ApiOperation(value = "Find deployed Components at Circle")

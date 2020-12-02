@@ -99,6 +99,22 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
         return Optional.ofNullable(this.client.target(url).request().get());
     }
 
+    @Override
+    public Optional<Response> getImagesTags(
+            String name,
+            DockerRegistryConfigurationEntity.DockerRegistryConnectionData connectionData
+    ) {
+
+        String url;
+        if (connectionData.organization.isEmpty()) {
+            url = createGetImagesUrl(this.baseAddress, name);
+        } else {
+            url = createGetImagesUrl(this.baseAddress, connectionData.organization, name);
+        }
+
+        return Optional.ofNullable(this.client.target(url).request().get());
+    }
+
     private String createGetImageUrl(String baseAddress, String name, String tagName) {
 
         UriBuilder builder = UriBuilder.fromUri(baseAddress);
@@ -113,6 +129,22 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
         builder.path("/v2/{organization}/{name}/manifests/{tagName}");
 
         return builder.build(organization, name, tagName).toString();
+    }
+
+    private String createGetImagesUrl(String baseAddress, String name) {
+
+        UriBuilder builder = UriBuilder.fromUri(baseAddress);
+        builder.path("/v2/{name}/tags/list");
+
+        return builder.build(name).toString();
+    }
+
+    private String createGetImagesUrl(String baseAddress, String organization, String name) {
+
+        UriBuilder builder = UriBuilder.fromUri(baseAddress);
+        builder.path("/v2/{organization}/{name}/tags/list");
+
+        return builder.build(organization, name).toString();
     }
 
     @Override

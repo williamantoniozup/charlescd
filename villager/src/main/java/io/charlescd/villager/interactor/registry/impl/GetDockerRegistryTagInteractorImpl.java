@@ -16,62 +16,108 @@
 
 package io.charlescd.villager.interactor.registry.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.charlescd.villager.exceptions.IllegalAccessResourceException;
 import io.charlescd.villager.exceptions.ResourceNotFoundException;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryClient;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationRepository;
 import io.charlescd.villager.interactor.registry.ComponentTagDTO;
+import io.charlescd.villager.interactor.registry.ComponentTagListDTO;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInput;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInteractor;
+import io.charlescd.villager.service.DockerRegistryCacheService;
+import java.util.Comparator;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import org.apache.http.HttpStatus;
+import javax.ws.rs.core.Response;
 
 @ApplicationScoped
 public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagInteractor {
 
     private DockerRegistryConfigurationRepository dockerRegistryConfigurationRepository;
     private RegistryClient registryClient;
+    private DockerRegistryCacheService registryService;
 
     @Inject
     public GetDockerRegistryTagInteractorImpl(
             DockerRegistryConfigurationRepository dockerRegistryConfigurationRepository,
-            RegistryClient registryClient) {
+            RegistryClient registryClient,
+            DockerRegistryCacheService registryService) {
         this.dockerRegistryConfigurationRepository = dockerRegistryConfigurationRepository;
         this.registryClient = registryClient;
+        this.registryService = registryService;
     }
 
     @Override
-    public Optional<ComponentTagDTO> execute(GetDockerRegistryTagInput input) {
+    public Optional execute(GetDockerRegistryTagInput input) {
 
         var entity =
-                this.dockerRegistryConfigurationRepository.findById(input.getArtifactRepositoryConfigurationId())
-                .orElseThrow(
-                        () -> new ResourceNotFoundException(ResourceNotFoundException.ResourceEnum.DOCKER_REGISTRY));
+                this.dockerRegistryConfigurationRepository.findById(
+                        input.getArtifactRepositoryConfigurationId()
+                )
+                        .orElseThrow(
+                                () -> new ResourceNotFoundException(
+                                        ResourceNotFoundException.ResourceEnum.DOCKER_REGISTRY)
+                        );
 
         if (!entity.workspaceId.equals(input.getWorkspaceId())) {
             throw new IllegalAccessResourceException(
                     "This docker registry does not belongs to the request application id.");
         }
 
+        var cacheKey = entity.workspaceId;
+
         try {
             this.registryClient.configureAuthentication(entity.type, entity.connectionData, input.getArtifactName());
-
-            var response =
-                    this.registryClient.getImage(input.getArtifactName(), input.getName(), entity.connectionData);
-
-            if (response.isEmpty() || response.get().getStatus() != HttpStatus.SC_OK) {
-                return Optional.empty();
+            var name = input.getName();
+            if (name == null || name.isEmpty() || !registryService.isExistingKey(cacheKey)) {
+                Optional<Response> response = this.registryClient.getImagesTags(
+                        input.getArtifactName(),
+                        entity.connectionData
+                );
+                var jsonEntity = response.get().readEntity(String.class);
+                saveCacheList(entity.workspaceId, jsonEntity);
             }
 
-            return Optional.of(new ComponentTagDTO(
-                    input.getName(),
-                    entity.connectionData.host + "/" + input.getArtifactName() + ":" + input.getName()
-            ));
+            return cacheSearch(
+                    entity.workspaceId,
+                    name,
+                    entity.connectionData.host,
+                    input.getArtifactName()
+            );
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         } finally {
             this.registryClient.closeQuietly();
         }
+        return Optional.empty();
+    }
 
+    private Optional cacheSearch(String key,
+                                 String name,
+                                 String host,
+                                 String artifactName) throws JsonProcessingException {
+        ComponentTagListDTO componetTagList = registryService.get(key);
+
+        return Optional.of(componetTagList.getTags()
+                .stream()
+                .filter(tag -> tag.startsWith(name))
+                .collect(Collectors.toList())
+                .stream()
+                .map(tag ->
+                        new ComponentTagDTO(tag,
+                                host + "/" + artifactName + ":" + tag)
+                ).sorted(Comparator.comparing(ComponentTagDTO::getName)).collect(Collectors.toList()));
+    }
+
+    private void saveCacheList(String key, String jsonEntity) throws JsonProcessingException {
+        ComponentTagListDTO tagList = registryService.get(key);
+        if (tagList != null) {
+            registryService.delete(key);
+        }
+        registryService.set(key, jsonEntity);
     }
 }
