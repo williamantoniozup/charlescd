@@ -20,12 +20,14 @@ import {
   useFetchData,
   useFetchStatus,
   FetchStatus,
-  ResponseError
+  ResponseError,
+  FetchStatuses
 } from 'core/providers/base/hooks';
 import {
   findAllUsers,
   resetPasswordById,
   updateProfileById,
+  patchProfileById,
   findUserByEmail,
   createNewUser,
   deleteUserById
@@ -153,6 +155,42 @@ export const useDeleteUser = (): [Function, string] => {
   }, [response, error, dispatch, userName]);
 
   return [delUser, userStatus];
+};
+
+export const useUpdateName = (): {
+  status: string;
+  user: User;
+  updateNameById: (id: string, name: string) => void;
+} => {
+  const dispatch = useDispatch();
+  const [status, setStatus] = useState<FetchStatuses>('idle');
+  const [user, setNewUser] = useState<User>();
+  const patch = useFetchData<User>(patchProfileById);
+
+  const updateNameById = useCallback(
+    async (id: string, name: string) => {
+      try {
+        setStatus('pending');
+        const res = await patch(id, name);
+        setNewUser(res);
+        setStatus('resolved');
+      } catch (e) {
+        setStatus('rejected');
+
+        const error = await e?.json();
+
+        dispatch(
+          toogleNotification({
+            text: error?.message,
+            status: 'error'
+          })
+        );
+      }
+    },
+    [patch, dispatch]
+  );
+
+  return { status, user, updateNameById };
 };
 
 export const useUpdateProfile = (): [boolean, Function, User, string] => {
