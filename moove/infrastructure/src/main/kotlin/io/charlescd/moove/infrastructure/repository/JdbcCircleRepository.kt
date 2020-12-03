@@ -319,8 +319,7 @@ class JdbcCircleRepository(
                 """
         )
 
-        name?.let { statement.appendln("AND circles.name ILIKE ?") }
-        statement.appendln("AND circles.workspace_id = ?")
+        incrementStatementFilters(name, statement)
 
         return statement
     }
@@ -358,8 +357,7 @@ class JdbcCircleRepository(
                 """
         )
 
-        name?.let { statement.appendln("AND circles.name ILIKE ?") }
-        statement.appendln("AND circles.workspace_id = ?")
+        incrementStatementFilters(name, statement)
 
         return statement
     }
@@ -389,10 +387,15 @@ class JdbcCircleRepository(
                 """
         )
 
-        name?.let { statement.appendln("AND circles.name ILIKE ?") }
-        statement.appendln("AND circles.workspace_id = ?")
+        incrementStatementFilters(name, statement)
 
         return statement
+    }
+
+    private fun incrementStatementFilters(name: String?, statement: StringBuilder) {
+        name?.let { statement.appendln("AND circles.name ILIKE ?") }
+        statement.appendln("AND circles.workspace_id = ?")
+        statement.appendln("ORDER BY circles.name")
     }
 
     override fun countGroupedByStatus(workspaceId: String): List<CircleCount> {
