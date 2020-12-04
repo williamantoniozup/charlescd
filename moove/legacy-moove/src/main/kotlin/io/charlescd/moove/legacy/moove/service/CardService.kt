@@ -63,6 +63,7 @@ class CardService(
 
     @Transactional
     fun create(createCardRequest: CreateCardRequest, workspaceId: String): CardRepresentation {
+        createCardRequest.validate()
         return createCardRequest.toEntity(workspaceId)
             .let { this.cardRepository.save(it) }
             .apply { createNewFeatureBranches(card = this) }
@@ -82,6 +83,7 @@ class CardService(
 
     @Transactional
     fun update(id: String, updateCardRequest: UpdateCardRequest, workspaceId: String): CardRepresentation {
+        updateCardRequest.validate()
         return cardRepository.findByIdAndWorkspaceId(id, workspaceId)
             .orElseThrow { NotFoundExceptionLegacy("card", id) }
             .fetchCardCommentsAndMembers()
