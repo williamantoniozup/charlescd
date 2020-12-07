@@ -41,6 +41,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import org.springframework.util.StringUtils
 
 @Service
 class CardService(
@@ -75,9 +76,11 @@ class CardService(
     }
 
     fun findById(id: String, workspaceId: String): CardRepresentation {
-        return cardRepository.findByIdAndWorkspaceId(id, workspaceId)
+        val cardRepresentation = cardRepository.findByIdAndWorkspaceId(id, workspaceId)
             .map { it.toRepresentation() }
             .orElseThrow { NotFoundExceptionLegacy("card", id) }
+            cardRepresentation.isProtected = isProtectedBranch(cardRepresentation)
+            return cardRepresentation
     }
 
     @Transactional
@@ -90,12 +93,12 @@ class CardService(
     }
 
     @Transactional
-    fun delete(id: String, workspaceId: String) {
+    fun delete(id: String, workspaceId: String, branchDeletion: Boolean = false) {
         return cardRepository.findByIdAndWorkspaceId(id, workspaceId)
             .orElseThrow { NotFoundExceptionLegacy("card", id) }
             .also { deleteCardRelationships(it) }
             .also { this.cardRepository.delete(it) }
-            .let { deleteFeatureBranches(it) }
+            .let { deleteFeatureBranches(it, branchDeletion) }
     }
 
     @Transactional
@@ -152,8 +155,17 @@ class CardService(
             .let { this.cardRepository.save(it) }
     }
 
-    private fun deleteFeatureBranches(card: Card) {
-        if (card is SoftwareCard) {
+    private fun isProtectedBranch(cardRepresentation: CardRepresentation): Boolean {
+        val branchName = cardRepresentation.feature?.branchName
+        if (StringUtils.isEmpty(branchName)) {
+            return isProtectedBranch(branchName.toString())
+        }
+
+        return false
+    }
+
+    private fun deleteFeatureBranches(card: Card, branchDeletion: Boolean = false) {
+        if (card is SoftwareCard && branchDeletion) {
             card.feature.modules.forEach { module ->
                 validateWorkspace(module.workspace)
                 deleteBranch(
@@ -207,6 +219,10 @@ class CardService(
 
     private fun isExcludableBranch(branchName: String): Boolean {
         return !protectedBranches.contains(branchName)
+    }
+
+    private fun isProtectedBranch(branchName: String): Boolean {
+        return protectedBranches.contains(branchName)
     }
 
     private fun createNewBranch(
@@ -289,7 +305,7 @@ class CardService(
             is SoftwareCard -> this.buildUpdatedActionCard(updateCardRequest)
                 .also { cardRepository.deleteById(it.id) }
                 .also { cardRepository.save(it) }
-                .also { deleteFeatureBranches(this) }
+                .also { deleteFeatureBranches(this, updateCardRequest.branchDeletion) }
             is ActionCard -> this.buildUpdatedActionCard(updateCardRequest)
                 .let { cardRepository.save(it) }
             else -> throw IllegalArgumentException("Invalid card type")
