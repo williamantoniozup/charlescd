@@ -20,6 +20,10 @@ package dispatcher
 
 import (
 	"fmt"
+	"log"
+	"sync"
+	"time"
+
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
@@ -27,9 +31,6 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/ZupIT/charlescd/compass/pkg/logger"
-	"log"
-	"sync"
-	"time"
 )
 
 type ActionDispatcher struct {
@@ -49,10 +50,10 @@ func NewActionDispatcher(metricGroupRepo metricsgroup.UseCases, actionRepo actio
 }
 
 func (dispatcher *ActionDispatcher) dispatch() {
-	logger.Info("Starting action dispatcher ", time.Now())
+
 	metricGroups, err := dispatcher.metricGroupRepo.FindAll()
 	if err != nil {
-		logger.Error("Error consulting metrics groups", "Dispatch", err, nil)
+		logger.Error("Error consulting metrics groups", "Dispatch", nil, nil)
 	}
 
 	for _, group := range metricGroups {
@@ -60,8 +61,6 @@ func (dispatcher *ActionDispatcher) dispatch() {
 			go dispatcher.doAction(group)
 		}
 	}
-
-	logger.Info("Finishing action dispatcher ", time.Now())
 }
 
 func (dispatcher *ActionDispatcher) doAction(group metricsgroup.MetricsGroup) {
@@ -145,6 +144,7 @@ func (dispatcher *ActionDispatcher) Start(stopChan chan bool) error {
 		return err
 	}
 
+	logger.Info("Starting action dispatcher", nil)
 	ticker := time.NewTicker(interval)
 	for {
 		select {

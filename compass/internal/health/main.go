@@ -36,9 +36,9 @@ type Main struct {
 	db         *gorm.DB
 	datasource datasource.UseCases
 	pluginMain plugin.UseCases
-	mooveMain  moove.APIClient
+	mooveMain  moove.ApiUseCases
 }
 
-func NewMain(db *gorm.DB, datasource datasource.UseCases, pluginMain plugin.UseCases, mooveMain moove.APIClient) UseCases {
+func NewMain(db *gorm.DB, datasource datasource.UseCases, pluginMain plugin.UseCases, mooveMain moove.ApiUseCases) UseCases {
 	return Main{db, datasource, pluginMain, mooveMain}
 }
