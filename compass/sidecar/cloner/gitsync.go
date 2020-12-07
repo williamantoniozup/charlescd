@@ -24,12 +24,12 @@ type Project struct {
 }
 
 func cloneAndOpenRepository(project Project) (*git.Repository, error) {
-	gitDirOut := fmt.Sprintf("%s/%s", configuration.GetConfiguration("PLUGINS_DIR"), project.Name)
+	gitDirOut := fmt.Sprintf("%s", configuration.GetEnv("PLUGINS_DIR"))
 
 	r, err := git.PlainClone(gitDirOut, false, &git.CloneOptions{
 		Auth: &http2.BasicAuth{
 			Username: "abc123", // yes, this can be anything except an empty string
-			Password: configuration.GetConfiguration("GIT_TOKEN"),
+			Password: configuration.GetEnv("GIT_TOKEN"),
 		},
 		URL:      project.Repository,
 		Progress: os.Stdout,
@@ -101,11 +101,9 @@ func getInterval() (time.Duration, error) {
 
 func SyncGitOps() {
 	resync := make(chan bool)
-	projects := []Project{
-		{
-			Name:       "plugins",
-			Repository: fmt.Sprintf("%s", configuration.GetConfiguration("PLUGINS_REPO")),
-		},
+	projects := Project{
+		//Name:       "plugins",
+		Repository: fmt.Sprintf("%s", configuration.GetEnv("PLUGINS_REPO")),
 	}
 
 	interval, err := getInterval()
@@ -113,38 +111,38 @@ func SyncGitOps() {
 		log.Fatalln(err)
 	}
 
-	for _, project := range projects {
-		r, err := cloneAndOpenRepository(project)
-		if err != nil {
-			log.Fatalln(err)
-		}
-
-		err = initializeRevision(r)
-		if err != nil {
-			log.Fatalln(err)
-		}
-
-		go func() {
-			fmt.Println("Start gitops engine...")
-			ticker := time.NewTicker(interval)
-			for {
-				select {
-				case <-ticker.C:
-					err := sync(r)
-					if err != nil {
-						log.Fatalln(err)
-					}
-					fmt.Println("Oh shit, here we go again")
-				case <-resync:
-					err := sync(r)
-					if err != nil {
-						log.Fatalln(err)
-					}
-					fmt.Println("Oh shit, here we are")
-				}
-			}
-		}()
+	//for _, project := range projects {
+	r, err := cloneAndOpenRepository(project)
+	if err != nil {
+		log.Fatalln(err)
 	}
+
+	err = initializeRevision(r)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	go func() {
+		fmt.Println("Start gitops engine...")
+		ticker := time.NewTicker(interval)
+		for {
+			select {
+			case <-ticker.C:
+				err := sync(r)
+				if err != nil {
+					log.Fatalln(err)
+				}
+				fmt.Println("Oh shit, here we go again")
+			case <-resync:
+				err := sync(r)
+				if err != nil {
+					log.Fatalln(err)
+				}
+				fmt.Println("Oh shit, here we are")
+			}
+		}
+	}()
+	//}
 
 	http.HandleFunc("/sync", func(w http.ResponseWriter, r *http.Request) {
 		resync <- true
