@@ -21,6 +21,7 @@ package health
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/ZupIT/charlescd/compass/internal/util"
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/ZupIT/charlescd/compass/pkg/logger"

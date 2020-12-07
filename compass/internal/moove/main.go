@@ -19,18 +19,23 @@
 package moove
 
 import (
-	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"net/http"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/jinzhu/gorm"
 )
+
+type ApiUseCases interface {
+	GetMooveComponents(circleIDHeader, circleId string, workspaceId uuid.UUID) ([]byte, error)
+}
 
 type APIClient struct {
 	URL        string
 	httpClient *http.Client
 }
 
-func NewAPIClient(url string, timeout time.Duration) APIClient {
+func NewAPIClient(url string, timeout time.Duration) ApiUseCases {
 	return APIClient{
 		URL: url,
 		httpClient: &http.Client{
