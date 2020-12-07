@@ -14,11 +14,36 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.application.module
+package io.charlescd.villager.interactor.registry;
 
-import io.charlescd.moove.application.module.response.ComponentTagResponse
+import java.util.List;
 
-interface FindComponentTagsInteractor {
+public class ComponentTagListDTO {
 
-    fun execute(moduleId: String, componentId: String, name: String, workspaceId: String): List<ComponentTagResponse>
+    private String name;
+    private List<String> tags;
+
+    public ComponentTagListDTO() {
+    }
+
+    public ComponentTagListDTO(String name, List<String> tags) {
+        this.name = name;
+        this.tags = tags;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
 }

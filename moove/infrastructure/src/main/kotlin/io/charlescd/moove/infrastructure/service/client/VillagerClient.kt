@@ -82,7 +82,7 @@ interface VillagerClient {
     fun findComponentTags(
         @PathVariable registryConfigurationId: String,
         @PathVariable componentName: String,
-        @RequestParam name: String,
+        @RequestParam name: String?,
         @RequestHeader("x-workspace-id") workspaceId: String
     ): FindComponentTagsResponse
 }
