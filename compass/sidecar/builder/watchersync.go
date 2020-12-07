@@ -26,6 +26,21 @@ func buildPlugins(plugins map[string][]string) error {
 	return nil
 }
 
+func RemovePlugins() error {
+	name := "/bin/sh"
+	removeScriptName := "remove.sh"
+
+	out, err := exec.Command(name, fmt.Sprintf("%s/%s", configuration.GetEnv("SCRIPTS_DIR"), removeScriptName)).Output()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	fmt.Println(string(out))
+
+	return nil
+}
+
 func ManagePlugins() error {
 	pluginMap := make(map[string][]string)
 	folders, err := ioutil.ReadDir(configuration.GetEnv("PLUGINS_DIR"))
@@ -34,7 +49,7 @@ func ManagePlugins() error {
 	}
 
 	for _, category := range folders {
-		if category.IsDir() {
+		if category.IsDir() && category.Name() != ".git" {
 
 			plugins, err := ioutil.ReadDir(configuration.GetEnv("PLUGINS_DIR") + "/" + category.Name())
 			if err != nil {
@@ -54,23 +69,3 @@ func ManagePlugins() error {
 
 	return nil
 }
-
-//
-//func removePlugins(plugins map[string][]string) error {
-//	name := "/bin/sh"
-//	removeScriptName := "remove.sh"
-//
-//	for category, plugins := range plugins {
-//		for _, plugin := range plugins {
-//			out, err := exec.Command(name, fmt.Sprintf("%s/%s", configuration.GetEnv("SCRIPTS_DIR"), removeScriptName), category, plugin).Output()
-//			if err != nil {
-//				fmt.Println(err)
-//				return err
-//			}
-//
-//			fmt.Println(string(out))
-//		}
-//	}
-//
-//	return nil
-//}
