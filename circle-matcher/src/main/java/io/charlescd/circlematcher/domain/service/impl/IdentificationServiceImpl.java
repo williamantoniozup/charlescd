@@ -132,11 +132,12 @@ public class IdentificationServiceImpl implements IdentificationService {
     }
 
     public Optional<KeyMetadata> getCircleByPercentage(List<KeyMetadata> percentageCircles) {
+        var percentageCirclesUpdated = percentageCircles;
         if (percentageCircles.size() > 1) {
-            IntStream.range(1, percentageCircles.size())
-                    .forEach(i -> this.sumValuesPercentage(percentageCircles.get(i), percentageCircles.get(i - 1)));
+            percentageCirclesUpdated = IntStream.range(1, percentageCircles.size())
+                    .mapToObj(i -> this.sumValuesPercentage(percentageCircles.get(i), percentageCircles.get(i - 1))).collect(Collectors.toList());
         }
-        return this.findMatchedCircle(this.pickRandomValue(), percentageCircles);
+        return this.findMatchedCircle(this.pickRandomValue(), percentageCirclesUpdated);
     }
 
     private Optional<KeyMetadata> findMatchedCircle(int randomValue, List<KeyMetadata> percentageCircles) {
@@ -145,8 +146,8 @@ public class IdentificationServiceImpl implements IdentificationService {
                 .findFirst();
     }
 
-    private int sumValuesPercentage(KeyMetadata keyMetadata, KeyMetadata keyMetadata1) {
-        return keyMetadata.sumPercentage(keyMetadata1.getPercentage());
+    private KeyMetadata sumValuesPercentage(KeyMetadata keyMetadata, KeyMetadata keyMetadata1) {
+        return keyMetadata.copy(keyMetadata1.sumPercentage(keyMetadata.getPercentage()));
     }
 
     private void verifyRequestFormat(IdentificationRequest request) {

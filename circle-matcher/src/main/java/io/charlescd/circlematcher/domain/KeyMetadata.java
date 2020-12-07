@@ -16,6 +16,8 @@
 
 package io.charlescd.circlematcher.domain;
 
+import java.security.Key;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 
 public class KeyMetadata {
@@ -94,7 +96,7 @@ public class KeyMetadata {
     }
 
     public int sumPercentage(Integer percentageToSum) {
-        return this.percentage += percentageToSum;
+        return this.percentage + percentageToSum;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -103,5 +105,13 @@ public class KeyMetadata {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public KeyMetadata copy(int percentage) {
+        var segmentation = new Segmentation(
+                this.name, null, this.reference, this.circleId, this.type, this.workspaceId, this.isDefault,
+                percentage, this.getCreatedAt()
+        );
+        return new KeyMetadata(this.key, segmentation);
     }
 }
