@@ -26,14 +26,25 @@ func buildPlugins(plugins map[string][]string) error {
 	return nil
 }
 
-func RemovePlugins() error {
+func RemovePlugins(fullClean bool) error {
 	name := "/bin/sh"
 	removeScriptName := "remove.sh"
+	fullCleanScriptName := "fullclean.sh"
+	var out []byte
+	var err error
 
-	out, err := exec.Command(name, fmt.Sprintf("%s/%s", configuration.GetEnv("SCRIPTS_DIR"), removeScriptName)).Output()
-	if err != nil {
-		fmt.Println(err)
-		return err
+	if fullClean {
+		out, err = exec.Command(name, fmt.Sprintf("%s/%s", configuration.GetEnv("SCRIPTS_DIR"), fullCleanScriptName)).Output()
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+	} else {
+		out, err = exec.Command(name, fmt.Sprintf("%s/%s", configuration.GetEnv("SCRIPTS_DIR"), removeScriptName)).Output()
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
 	}
 
 	fmt.Println(string(out))

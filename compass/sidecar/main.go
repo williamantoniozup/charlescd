@@ -38,20 +38,8 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func main() {
 	resync := make(chan bool)
 
-	err := builder.RemovePlugins()
+	err := builder.RemovePlugins(true)
 	if err != nil {
-		log.Fatalln(err)
-	}
-
-	err = builder.ManagePlugins()
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	watcher, _ = fsnotify.NewWatcher()
-	defer watcher.Close()
-
-	if err := filepath.Walk(fmt.Sprintf("%s", configuration.GetEnv("PLUGINS_DIR")), watchDir); err != nil {
 		log.Fatalln(err)
 	}
 
@@ -74,29 +62,41 @@ func main() {
 		log.Fatalln(err)
 	}
 
+	err = builder.ManagePlugins()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	watcher, _ = fsnotify.NewWatcher()
+	defer watcher.Close()
+
+	if err := filepath.Walk(fmt.Sprintf("%s", configuration.GetEnv("PLUGINS_DIR")), watchDir); err != nil {
+		log.Fatalln(err)
+	}
+
 	log.Println("Start lockfile verifier...")
 	go func() {
 		ticker := time.NewTicker(interval)
 		for {
 			select {
-			case event := <-watcher.Events:
-				log.Println("PVC changes detected: ", event)
-				err := builder.ManagePlugins()
-				if err != nil {
-					log.Fatalln(err)
-				}
+			//case event := <-watcher.Events:
+			//	log.Println("PVC changes detected: ", event)
+			//	err := builder.ManagePlugins()
+			//	if err != nil {
+			//		log.Fatalln(err)
+			//	}
 			case <-ticker.C:
+				log.Println("Automated Sync...")
 				err := cloner.Sync(r)
 				if err != nil {
 					log.Fatalln(err)
 				}
-				fmt.Println("Automated Sync...")
 			case <-resync:
+				log.Println("Request Sync")
 				err := cloner.Sync(r)
 				if err != nil {
 					log.Fatalln(err)
 				}
-				fmt.Println("Request Sync")
 			}
 		}
 	}()
