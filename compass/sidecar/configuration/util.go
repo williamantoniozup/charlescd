@@ -8,7 +8,7 @@ func GetEnv(key string) string {
 		"DIST_DIR":     "./dist",
 		"PLUGINS_DIR":  "./plugins",
 		"SCRIPTS_DIR":  "sidecar/scripts",
-		"GIT_TOKEN":    "10e79f3b100259c4f359a85388676cd8b7c5eee1",
+		"GIT_TOKEN":    "sometoken",
 	}
 
 	if env := os.Getenv(key); env != "" {

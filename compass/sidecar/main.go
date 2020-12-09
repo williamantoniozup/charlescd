@@ -79,12 +79,6 @@ func main() {
 		ticker := time.NewTicker(interval)
 		for {
 			select {
-			//case event := <-watcher.Events:
-			//	log.Println("PVC changes detected: ", event)
-			//	err := builder.ManagePlugins()
-			//	if err != nil {
-			//		log.Fatalln(err)
-			//	}
 			case <-ticker.C:
 				log.Println("Automated Sync...")
 				err := cloner.Sync(r)
