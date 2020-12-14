@@ -14,25 +14,29 @@
  * limitations under the License.
  */
 
-import React, { MouseEvent } from 'react';
-import Icon from 'core/components/Icon';
-import Text from 'core/components/Text';
+import React, { MouseEvent, Fragment } from 'react';
 import Styled from './styled';
 
 export interface Props {
+  id?: string;
   icon?: string;
   name: string;
   onClick?: (event: MouseEvent) => void;
   onSelect?: (name: string) => void;
   className?: string;
+  isInactive?: boolean;
+  tooltip?: string;
 }
 
 const DropdownItem = ({
+  id,
   icon,
   name,
   onClick,
   onSelect,
   className,
+  isInactive,
+  tooltip,
   ...rest
 }: Props) => {
   const handleClick = (event: MouseEvent) => {
@@ -42,16 +46,30 @@ const DropdownItem = ({
   };
 
   return (
-    <Styled.Item
-      key={`dropdown-item-${icon}-${name}`}
-      data-testid={`dropdown-item-${icon}-${name}`}
-      className={className}
-      onClick={(event: MouseEvent) => handleClick(event)}
-      {...rest}
-    >
-      {icon && <Icon name={icon} size="15px" />}
-      <Text.h5 color="dark">{name}</Text.h5>
-    </Styled.Item>
+    <Fragment>
+      <Styled.Item
+        key={`dropdown-item-${icon}-${name}`}
+        data-testid={`dropdown-item-${icon}-${name}`}
+        className={className}
+        onClick={(event: MouseEvent) => !isInactive && handleClick(event)}
+        isInactive={isInactive}
+        data-tip={tooltip}
+        data-for={id}
+        {...rest}
+      >
+        {icon && <Styled.Icon name={icon} size="15px" />}
+        <Styled.Text color="dark">{name}</Styled.Text>
+      </Styled.Item>
+      {isInactive && (
+        <Styled.ReactTooltipStyled
+          id={id}
+          place="right"
+          effect="solid"
+          multiline={true}
+          delayHide={300}
+        />
+      )}
+    </Fragment>
   );
 };
 
