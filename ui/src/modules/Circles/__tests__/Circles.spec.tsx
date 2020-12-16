@@ -14,9 +14,22 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.legacy.repository
+import React from 'react';
+import { render, screen } from 'unit-test/testUtils';
+import { FetchMock } from 'jest-fetch-mock/types';
+import Circles from '..';
+import { circlesResponse } from './fixtures';
 
-import io.charlescd.moove.legacy.repository.entity.Workspace
-import org.springframework.data.jpa.repository.JpaRepository
+beforeEach(() => {
+  (fetch as FetchMock).resetMocks();
+});
 
-interface WorkspaceRepository : JpaRepository<Workspace, String>
+test('render Circles', () => {
+  render(<Circles />);
+
+  expect(screen.getByTestId('input-text-search')).toBeInTheDocument();
+  expect(screen.getByText('Create circle')).toBeInTheDocument();
+  expect(screen.getByText('Active')).toBeInTheDocument();
+});
+
+
