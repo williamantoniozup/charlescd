@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-/* eslint-disable */
 export default () => {
   const getRandomInt = (min, max) => {
     min = Math.ceil(min);

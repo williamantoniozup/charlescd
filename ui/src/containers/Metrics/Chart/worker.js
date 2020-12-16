@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-/* eslint-disable */
 export default () => {
   const toList = data => data.map(({ value, timestamp }) => [timestamp, value]);
 

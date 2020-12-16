@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-/* eslint-disable @typescript-eslint/no-var-requires */
 const fs = require('fs');
 const readline = require('readline');
 const os = require('os');
@@ -25,7 +24,6 @@ const deleteFile = path => {
 };
 
 const createFile = path => {
-  // eslint-disable-next-line no-useless-catch
   try {
     fs.writeFileSync(path, 'window.CHARLESCD_ENVIRONMENT = {');
   } catch (error) {

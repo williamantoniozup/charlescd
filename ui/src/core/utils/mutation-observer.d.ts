@@ -14,6 +14,5 @@
  * limitations under the License.
  */
 
-// eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../../node_modules/mutation-observer" />
 declare module 'mutation-observer';

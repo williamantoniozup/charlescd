@@ -59,7 +59,6 @@ export interface FetchProps {
 }
 
 const renewTokenByCb = (fn: () => Promise<Response>, isLoginRequest: boolean) =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fn().catch(async (error: any) => {
     if (HTTP_STATUS.unauthorized === error.status) {
       try {
@@ -89,7 +88,6 @@ const getResponse = async (response: Response) => {
 };
 
 export type FetchParams = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ...args: any
 ) => (options: RequestInit) => Promise<Response>;
 
@@ -112,7 +110,6 @@ export const useFetchData = <T>(
 };
 
 export const useFetch = <T>(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   req: (...args: any) => (options: RequestInit) => Promise<Response>
 ): [
   FetchData<T>,
