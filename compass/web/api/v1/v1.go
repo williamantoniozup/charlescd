@@ -21,7 +21,11 @@ package v1
 import (
 	"errors"
 	"fmt"
+	"net/http"
+	"strings"
+
 	"github.com/ZupIT/charlescd/compass/internal/action"
+	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	healthPKG "github.com/ZupIT/charlescd/compass/internal/health"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
@@ -36,9 +40,6 @@ import (
 	"github.com/didip/tollbooth"
 	"github.com/didip/tollbooth/limiter"
 	"github.com/google/uuid"
-	"io/ioutil"
-	"net/http"
-	"strings"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
@@ -147,12 +148,9 @@ func extractToken(authorization string) (AuthToken, error) {
 	}
 
 	splitToken := strings.Split(rToken, "Bearer ")
-	pkey, fileErr := ioutil.ReadFile(fmt.Sprintf("./pkey.txt"))
-	if fileErr != nil {
-		return AuthToken{}, fileErr
-	}
+	pkey := configuration.GetConfiguration("PKEY")
 
-	key, keyErr := jwt.ParseRSAPublicKeyFromPEM(pkey)
+	key, keyErr := jwt.ParseRSAPublicKeyFromPEM([]byte(pkey))
 	if keyErr != nil {
 		return AuthToken{}, fmt.Errorf("error parsing RSA public key: %v\n", keyErr)
 	}

@@ -52,7 +52,18 @@ var initialValues = map[string]string{
 	"REQUESTS_PER_SECOND_LIMIT": "1",
 	"LIMITER_TOKEN_TTL":         "5",
 	"LIMITER_HEADERS_TTL":       "5",
-	"ENCRYPTION_KEY":      "caf5a807-5edd-4580-9149-7a4882755716",
+	"ENCRYPTION_KEY":            "caf5a807-5edd-4580-9149-7a4882755716",
+	"PKEY": `
+	-----BEGIN PUBLIC KEY-----
+	MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlfapihqzqSZQ8Z9jGR88
+	lCNdG3wcGWxLfa2E7Sr6pxx4STuhpIucA/l6FZ5OCNIzmJL+6AdVhZLovXVwIu/E
+	UXYHmyOxeN3N5WB3wxRsIEB2YCUnTduJQu5oX3/hmsHBw6cX3y5SZuqy/zxZu6VE
+	L33w6TK4gaGdPuitkh7hFqyIE7qc7VizMrLhWC6IqyBBipfGJwjYYkTGCW1lJj73
+	eq6O5gw5agUe/NlWi7AfUUb/WBjVlD2c5SCAZgUuJtvLMkEDljY980rTj5rI52EL
+	OJ9XuDbHIrDFeDgmuMAq6gFYi89RwQp98mPtisUzKkI3NzD+rFdO8iao+AK4Dplp
+	XwIDAQAB
+	-----END PUBLIC KEY-----
+	`,
 }
 
 func GetDBConnection(migrationsPath string) (*gorm.DB, error) {
