@@ -1,0 +1,17 @@
+{{- if .Values.compass.enabled }}
+apiVersion: v1
+data:
+  pkey.txt: |-
+    -----BEGIN PUBLIC KEY-----
+    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlsG3Rz2qD9LGJ9uqcQQ7
+    3NVrjCwbEk5piL9UN2S92G+LGCIoQX/lTNZUDRp+gjotkLa8cxjE0sulrxnFqZ6i
+    xVZLizoNJRsigSqlzHS3KRL6xMIq5IP8krzeGMKZQLq/vB2SajkHH7mnXKcIYh/1
+    Jhs8eBsffhPal38CT5jDwSm/TyUpwws7a0n+0S4lqlMvosGXAWZPqx0aA51dilYj
+    qvhtiNJaRcTbJz5xtMvLfsxVEj20C4/GhlvlQfitG0nlZsZ+mbPaLW3GRpUQbQIo
+    1fA3h0RgeHPe3OKu3OWjOVsYKq1pdNxWMFYrmYrbWsXCBFksb4riP2lK7IDiPX6F
+    cQIDAQAB
+    -----END PUBLIC KEY-----
+kind: ConfigMap
+metadata:
+  name: confcompass
+{{- end}}

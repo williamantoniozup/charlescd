@@ -262,6 +262,11 @@ compass:
       value: "5"
     - name: LIMITER_HEADERS_TTL
       value: "5"
+    - name: PKEY
+      valueFrom:
+        configMapKeyRef:
+          name: confcompass
+          key: pkey.txt
   secretEnvVars:
     - name: ENCRYPTION_KEY
       secretName: "compass-aes256-key"
