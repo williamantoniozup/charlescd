@@ -28,6 +28,7 @@ import {
   resetPasswordById,
   patchProfileById,
   findUserByEmail,
+  findWorkspacesByUserId,
   createNewUser,
   deleteUserById
 } from 'core/providers/users';
@@ -40,13 +41,18 @@ import { isIDMAuthFlow } from 'core/utils/auth';
 
 export const useUser = (): {
   findByEmail: Function;
+  findWorkspacesByUser: Function;
   user: User;
+  userAndWorkspaces: User;
   error: ResponseError;
 } => {
   const dispatch = useDispatch();
   const getUserByEmail = useFetchData<User>(findUserByEmail);
+  const getWorkspacesByUserId = useFetchData<User>(findWorkspacesByUserId);
   const [user, setUser] = useState<User>(null);
   const [error, setError] = useState<ResponseError>(null);
+  const [workspaces, setWorkspaces] = useState<User>(null);
+  const [userAndWorkspaces, setUserAndWorkspaces] = useState<User>(null);
 
   const findByEmail = useCallback(
     async (email: Pick<User, 'email'>) => {
@@ -74,9 +80,42 @@ export const useUser = (): {
     [dispatch, getUserByEmail]
   );
 
+  const findWorkspacesByUser = useCallback(
+    async (id: Pick<User, 'id'>) => {
+      try {
+        if (id) {
+          const res = await getWorkspacesByUserId(id);
+
+          setWorkspaces(res);
+
+          return res;
+        }
+      } catch (e) {
+        setError(e);
+
+        if (!isIDMAuthFlow()) {
+          dispatch(
+            toogleNotification({
+              text: `Error when trying to fetch the user info for id ${id}`,
+              status: 'error'
+            })
+          );
+        }
+      }
+    },
+    [dispatch, getWorkspacesByUserId]
+  );
+
+  useEffect(() => {
+    const newstr = { ...user, ...workspaces };
+    setUserAndWorkspaces(newstr);
+  }, [workspaces, user]);
+
   return {
     findByEmail,
+    findWorkspacesByUser,
     user,
+    userAndWorkspaces,
     error
   };
 };
