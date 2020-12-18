@@ -13,8 +13,10 @@ import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.transaction.annotation.Transactional
 
 @Named
+@Transactional
 class CreateUserInteractorImpl @Inject constructor(
     private val userService: UserService,
     @Value("\${charles.internal.idm.enabled:true}") private val internalIdmEnabled: Boolean
