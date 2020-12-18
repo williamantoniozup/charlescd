@@ -20,7 +20,7 @@ import Button from 'core/components/Button';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
-import { useRegistry, useRegistryTest } from './hooks';
+import { useRegistry, useRegistryTestConnection } from './hooks';
 import { options } from './constants';
 import { Registry } from './interfaces';
 import { Props } from '../interfaces';
@@ -33,18 +33,22 @@ import { Option } from 'core/components/Form/Select/interfaces';
 
 const FormRegistry = ({ onFinish }: Props) => {
   const { save, responseAdd, loadingSave, loadingAdd } = useRegistry();
-  const { testConnection, response, error, status } = useRegistryTest();
+  const {
+    testConnectionRegistry,
+    response,
+    error,
+    status
+  } = useRegistryTestConnection();
   const [registryType, setRegistryType] = useState('');
   const [awsUseSecret, setAwsUseSecret] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
   const [message, setMessage] = useState<ConnectionProps>(null);
-  const isGCP = registryType === 'GCP';
   const {
     register,
     handleSubmit,
     reset,
-    getValues,
     control,
+    getValues,
     formState: { isValid }
   } = useForm<Registry>({ mode: 'onChange' });
 
@@ -53,11 +57,11 @@ const FormRegistry = ({ onFinish }: Props) => {
   }, [onFinish, responseAdd]);
 
   useEffect(() => {
-    if (response) {
+    if (status.isResolved && response) {
       setMessage({ type: 'success', message: 'Successful connection.' });
       setIsDisabled(false);
     }
-  }, [response]);
+  }, [status.isResolved, response]);
 
   useEffect(() => {
     if (error) {
@@ -77,8 +81,7 @@ const FormRegistry = ({ onFinish }: Props) => {
       ...getValues(),
       provider: registryType
     };
-
-    testConnection(registry);
+    testConnectionRegistry(registry);
   };
 
   const onSubmit = (registry: Registry) => {
@@ -139,16 +142,6 @@ const FormRegistry = ({ onFinish }: Props) => {
           control={control}
           theme="monokai"
         />
-        {message && <ConnectionStatus {...message} />}
-        <Button.Default
-          type="button"
-          id="test-connection"
-          onClick={onClick}
-          isDisabled={!isValid}
-          isLoading={status.isPending}
-        >
-          Test connection
-        </Button.Default>
       </>
     );
   };
@@ -198,12 +191,22 @@ const FormRegistry = ({ onFinish }: Props) => {
           label="Enter the registry url"
         />
         {handleFields()}
+        {message && <ConnectionStatus {...message} />}
+        <Button.Default
+          type="button"
+          id="test-connection"
+          onClick={onClick}
+          isDisabled={!isValid}
+          isLoading={status.isPending}
+        >
+          Test connection
+        </Button.Default>
       </Styled.Fields>
       <Button.Default
         id="submit-registry"
         type="submit"
         isLoading={loadingSave || loadingAdd}
-        isDisabled={isGCP ? isDisabled : !isValid}
+        isDisabled={isDisabled}
       >
         Save
       </Button.Default>
