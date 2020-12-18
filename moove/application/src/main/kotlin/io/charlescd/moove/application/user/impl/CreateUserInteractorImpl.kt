@@ -9,12 +9,14 @@ import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.ForbiddenException
 import io.charlescd.moove.domain.exceptions.NotFoundException
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
-import org.springframework.beans.factory.annotation.Value
 
 @Named
+@Transactional
 class CreateUserInteractorImpl @Inject constructor(
     private val userService: UserService,
     @Value("\${charles.internal.idm.enabled:true}") private val internalIdmEnabled: Boolean
@@ -68,10 +70,15 @@ class CreateUserInteractorImpl @Inject constructor(
 
     private fun saveUserOnKeycloak(user: User, password: String?) {
         if (password.isNullOrBlank()) throw BusinessException.of(MooveErrorCode.MISSING_PARAMETER).withParameters("password")
-        this.userService.createUserOnKeycloak(
-            user.email,
-            user.name,
-            password
-        )
+
+        try {
+            this.userService.createUserOnKeycloak(
+                user.email,
+                user.name,
+                password
+            )
+        } catch (exception: Exception) {
+            throw BusinessException.of(MooveErrorCode.EXTERNAL_IDM_ERROR)
+        }
     }
 }
