@@ -18,8 +18,8 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   create,
   configPath,
-  validation,
-  validationConnection
+  testConnection,
+  validateConnection
 } from 'core/providers/registry';
 import { addConfig, delConfig } from 'core/providers/workspace';
 import {
@@ -33,6 +33,7 @@ import {
 import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { Registry, Response } from './interfaces';
+import { v4 as uuidv4 } from 'uuid';
 
 export const useRegistry = (): FetchProps => {
   const dispatch = useDispatch();
@@ -105,25 +106,25 @@ export const useRegistry = (): FetchProps => {
   };
 };
 
-export const useRegistryTest = (): {
-  testConnection: Function;
-  response: Response;
+export const useRegistryTestConnection = (): {
+  testConnectionRegistry: Function;
+  response: string;
   error: ResponseError;
   status: FetchStatus;
 } => {
   const status = useFetchStatus();
-  const test = useFetchData<Response>(validation);
-  const [response, setResponse] = useState<Response>(null);
+  const test = useFetchData<Response>(testConnection);
+  const [response, setResponse] = useState<string>(null);
   const [error, setError] = useState<ResponseError>(null);
 
-  const testConnection = useCallback(
+  const testConnectionRegistry = useCallback(
     async (registry: Registry) => {
       try {
         if (registry) {
           status.pending();
           const res = await test(registry);
 
-          setResponse(res);
+          setResponse(uuidv4());
           status.resolved();
 
           return res;
@@ -140,23 +141,23 @@ export const useRegistryTest = (): {
   );
 
   return {
-    testConnection,
+    testConnectionRegistry,
     response,
     error,
     status
   };
 };
 
-export const useRegistryConnection = (): {
-  testConnection: Function;
+export const useRegistryValidateConnection = (): {
+  validateConnectionRegistry: Function;
   response: Response;
   error: ResponseError;
 } => {
-  const test = useFetchData<Response>(validationConnection);
+  const test = useFetchData<Response>(validateConnection);
   const [response, setResponse] = useState<Response>(null);
   const [error, setError] = useState<ResponseError>(null);
 
-  const testConnection = useCallback(
+  const validateConnectionRegistry = useCallback(
     async (configurationId: string) => {
       try {
         if (configurationId) {
@@ -177,7 +178,7 @@ export const useRegistryConnection = (): {
   );
 
   return {
-    testConnection,
+    validateConnectionRegistry,
     response,
     error
   };
