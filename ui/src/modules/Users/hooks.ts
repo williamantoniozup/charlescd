@@ -28,6 +28,7 @@ import {
   resetPasswordById,
   patchProfileById,
   findUserByEmail,
+  findWorkspacesByUserId,
   createNewUser,
   deleteUserById
 } from 'core/providers/users';
@@ -35,28 +36,45 @@ import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { LoadedUsersAction } from './state/actions';
 import { UserPagination } from './interfaces/UserPagination';
-import { User, NewUser, NewPassword } from './interfaces/User';
+import {
+  User,
+  NewUser,
+  NewPassword,
+  Workspace,
+  Profile
+} from './interfaces/User';
 import { isIDMAuthFlow } from 'core/utils/auth';
 
 export const useUser = (): {
   findByEmail: Function;
   user: User;
+  workspaces: Workspace[];
+  userProfileData: User;
   error: ResponseError;
 } => {
   const dispatch = useDispatch();
   const getUserByEmail = useFetchData<User>(findUserByEmail);
+  const getWorkspacesByUserId = useFetchData<Workspace[]>(
+    findWorkspacesByUserId
+  );
   const [user, setUser] = useState<User>(null);
+  const [workspaces, setWorkspaces] = useState<Workspace[]>(null);
+  const [userProfileData, setUserProfileData] = useState<Profile>(null);
   const [error, setError] = useState<ResponseError>(null);
 
   const findByEmail = useCallback(
     async (email: Pick<User, 'email'>) => {
       try {
         if (email) {
-          const res = await getUserByEmail(email);
+          const userData = await getUserByEmail(email);
+          setUser(userData);
 
-          setUser(res);
+          const workspacesData = await getWorkspacesByUserId(userData.id);
+          setWorkspaces(workspacesData);
 
-          return res;
+          setUserProfileData({ ...userData, workspaces: workspacesData });
+
+          return { ...userData, workspaces: workspacesData };
         }
       } catch (e) {
         setError(e);
@@ -71,12 +89,14 @@ export const useUser = (): {
         }
       }
     },
-    [dispatch, getUserByEmail]
+    [dispatch, getUserByEmail, getWorkspacesByUserId]
   );
 
   return {
     findByEmail,
     user,
+    workspaces,
+    userProfileData,
     error
   };
 };
