@@ -14,37 +14,19 @@
  * limitations under the License.
  */
 
-export interface Workspace {
-  id: string;
-  name?: string;
-  permissions?: string[];
+import React from 'react';
+import { render, screen } from 'unit-test/testUtils';
+import Radio from '..'
+
+const props = {
+  name: 'charles',
+  value: 'charles',
+  label: 'charles'
 }
 
-interface Base {
-  name: string;
-  email: string;
-}
+test('render Radio default', async () => {
+  render(<Radio { ...props } />);
 
-export interface NewPassword {
-  newPassword: string;
-}
-
-export interface User extends Base {
-  id: string;
-  workspaces?: Workspace[];
-  createdAt?: string;
-  root?: boolean;
-  photoUrl?: string;
-}
-
-export interface NewUser extends Base {
-  password: string;
-  root?: boolean;
-}
-
-export interface Profile extends Base {
-  id: string;
-  photoUrl?: string;
-  workspaces?: Workspace[];
-  createdAt?: string;
-}
+  const element = await screen.findByTestId(`radio-${props.value}`);
+  expect(element).toBeInTheDocument();
+});
