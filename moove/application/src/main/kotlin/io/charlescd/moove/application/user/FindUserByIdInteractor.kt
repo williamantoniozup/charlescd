@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-import forEach from 'lodash/forEach';
-import isEmpty from 'lodash/isEmpty';
+package io.charlescd.moove.application.user
 
-export const validFields = (fields: object) => {
-  let status = true;
-  forEach(fields, (value: string) => {
-    if (isEmpty(value)) {
-      status = false;
-    }
-  });
+import io.charlescd.moove.application.user.response.UserResponse
+import java.util.UUID
 
-  return status;
-};
+interface FindUserByIdInteractor {
 
-export const isNotBlank = (value: string) => !!value.trim();
+    fun execute(authorization: String, id: UUID): UserResponse
+}
