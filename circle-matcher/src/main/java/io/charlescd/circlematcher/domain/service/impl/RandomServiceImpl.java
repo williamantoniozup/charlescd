@@ -14,25 +14,23 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useRef } from 'react';
-import { components, SingleValueProps, OptionTypeBase } from 'react-select';
+package io.charlescd.circlematcher.domain.service.impl;
 
-const SingleValue = ({
-  children,
-  ...props
-}: SingleValueProps<OptionTypeBase>) => {
-  const { options, clearValue } = props;
-  const started = useRef(false);
+import io.charlescd.circlematcher.domain.service.RandomService;
+import java.security.SecureRandom;
+import org.springframework.stereotype.Service;
 
-  useEffect(() => {
-    if (options && started.current) {
-      clearValue();
-    } else {
-      started.current = true;
+@Service
+public class RandomServiceImpl implements RandomService {
+
+    private SecureRandom secureRandom;
+
+    public RandomServiceImpl() {
+        this.secureRandom = new SecureRandom();
     }
-  }, [options, clearValue]);
 
-  return <components.SingleValue {...props}>{children}</components.SingleValue>;
-};
+    public int getRandomNumber(int number) {
+        return this.secureRandom.nextInt(number) + 1;
+    }
 
-export default SingleValue;
+}
