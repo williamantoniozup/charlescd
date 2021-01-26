@@ -24,6 +24,9 @@ spec:
         app: {{ .name }}
         version: {{ $.Chart.Version }}
     spec:
+    {{- if .serviceAccountName }}
+    serviceAccountName: {{ .serviceAccountName }}
+    {{- end}}
     {{- if .postgresqlWait }}
       initContainers:
         - name: check-db-ready

@@ -117,6 +117,7 @@ CharlesApplications:
 
   octopipe:
     enabled: true
+    serviceAccountName: charlescd-octopipe
     name: charlescd-octopipe
     sidecarIstio: 
       enabled: true
