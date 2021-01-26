@@ -14,25 +14,11 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useRef } from 'react';
-import { components, SingleValueProps, OptionTypeBase } from 'react-select';
+import { UserGroupPaginationItem } from '../../interfaces/UserGroupsPagination';
 
-const SingleValue = ({
-  children,
-  ...props
-}: SingleValueProps<OptionTypeBase>) => {
-  const { options, clearValue } = props;
-  const started = useRef(false);
-
-  useEffect(() => {
-    if (options && started.current) {
-      clearValue();
-    } else {
-      started.current = true;
-    }
-  }, [options, clearValue]);
-
-  return <components.SingleValue {...props}>{children}</components.SingleValue>;
-};
-
-export default SingleValue;
+export const UserGroupItem: UserGroupPaginationItem[] = [
+  {
+    id: '1',
+    name: 'user',
+    users: []
+  }];
