@@ -22,7 +22,9 @@ import {
   useDeleteCircle,
   useSaveCircleManually,
   useSaveCircleWithFile,
-  useCircleUndeploy
+  useCircleUndeploy,
+  useCirclePercentage,
+  CIRCLE_STATUS
 } from 'modules/Circles/hooks';
 import { delParam, updateParam } from 'core/utils/path';
 import { useDispatch } from 'core/state/hooks';
@@ -60,6 +62,7 @@ import {
 } from './helpers';
 import { SECTIONS } from './enums';
 import Styled from './styled';
+import get from 'lodash/get';
 
 interface Props {
   id: string;
@@ -72,6 +75,7 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
   const [activeSection, setActiveSection] = useState<SECTIONS>();
   const [isEditing, setIsEditing] = useState(false);
   const [data, circleActions] = useCircle();
+  const [responseGetCircles, getFilteredCircles] = useCirclePercentage();
   const { circleResponse, components, loading } = data;
   const { loadCircle, loadComponents } = circleActions;
   const [delCircle, delCircleResponse] = useDeleteCircle();
@@ -88,6 +92,13 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
   const [circle, setCircle] = useState<Circle>();
   const { pollingCircle, response } = useCirclePolling();
   const POLLING_DELAY = 15000;
+  const [releaseEnabled, setReleaseEnabled] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (circleResponse?.matcherType === 'PERCENTAGE') {
+      getFilteredCircles('', CIRCLE_STATUS.active);
+    }
+  }, [getFilteredCircles, circleResponse]);
 
   useEffect(() => {
     if (circleResponse) {
@@ -153,6 +164,25 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
       delParam('circle', routes.circlesComparation, history, id);
     }
   }, [delCircleResponse, history, id, onChange]);
+
+  const checkIfReleaseIsEnabled = () => {
+    const sumPercentage: number = get(
+      responseGetCircles,
+      'content[0].sumPercentage',
+      0
+    );
+    const availablePercentage = 100 - sumPercentage;
+    if (availablePercentage < circle.percentage) {
+      return setReleaseEnabled(false);
+    }
+    return setReleaseEnabled(true);
+  };
+
+  useEffect(() => {
+    if (responseGetCircles) {
+      checkIfReleaseIsEnabled();
+    }
+  });
 
   const handleDelete = (deployStatus: string) => {
     delCircle(id, deployStatus, circle?.name);
@@ -281,9 +311,12 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
         circle={circle}
         isEditing={isEditing}
         onClickCreate={() => setActiveSection(SECTIONS.SEGMENTS)}
+        percentageCircles={responseGetCircles}
+        setActiveSection={setActiveSection}
       />
       <LayerRelease
         circle={circle}
+        releaseEnabled={releaseEnabled}
         onClickCreate={() => setActiveSection(SECTIONS.RELEASE)}
       />
       <LayerMetricsGroups
