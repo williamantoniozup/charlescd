@@ -20,6 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.charlescd.circlematcher.domain.KeyMetadata;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Component;
@@ -83,15 +85,25 @@ public class KeyMetadataRepository implements RedisRepository {
                 .scan(CHARLES_KEY_SET, ScanOptions.scanOptions()
                         .match(String.format("*\"circleId\":\"%s\"*", circleId))
                         .build());
-
         while (!cursor.isClosed() && cursor.hasNext()) {
             var metadata = this.objectMapper.convertValue(cursor.next(), KeyMetadata.class);
             metadataList.add(metadata);
         }
 
         closeCursor(cursor);
-
         return metadataList;
+    }
+
+    public List<KeyMetadata> findAllOldMetadata() {
+
+        var metadataList = new ArrayList<KeyMetadata>();
+
+        var cursor = this.template.opsForSet().scan(CHARLES_KEY_SET, ScanOptions.scanOptions().build());
+        while (!cursor.isClosed() && cursor.hasNext()) {
+            var metadata = this.objectMapper.convertValue(cursor.next(), KeyMetadata.class);
+            metadataList.add(metadata);
+        }
+        return metadataList.parallelStream().filter(metadata -> metadata.getActive() == null).collect(Collectors.toList());
     }
 
     public void remove(KeyMetadata keyMetadata) {
