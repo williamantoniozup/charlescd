@@ -61,8 +61,8 @@ public class ApplicationReadyListener implements ApplicationListener<Application
 
     private void removeMetadata(KeyMetadata keyMetadata) {
         try {
-            this.keyMetadataRepository.remove(keyMetadata);
             this.segmentationRepository.removeByKey(keyMetadata.getKey());
+            this.keyMetadataRepository.remove(keyMetadata);
         } catch(Exception exception){
             System.out.println(exception.getMessage());
         }
