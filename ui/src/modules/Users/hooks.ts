@@ -29,13 +29,14 @@ import {
   patchProfileById,
   findUserByEmail,
   createNewUser,
-  deleteUserById
+  deleteUserById,
+  findWorkspacesByUserId
 } from 'core/providers/users';
 import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { LoadedUsersAction } from './state/actions';
 import { UserPagination } from './interfaces/UserPagination';
-import { User, NewUser, NewPassword } from './interfaces/User';
+import { User, NewUser, NewPassword, Workspace } from './interfaces/User';
 import { isIDMAuthFlow } from 'core/utils/auth';
 
 export const useUser = (): {
@@ -53,7 +54,6 @@ export const useUser = (): {
       try {
         if (email) {
           const res = await getUserByEmail(email);
-
           setUser(res);
 
           return res;
@@ -77,6 +77,48 @@ export const useUser = (): {
   return {
     findByEmail,
     user,
+    error
+  };
+};
+
+export const useWorkspacesByUser = (): {
+  findWorkspacesByUser: Function;
+  workspaces: Workspace[];
+  error: ResponseError;
+} => {
+  const dispatch = useDispatch();
+  const getWorkspacesByUser = useFetchData<Workspace[]>(findWorkspacesByUserId);
+  const [workspaces, setWorkspaces] = useState<Workspace[]>(null);
+  const [error, setError] = useState<ResponseError>(null);
+
+  const findWorkspacesByUser = useCallback(
+    async (id: Pick<User, 'id'>) => {
+      try {
+        if (id) {
+          const res = await getWorkspacesByUser(id);
+          setWorkspaces(res);
+
+          return res;
+        }
+      } catch (e) {
+        setError(e);
+
+        if (!isIDMAuthFlow()) {
+          dispatch(
+            toogleNotification({
+              text: `Error when trying to fetch workspaces for current user`,
+              status: 'error'
+            })
+          );
+        }
+      }
+    },
+    [dispatch, getWorkspacesByUser]
+  );
+
+  return {
+    findWorkspacesByUser,
+    workspaces,
     error
   };
 };
@@ -225,14 +267,14 @@ export const useResetPassword = (): {
   return { resetPassword, response, status };
 };
 
-export const useUsers = (): [Function, Function, boolean] => {
+export const useUsers = (): [Function, UserPagination, boolean] => {
   const dispatch = useDispatch();
   const [usersData, getUsers] = useFetch<UserPagination>(findAllUsers);
   const { response, error, loading } = usersData;
 
-  const getAll = useCallback(
-    (name: string) => {
-      getUsers({ name });
+  const filterUsers = useCallback(
+    (name: string, page: number) => {
+      getUsers({ name, page });
     },
     [getUsers]
   );
@@ -245,7 +287,7 @@ export const useUsers = (): [Function, Function, boolean] => {
     }
   }, [dispatch, response, error]);
 
-  return [getAll, getUsers, loading];
+  return [filterUsers, response, loading];
 };
 
 export default useUsers;
