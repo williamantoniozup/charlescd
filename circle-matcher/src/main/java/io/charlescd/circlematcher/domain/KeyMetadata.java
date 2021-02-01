@@ -16,8 +16,10 @@
 
 package io.charlescd.circlematcher.domain;
 
-import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.time.LocalDateTime;
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class KeyMetadata {
 
     private String reference;

@@ -35,7 +35,12 @@ public class ApplicationReadyListener implements ApplicationListener<Application
             this.keyMetadataRepository.remove(keyMetadata);
             keyMetadata.setActive(true);
             this.keyMetadataRepository.create(keyMetadata);
-            this.createSegmentation(optionalSegmentation, keyMetadata);
+            if (optionalSegmentation.isPresent()) {
+                var segmentation = optionalSegmentation.get();
+                this.segmentationRepository.removeByKey(keyMetadata.getKey());
+                segmentation.setActive(true);
+                this.segmentationRepository.create(keyMetadata.getKey(), segmentation);
+            }
         }
     }
 
@@ -46,11 +51,4 @@ public class ApplicationReadyListener implements ApplicationListener<Application
         return Optional.empty();
     }
 
-    private void createSegmentation(Optional<Segmentation> optionalSegmentation, KeyMetadata keyMetadata) {
-        if (optionalSegmentation.isPresent()) {
-            var segmentation = optionalSegmentation.get();
-            segmentation.setActive(true);
-            this.segmentationRepository.create(keyMetadata.getKey(), segmentation);
-        }
-    }
 }
