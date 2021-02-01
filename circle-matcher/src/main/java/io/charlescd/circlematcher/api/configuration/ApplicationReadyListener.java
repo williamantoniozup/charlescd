@@ -40,12 +40,12 @@ public class ApplicationReadyListener implements ApplicationListener<Application
 //            }
 //        }
     }
-
-    private Optional<Segmentation> findSegmentation(KeyMetadata keyMetadata) {
-//        if (keyMetadata.getType() != SegmentationType.SIMPLE_KV) {
-//            return this.segmentationRepository.findByKey(keyMetadata.getKey());
-//        }
-//        return Optional.empty();
-    }
+//
+//    private Optional<Segmentation> findSegmentation(KeyMetadata keyMetadata) {
+////        if (keyMetadata.getType() != SegmentationType.SIMPLE_KV) {
+////            return this.segmentationRepository.findByKey(keyMetadata.getKey());
+////        }
+////        return Optional.empty();
+//    }
 
 }
