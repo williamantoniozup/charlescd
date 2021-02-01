@@ -5,16 +5,20 @@ go 1.14
 require (
 	cloud.google.com/go v0.51.0 // indirect
 	github.com/Azure/go-autorest/autorest v0.9.6 // indirect
+	github.com/Masterminds/goutils v1.1.0 // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Masterminds/sprig v2.22.0+incompatible // indirect
 	github.com/aws/aws-sdk-go v1.32.10
+	github.com/cyphar/filepath-securejoin v0.2.2 // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/gin-gonic/gin v1.6.3
+	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/googleapis/gnostic v0.4.0 // indirect
 	github.com/huandu/xstrings v1.3.2 // indirect
 	github.com/imdario/mergo v0.3.9
 	github.com/joho/godotenv v1.3.0
+	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.6.0
 	github.com/stretchr/testify v1.6.1
 	github.com/tidwall/sjson v1.1.1
