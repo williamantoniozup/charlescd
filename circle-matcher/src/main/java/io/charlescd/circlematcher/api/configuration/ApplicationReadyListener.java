@@ -13,42 +13,39 @@ import java.util.Optional;
 
 @Component
 public class ApplicationReadyListener implements ApplicationListener<ApplicationReadyEvent> {
-    private KeyMetadataRepository keyMetadataRepository;
-    private SegmentationRepository segmentationRepository;
-    public ApplicationReadyListener(KeyMetadataRepository keyMetadataRepository,
-                                    SegmentationRepository segmentationRepository
+//    private KeyMetadataRepository keyMetadataRepository;
+//    private SegmentationRepository segmentationRepository;
+    public ApplicationReadyListener(
     ){
-        this.keyMetadataRepository = keyMetadataRepository;
-        this.segmentationRepository = segmentationRepository;
     }
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
-        var oldMetaData = this.keyMetadataRepository.findAllOldMetadata();
-        oldMetaData.forEach(
-                this::updateOldMetadata
-        );
+//        var oldMetaData = this.keyMetadataRepository.findAllOldMetadata();
+//        oldMetaData.forEach(
+//                this::updateOldMetadata
+//        );
     }
 
     private void updateOldMetadata(KeyMetadata keyMetadata) {
-        if (!keyMetadata.getIsDefault()) {
-            var optionalSegmentation = findSegmentation(keyMetadata);
-            this.keyMetadataRepository.remove(keyMetadata);
-            keyMetadata.setActive(true);
-            this.keyMetadataRepository.create(keyMetadata);
-            if (optionalSegmentation.isPresent()) {
-                var segmentation = optionalSegmentation.get();
-                this.segmentationRepository.removeByKey(keyMetadata.getKey());
-                segmentation.setActive(true);
-                this.segmentationRepository.create(keyMetadata.getKey(), segmentation);
-            }
-        }
+//        if (!keyMetadata.getIsDefault()) {
+//            var optionalSegmentation = findSegmentation(keyMetadata);
+//            this.keyMetadataRepository.remove(keyMetadata);
+//            keyMetadata.setActive(true);
+//            this.keyMetadataRepository.create(keyMetadata);
+//            if (optionalSegmentation.isPresent()) {
+//                var segmentation = optionalSegmentation.get();
+//                this.segmentationRepository.removeByKey(keyMetadata.getKey());
+//                segmentation.setActive(true);
+//                this.segmentationRepository.create(keyMetadata.getKey(), segmentation);
+//            }
+//        }
     }
 
     private Optional<Segmentation> findSegmentation(KeyMetadata keyMetadata) {
-        if (keyMetadata.getType() != SegmentationType.SIMPLE_KV) {
-            return this.segmentationRepository.findByKey(keyMetadata.getKey());
-        }
-        return Optional.empty();
+//        if (keyMetadata.getType() != SegmentationType.SIMPLE_KV) {
+//            return this.segmentationRepository.findByKey(keyMetadata.getKey());
+//        }
+//        return Optional.empty();
     }
 
 }
