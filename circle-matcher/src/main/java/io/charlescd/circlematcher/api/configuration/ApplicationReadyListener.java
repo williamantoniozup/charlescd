@@ -31,40 +31,26 @@ public class ApplicationReadyListener implements ApplicationListener<Application
 
     private void updateOldMetadata(KeyMetadata keyMetadata) {
         if (!keyMetadata.getIsDefault()) {
-            var optionalSegmentation = this.segmentationRepository.findByKey(keyMetadata.getKey());
-            this.removeMetadata(keyMetadata);
+            var optionalSegmentation = findSegmentation(keyMetadata);
+            this.keyMetadataRepository.remove(keyMetadata);
             keyMetadata.setActive(true);
             this.keyMetadataRepository.create(keyMetadata);
             this.createSegmentation(optionalSegmentation, keyMetadata);
         }
     }
 
+    private Optional<Segmentation> findSegmentation(KeyMetadata keyMetadata) {
+        if (keyMetadata.getType() != SegmentationType.SIMPLE_KV) {
+            return this.segmentationRepository.findByKey(keyMetadata.getKey());
+        }
+        return Optional.empty();
+    }
+
     private void createSegmentation(Optional<Segmentation> optionalSegmentation, KeyMetadata keyMetadata) {
         if (optionalSegmentation.isPresent()) {
             var segmentation = optionalSegmentation.get();
             segmentation.setActive(true);
-            if (SegmentationType.SIMPLE_KV.equals(segmentation.getType())) {
-                this.segmentationRepository.create(keyMetadata.getKey(), getSegmentationValue(segmentation));
-            } else {
-                this.segmentationRepository.create(keyMetadata.getKey(), segmentation);
-            }
-        }
-    }
-
-    private Object getSegmentationValue(Segmentation segmentation) {
-        return segmentation
-                .getNode()
-                .getContent()
-                .getValue()
-                .get(0);
-    }
-
-    private void removeMetadata(KeyMetadata keyMetadata) {
-        try {
-            this.segmentationRepository.removeByKey(keyMetadata.getKey());
-            this.keyMetadataRepository.remove(keyMetadata);
-        } catch(Exception exception){
-            System.out.println(exception.getMessage());
+            this.segmentationRepository.create(keyMetadata.getKey(), segmentation);
         }
     }
 }
