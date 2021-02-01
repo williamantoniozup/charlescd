@@ -21,9 +21,11 @@ public class ApplicationReadyListener implements ApplicationListener<Application
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
         var oldMetaData = this.keyMetadataRepository.findAllOldMetadata();
-        oldMetaData.forEach(
-                this::updateOldMetadata
-        );
+        if (oldMetaData != null) {
+            oldMetaData.forEach(
+                    this::updateOldMetadata
+            );
+        }
     }
 
     private void updateOldMetadata(KeyMetadata keyMetadata) {
