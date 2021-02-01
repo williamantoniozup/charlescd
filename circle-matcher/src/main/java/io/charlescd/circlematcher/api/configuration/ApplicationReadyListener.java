@@ -31,15 +31,15 @@ public class ApplicationReadyListener implements ApplicationListener<Application
 
     private void updateOldMetadata(KeyMetadata keyMetadata) {
         if (!keyMetadata.getIsDefault()) {
+            var optionalSegmentation = this.segmentationRepository.findByKey(keyMetadata.getKey());
             this.removeMetadata(keyMetadata);
             keyMetadata.setActive(true);
             this.keyMetadataRepository.create(keyMetadata);
-            this.createSegmentation(keyMetadata);
+            this.createSegmentation(optionalSegmentation, keyMetadata);
         }
     }
 
-    private void createSegmentation(KeyMetadata keyMetadata) {
-        var optionalSegmentation = this.segmentationRepository.findByKey(keyMetadata.getKey());
+    private void createSegmentation(Optional<Segmentation> optionalSegmentation, KeyMetadata keyMetadata) {
         if (optionalSegmentation.isPresent()) {
             var segmentation = optionalSegmentation.get();
             segmentation.setActive(true);
