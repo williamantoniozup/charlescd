@@ -38,6 +38,11 @@ import { PaginatedExecutionsUseCase } from './use-cases/paginated-executions.use
 import { CdStrategyFactory } from '../../core/integrations/cd-strategy-factory'
 import { OctopipeConnector } from '../../core/integrations/octopipe/connector'
 import { OctopipeApi } from '../../core/integrations/octopipe/octopipe-api'
+import { HelmManifest } from '../../core/manifests/helm/helm-manifest'
+import { GitHubRepository } from '../../core/integrations/github/github-repository'
+import { GitLabRepository } from '../../core/integrations/gitlab/gitlab-repository'
+import { RepositoryStrategyFactory } from '../../core/integrations/repository-strategy-factory'
+import { K8sClient } from '../../core/integrations/k8s/client'
 import { ConsoleLoggerService } from '../../core/logs/console/console-logger.service'
 
 @Module({
@@ -71,7 +76,12 @@ import { ConsoleLoggerService } from '../../core/logs/console/console-logger.ser
     SpinnakerApiService,
     CdStrategyFactory,
     OctopipeConnector,
-    OctopipeApi
+    OctopipeApi,
+    GitHubRepository,
+    GitLabRepository,
+    RepositoryStrategyFactory,
+    HelmManifest,
+    K8sClient
   ],
   exports: [
   ]

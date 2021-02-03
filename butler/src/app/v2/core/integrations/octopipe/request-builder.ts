@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { OctopipeConfigurationData } from '../../../api/configurations/interfaces'
 import { CdConfiguration, Component, Deployment } from '../../../api/deployments/interfaces'
 import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 import { UrlUtils } from '../../utils/url.utils'
 import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
 import { K8sManifest } from '../interfaces/k8s-manifest.interface'
-import { CommonTemplateUtils } from '../spinnaker/utils/common-template.utils'
 import { componentsToBeRemoved, DeploymentUtils } from '../utils/deployment.utils'
 import { IstioDeploymentManifestsUtils } from '../utils/istio-deployment-manifests.utils'
 import { IstioUndeploymentManifestsUtils } from '../utils/istio-undeployment-manifests.utils'
@@ -173,7 +171,7 @@ export class OctopipeRequestBuilder {
     return {
       overrideValues: {
         'image.tag': component.imageUrl,
-        deploymentName: CommonTemplateUtils.getDeploymentName(component, circleId),
+        deploymentName: DeploymentUtils.getDeploymentName(component, circleId),
         component: component.name,
         tag: component.imageTag,
         circleId: circleId
