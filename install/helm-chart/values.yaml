@@ -170,7 +170,7 @@ keycloak:
       existingSecret: false
     cli:
       custom: |
-        /subsystem=keycloak-server/spi=hostname/provider=default:write-attribute(name=properties.frontendUrl, value="automation.charles.local//keycloak/auth")
+        /subsystem=keycloak-server/spi=hostname/provider=default:write-attribute(name=properties.frontendUrl, value="http://charles.info.example/keycloak/auth")
 
 postgresql:
   enabled: true
