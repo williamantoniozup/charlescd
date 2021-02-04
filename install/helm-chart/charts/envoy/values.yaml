@@ -14,7 +14,7 @@ cors:
   enabled: true
   hosts: []
 idm:
-  endpoint: https://idm-dev.continuousplatform.com
+  endpoint: idm-dev.continuousplatform.com
   port: 80
-  path: /keycloak/auth/realms/charlescd/protocol/openid-connect/userinfo
-  protocol: http
+  path: /auth/realms/ZupDev/protocol/openid-connect/userinfo
+  protocol: https
