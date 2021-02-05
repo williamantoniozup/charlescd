@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 /*
  * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
@@ -24,7 +23,7 @@ import { clearProfile } from './profile';
 import { clearWorkspace } from './workspace';
 import { HTTP_STATUS } from 'core/enums/HttpStatus';
 import { redirectTo } from './routes';
-import routes from 'core/constants/routes';
+// import routes from 'core/constants/routes';
 import { getProfileByKey } from 'core/utils/profile';
 import { microfrontendKey } from './microfrontend';
 
@@ -32,7 +31,7 @@ type AccessToken = {
   id?: string;
   name?: string;
   email?: string;
-  isRoot?: boolean;
+  root?: boolean;
   workspaces?: {
     id: string;
     roles: string[];
@@ -46,7 +45,7 @@ const IDMUrl = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_URI;
 const IDMRealm = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_REALM;
 const IDMClient = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_CLIENT_ID;
 const IDMUrlLogin = window.CHARLESCD_ENVIRONMENT?.REACT_APP_IDM_LOGIN_URI;
-const IDMUrlLogout = window.CHARLESCD_ENVIRONMENT?.REACT_APP_IDM_LOGOUT_URI;
+// const IDMUrlLogout = window.CHARLESCD_ENVIRONMENT?.REACT_APP_IDM_LOGOUT_URI;
 const IDMUrlRedirect = window.CHARLESCD_ENVIRONMENT?.REACT_APP_IDM_REDIRECT_URI;
 
 export const setAccessToken = (token: string) =>
@@ -66,7 +65,7 @@ export const getAccessTokenDecoded = (): AccessToken => {
 };
 
 export const isRoot = () => {
-  const isRoot = getProfileByKey('isRoot');
+  const isRoot = getProfileByKey('root');
   return isRoot || false;
 };
 
@@ -101,7 +100,7 @@ export const clearSession = () => {
   clearWorkspace();
 };
 
-export const isIDMAuthFlow = (): boolean => {
+export const isIDMEnabled = (): boolean => {
   const IDMEnabled = window.CHARLESCD_ENVIRONMENT?.REACT_APP_IDM;
 
   return Boolean(parseInt(IDMEnabled));
@@ -121,24 +120,24 @@ export const redirectToIDM = () => {
 };
 
 export const logout = () => {
-  if (isIDMAuthFlow()) {
-    const refreshToken = getRefreshToken();
-    const url = `${IDMUrl}/auth/realms/${IDMRealm}${IDMUrlLogout}`;
+  // if (isIDMEnabled()) {
+  //   const refreshToken = getRefreshToken();
+  //   const url = `${IDMUrl}/auth/realms/${IDMRealm}${IDMUrlLogout}`;
 
-    fetch(url, {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: `client_id=${IDMClient}&refresh_token=${refreshToken}`,
-      method: 'POST'
-    }).finally(() => {
-      clearSession();
-      redirectTo(routes.main);
-    });
-  } else {
-    clearSession();
-    redirectTo(routes.login);
-  }
+  //   fetch(url, {
+  //     headers: {
+  //       'Content-Type': 'application/x-www-form-urlencoded'
+  //     },
+  //     body: `client_id=${IDMClient}&refresh_token=${refreshToken}`,
+  //     method: 'POST'
+  //   }).finally(() => {
+  //     clearSession();
+  //     redirectTo(routes.main);
+  //   });
+  // } else {
+  //   clearSession();
+  //   redirectTo(routes.login);
+  // }
 };
 
 export const checkStatus = (status: number) => {
