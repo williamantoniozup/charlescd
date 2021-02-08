@@ -21,7 +21,6 @@ import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.FindUserByEmailInteractor
 import io.charlescd.moove.domain.Permission
 import io.charlescd.moove.domain.User
-import io.charlescd.moove.domain.Workspace
 import io.charlescd.moove.domain.WorkspacePermissions
 import io.charlescd.moove.domain.WorkspaceStatusEnum
 import io.charlescd.moove.domain.repository.UserRepository
@@ -35,7 +34,6 @@ class FindUserByEmailInteractorImplTest extends Specification {
     private FindUserByEmailInteractor findUserByEmailInteractor
 
     private UserRepository userRepository = Mock(UserRepository)
-
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
@@ -70,11 +68,6 @@ class FindUserByEmailInteractorImplTest extends Specification {
         assert response.name == user.name
         assert response.createdAt == user.createdAt
         assert response.photoUrl == user.photoUrl
-        assert response.workspaces.size() == 1
-        assert response.workspaces[0].id == workspacePermission.id
-        assert response.workspaces[0].name == workspacePermission.name
-        assert response.workspaces[0].permissions.size() == workspacePermission.permissions.size()
-        assert response.workspaces[0].permissions[0] == workspacePermission.permissions[0].name
     }
 
     def "should find an user by email when requester is root"() {
@@ -105,11 +98,6 @@ class FindUserByEmailInteractorImplTest extends Specification {
         assert response.name == user.name
         assert response.createdAt == user.createdAt
         assert response.photoUrl == user.photoUrl
-        assert response.workspaces.size() == 1
-        assert response.workspaces[0].id == workspacePermission.id
-        assert response.workspaces[0].name == workspacePermission.name
-        assert response.workspaces[0].permissions.size() == workspacePermission.permissions.size()
-        assert response.workspaces[0].permissions[0] == workspacePermission.permissions[0].name
     }
 
     def "should return request user when requester is not root"() {
@@ -140,11 +128,6 @@ class FindUserByEmailInteractorImplTest extends Specification {
         assert response.name == user.name
         assert response.createdAt == user.createdAt
         assert response.photoUrl == user.photoUrl
-        assert response.workspaces.size() == 1
-        assert response.workspaces[0].id == workspacePermission.id
-        assert response.workspaces[0].name == workspacePermission.name
-        assert response.workspaces[0].permissions.size() == workspacePermission.permissions.size()
-        assert response.workspaces[0].permissions[0] == workspacePermission.permissions[0].name
     }
 
     def "should return an user with an empty workspace when no workspaces where found"() {
@@ -169,6 +152,5 @@ class FindUserByEmailInteractorImplTest extends Specification {
         assert response.name == user.name
         assert response.createdAt == user.createdAt
         assert response.photoUrl == user.photoUrl
-        assert response.workspaces.size() == 0
     }
 }
