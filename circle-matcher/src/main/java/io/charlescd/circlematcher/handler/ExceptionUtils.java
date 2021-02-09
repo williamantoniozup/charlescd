@@ -25,11 +25,11 @@ import java.util.UUID;
 public class ExceptionUtils {
 
     public static DefaultErrorResponse createNotFoundErrorResponse(String message, String sourceString) {
-        return createExceptionError(message, "Not found", sourceString, "404");
+        return createResponseError(message, "Not found", sourceString, "404");
     }
 
     public static DefaultErrorResponse createBadRequestError(String message, String sourceString) {
-        return createExceptionError(message, "Bad Request", sourceString, "400");
+        return createResponseError(message, "Bad Request", sourceString, "400");
     }
 
     public static DefaultErrorResponse createBusinessExceptionError(
@@ -37,12 +37,12 @@ public class ExceptionUtils {
             String title,
             String sourceString
     ) {
-        return createExceptionError(message, title, sourceString, "400");
+        return createResponseError(message, title, sourceString, "400");
     }
 
     public static DefaultErrorResponse createInternalServerError(String message, String sourceString) {
 
-        return createExceptionError(message, "Internal Server Error", sourceString, "500");
+        return createResponseError(message, "Internal Server Error", sourceString, "500");
     }
 
     private static Map<String, String> getMetaInfo() {
@@ -51,10 +51,15 @@ public class ExceptionUtils {
         metaInfo.put("component", "circle-matcher");
         return metaInfo;
     }
-    public static DefaultErrorResponse createExceptionError(String message, String title, String sourceString, String status) {
+
+    public static DefaultErrorResponse createResponseError(
+            String message,
+            String title,
+            String sourceString,
+            String status) {
         Map<String, String> source = new HashMap<String, String>();
         source.put("pointer", sourceString);
-        return new DefaultErrorResponse (UUID.randomUUID().toString(),
+        return new DefaultErrorResponse(UUID.randomUUID().toString(),
                 new ArrayList<String>(),
                 title,
                 message,
