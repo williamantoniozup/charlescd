@@ -52,11 +52,8 @@ class CreateUserInteractorImpl @Inject constructor(
     }
 
     private fun createUserWhenUserFromTokenExists(it: User, newUser: User, password: String?) {
-        if (it.root) {
             saveUser(newUser, password)
-        } else {
             throw ForbiddenException()
-        }
     }
 
     private fun saveUser(newUser: User, password: String?) {

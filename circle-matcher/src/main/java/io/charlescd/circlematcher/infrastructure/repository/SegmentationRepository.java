@@ -36,11 +36,13 @@ public class SegmentationRepository implements RedisRepository {
     }
 
     public Optional<Segmentation> findByKey(String key) {
+        System.out.println(key);
         var cursor = this.template.opsForSet().scan(key, ScanOptions.scanOptions().build());
 
         if (!cursor.isClosed() && cursor.hasNext()) {
 
             Object record = cursor.next();
+            System.out.println(record);
             closeCursor(cursor);
 
             return Optional.of(this.objectMapper
