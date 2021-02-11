@@ -20,6 +20,7 @@ import io.charlescd.circlematcher.domain.Node;
 import io.charlescd.circlematcher.domain.Segmentation;
 import io.charlescd.circlematcher.domain.SegmentationType;
 import io.charlescd.circlematcher.domain.validation.NodeConstraint;
+import io.charlescd.circlematcher.domain.validation.PercentageConstraint;
 import java.time.LocalDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -48,6 +49,10 @@ public abstract class SegmentationRequest {
 
     @NotNull
     private Boolean isDefault;
+
+    @Valid
+    @PercentageConstraint
+    private Integer percentage;
 
     @NotNull
     private LocalDateTime createdAt;
@@ -108,9 +113,18 @@ public abstract class SegmentationRequest {
         this.isDefault = isDefault;
     }
 
+    public Integer getPercentage() {
+        return percentage;
+    }
+
+    public void setPercentage(Integer percentage) {
+        this.percentage = percentage;
+    }
+
     public Segmentation toSegmentation() {
         return new Segmentation(
-            this.name, this.node, this.reference, this.circleId, this.type, workspaceId, isDefault, this.createdAt
+                this.name, this.node, this.reference, this.circleId, this.type, workspaceId, isDefault, percentage,
+                createdAt
         );
     }
 
