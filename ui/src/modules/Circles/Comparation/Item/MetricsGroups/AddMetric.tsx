@@ -33,6 +33,7 @@ import BasicQueryForm from './BasicQueryForm';
 import Styled from './styled';
 import Button from 'core/components/Button/Default';
 import Icon from 'core/components/Icon';
+import { isRequiredAndNotBlank } from 'core/utils/validations';
 
 type Props = {
   id: string;
@@ -153,7 +154,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
           <Styled.Layer>
             <Styled.Input
               name="nickname"
-              ref={register({ required: true })}
+              ref={register(isRequiredAndNotBlank)}
               label="Type a nickname for the metric"
               maxLength={100}
             />
@@ -169,7 +170,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
               <Styled.Select
                 control={control}
                 name="dataSourceId"
-                label="Select a data source"
+                label="Select a datasource"
                 options={providerOptions}
                 rules={{ required: true }}
                 defaultValue={getSelectDefaultValue(
@@ -236,7 +237,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                     <Styled.AdvancedQueryWrapper>
                       <Input
                         name="query"
-                        ref={register({ required: true })}
+                        ref={register(isRequiredAndNotBlank)}
                         hasError={!!errors?.query}
                         label="Type a query"
                       />
@@ -293,7 +294,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                       <Styled.InputNumber
                         name="threshold"
                         label="Threshold"
-                        ref={register({ required: true })}
+                        ref={register(isRequiredAndNotBlank)}
                         maxLength={100}
                       />
                     </StyledRule.Rule>
