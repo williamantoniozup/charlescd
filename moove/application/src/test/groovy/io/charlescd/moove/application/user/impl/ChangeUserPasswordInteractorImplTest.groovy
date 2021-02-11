@@ -4,8 +4,11 @@ import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.ChangeUserPasswordInteractor
 import io.charlescd.moove.application.user.request.ChangeUserPasswordRequest
+import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.UserRepository
+import io.charlescd.moove.domain.service.ManagementUserSecurityService
+import io.charlescd.moove.domain.service.KeycloakService
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
 

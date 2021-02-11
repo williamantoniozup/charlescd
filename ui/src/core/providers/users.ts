@@ -17,10 +17,12 @@
 import { baseRequest, putRequest, postRequest, patchRequest } from './base';
 import { Profile, NewUser } from 'modules/Users/interfaces/User';
 import { CheckPassword } from 'modules/Account/interfaces/ChangePassword';
+import { getWorkspaceId } from 'core/utils/workspace';
+import { buildParams } from 'core/utils/query';
 import { DEFAULT_PAGE_SIZE } from 'core/constants/request';
 
 const endpoint = '/moove/v2/users';
-const endpointWorkspaces = '/moove/v2/workspaces/users';
+const endpointWorkspaces = '/moove/v2/workspaces';
 const v1Endpoint = '/moove/users';
 
 export interface UserFilter {
@@ -35,16 +37,16 @@ const initialUserFilter = {
 export const findAllWorkspaceUsers = (
   filter: UserFilter = initialUserFilter
 ) => {
-  const defaultPage = 0;
-  const params = new URLSearchParams({
-    size: `${DEFAULT_PAGE_SIZE}`,
-    page: `${defaultPage}`
+  const workspaceId = getWorkspaceId();
+  const page = '0';
+  const size = '100';
+  const params = buildParams({
+    size,
+    page,
+    ...filter
   });
 
-  if (filter?.name) params.append('name', filter?.name);
-  if (filter?.email) params.append('email', filter?.email);
-
-  return baseRequest(`${endpointWorkspaces}?${params}`);
+  return baseRequest(`${endpointWorkspaces}/${workspaceId}/users?${params}`);
 };
 
 export const findAllUsers = (filter: UserFilter = initialUserFilter) => {
@@ -83,6 +85,10 @@ export const findUserByEmail = (email: string) => {
   const decodeEmail = btoa(email);
 
   return baseRequest(`${endpoint}/${decodeEmail}`);
+};
+
+export const findWorkspacesByUserId = (id: string) => {
+  return baseRequest(`${endpoint}/${id}/workspaces`);
 };
 
 export const deleteUserById = (id: string) =>

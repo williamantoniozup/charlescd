@@ -75,7 +75,7 @@ class CreateBuildInteractorImplTest extends Specification {
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
-        1 * hypothesisRepository.findById(hypothesisId) >> Optional.empty()
+        1 * hypothesisRepository.findByIdAndWorkspaceId(hypothesisId, workspaceId) >> Optional.empty()
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
 
         def ex = thrown(NotFoundException)
@@ -176,7 +176,7 @@ class CreateBuildInteractorImplTest extends Specification {
 
         then:
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * hypothesisRepository.findById(hypothesis.id) >> Optional.of(hypothesis)
+        1 * hypothesisRepository.findByIdAndWorkspaceId(hypothesis.id, workspaceId) >> Optional.of(hypothesis)
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * buildRepository.save(_) >> { argument ->
@@ -258,7 +258,7 @@ class CreateBuildInteractorImplTest extends Specification {
 
         then:
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * hypothesisRepository.findById(hypothesis.id) >> Optional.of(hypothesis)
+        1 * hypothesisRepository.findByIdAndWorkspaceId(hypothesis.id, workspaceId) >> Optional.of(hypothesis)
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
 
