@@ -22,7 +22,7 @@ import Styled from './styled';
 
 export const CHARLES_DOC = 'https://docs.charlescd.io';
 
-interface Popover {
+type PopoverProps = {
   title: string;
   size?: string;
   description: string;
@@ -31,15 +31,15 @@ interface Popover {
   className?: string;
 }
 
-interface WithIcon extends Popover {
+interface WithIcon extends PopoverProps {
   icon: string;
 }
 
-interface WithChildren extends Popover {
+interface WithChildren extends PopoverProps {
   children: ReactNode;
 }
 
-export type Props = WithChildren | WithIcon;
+export type Props = WithIcon | WithChildren;
 
 const Popover = (props: Props) => {
   const {

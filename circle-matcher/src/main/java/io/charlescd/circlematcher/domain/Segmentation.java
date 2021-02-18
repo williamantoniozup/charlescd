@@ -16,8 +16,7 @@
 
 package io.charlescd.circlematcher.domain;
 
-
-
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
 
 public class Segmentation {
@@ -36,6 +35,11 @@ public class Segmentation {
 
     private Boolean isDefault;
 
+    private Integer percentage;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Boolean active;
+
     private LocalDateTime createdAt;
 
     public Segmentation() {
@@ -48,6 +52,8 @@ public class Segmentation {
                         SegmentationType type,
                         String workspaceId,
                         Boolean isDefault,
+                        Integer percentage,
+                        Boolean active,
                         LocalDateTime createdAt) {
         this.name = name;
         this.node = node;
@@ -56,6 +62,8 @@ public class Segmentation {
         this.type = type;
         this.workspaceId = workspaceId;
         this.isDefault = isDefault;
+        this.percentage = percentage;
+        this.active = active;
         this.createdAt = createdAt;
     }
 
@@ -68,6 +76,8 @@ public class Segmentation {
                 metadata.getType(),
                 metadata.getWorkspaceId(),
                 metadata.getIsDefault(),
+                metadata.getPercentage(),
+                metadata.isActive(),
                 metadata.getCreatedAt());
     }
 
@@ -95,6 +105,14 @@ public class Segmentation {
         return workspaceId;
     }
 
+    public Boolean isActive() {
+        return this.active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -106,4 +124,13 @@ public class Segmentation {
     public Boolean getIsDefault() {
         return isDefault;
     }
+
+    public Integer getPercentage() {
+        return percentage;
+    }
+
+    public void setPercentage(Integer percentage) {
+        this.percentage = percentage;
+    }
+
 }
