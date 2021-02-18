@@ -15,56 +15,126 @@
  */
 
 import React from 'react';
-import { fireEvent, render, screen } from 'unit-test/testUtils';
+import { render, screen, waitFor, act } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import Menu from '../index';
-import workspaces from '../../../../../stub/workspaces/mock';
+import * as StateHooks from 'core/state/hooks';
+import * as authUtils from 'core/utils/auth';
+import * as WorkspaceHooks from '../../hooks';
 
 const props = {
-  items: workspaces.workspaces.content,
-  onSearch: jest.fn()
+  onCreate: jest.fn(),
+  selectedWorkspace: jest.fn()
 };
 
 test('renders Workspace menu', async () => {
-  const { getByTestId, getAllByText } = render(
+  const workspaceRequest = jest.fn();
+  jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
+  jest.spyOn(WorkspaceHooks, 'useWorkspace').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
+  const useGlobalStateSpy = jest.spyOn(StateHooks, 'useGlobalState')
+    .mockReturnValueOnce({
+      list: {
+        content: [
+          {
+            id: 1,
+            name: 'ws1'
+          },
+          {
+            id: 2,
+            name: 'ws2'
+          }
+        ]
+      }
+    })
+
+  render(
     <Menu
-      items={props.items}
-      onSearch={props.onSearch}
-      selectedWorkspace={jest.fn()}
+      onCreate={props.onCreate}
+      selectedWorkspace={props.selectedWorkspace}
     />
   );
-  const createButton = getByTestId('labeledIcon-plus-circle');
-  const searchInput = getByTestId('input-text-search');
-  const workspacesArray = getAllByText(/Workspace/);
+  
+  expect(screen.getByTestId('labeledIcon-plus-circle')).toBeInTheDocument();
+  expect(screen.getByText('Create workspace')).toBeInTheDocument();
+  expect(screen.getByTestId('input-text-search')).toBeInTheDocument();
 
-  expect(createButton).toBeInTheDocument();
-  expect(searchInput).toBeInTheDocument();
-  expect(workspacesArray.length).toBe(5);
+  const workspacesArray = screen.getAllByText(/ws/);
+  expect(workspacesArray.length).toBe(2);
+
+  useGlobalStateSpy.mockRestore();
+});
+
+test('renders Workspace menu without any results', async () => {
+  const workspaceRequest = jest.fn();
+  jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
+  jest.spyOn(WorkspaceHooks, 'useWorkspace').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
+  const useGlobalStateSpy = jest.spyOn(StateHooks, 'useGlobalState')
+    .mockReturnValueOnce({
+      list: {
+        content: []
+      }
+    })
+
+  render(
+    <Menu
+      onCreate={props.onCreate}
+      selectedWorkspace={props.selectedWorkspace}
+    />
+  );
+
+  await waitFor(() => expect(screen.getByText('No workspace was found')).toBeInTheDocument());
+
+  useGlobalStateSpy.mockRestore();
 });
 
 test('renders Workspace menu on loading', () => {
-  const { getByText } = render(
-    <Menu
-      items={props.items}
-      onSearch={props.onSearch}
-      selectedWorkspace={jest.fn()}
-      isLoading
-    />
-  );
-  expect(getByText('Loading...')).toBeInTheDocument();
-});
-
-test('should click Workspace item', () => {
-  const selectedWorkspace = jest.fn();
+  const workspaceRequest = jest.fn();
+  const useGlobalStateSpy = jest.spyOn(WorkspaceHooks, 'useWorkspace').mockImplementation(() => [workspaceRequest, jest.fn(), true]);
+  
   render(
     <Menu
-      items={props.items}
-      onSearch={props.onSearch}
+      onCreate={props.onCreate}
+      selectedWorkspace={props.selectedWorkspace}
+    />
+  );
+
+  expect(screen.getByText('Loading...')).toBeInTheDocument();
+
+  useGlobalStateSpy.mockRestore();
+});
+
+test.only('should click Workspace item', async () => {
+  const selectedWorkspace = jest.fn();
+  const workspaceRequest = jest.fn();
+  jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
+  jest.spyOn(WorkspaceHooks, 'useWorkspace').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
+  const useGlobalStateSpy = jest.spyOn(StateHooks, 'useGlobalState')
+    .mockReturnValue({
+      list: {
+        content: [
+          {
+            id: 1,
+            name: 'ws1'
+          },
+          {
+            id: 2,
+            name: 'ws2'
+          }
+        ]
+      }
+    })
+
+  render(
+    <Menu
+      onCreate={props.onCreate}
       selectedWorkspace={selectedWorkspace}
     />
   );
 
-  const items = screen.getAllByTestId('labeledIcon-workspace');
-  fireEvent.click(items[0]);
+  const item = await screen.findByTestId('workspace-ws1');
+  await act(async () => userEvent.click(item));
 
-  expect(selectedWorkspace).toHaveBeenCalled();
+  await waitFor(() => expect(selectedWorkspace).toHaveBeenCalled());
+
+  useGlobalStateSpy.mockRestore();
 });
