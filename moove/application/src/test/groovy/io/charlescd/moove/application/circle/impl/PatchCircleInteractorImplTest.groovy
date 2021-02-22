@@ -84,17 +84,19 @@ class PatchCircleInteractorImplTest extends Specification {
 
             return patchedCircle
         }
-        1 * this.circleMatcherService.update(_, _, _) >> { arguments ->
+        1 * this.circleMatcherService.update(_, _, _, _) >> { arguments ->
             def patchedCircle = arguments[0]
             def previousReference = arguments[1]
             def matcherUri = arguments[2]
+            def isActive = arguments[3]
 
             assert patchedCircle instanceof Circle
             assert patchedCircle.name == "Men"
             assert previousReference == circle.reference
             assert matcherUri == workspace.circleMatcherUrl
+            assert isActive == true
         }
-        1 * deploymentRepository.findActiveByCircleId(circle.id) >> [deployment]
+        2 * deploymentRepository.findActiveByCircleId(circle.id) >> [deployment]
         1 * buildRepository.findById(_) >> Optional.of(build)
 
         assert response != null
@@ -153,17 +155,19 @@ class PatchCircleInteractorImplTest extends Specification {
 
             return patchedCircle
         }
-        1 * this.circleMatcherService.update(_, _, _) >> { arguments ->
+        1 * this.circleMatcherService.update(_, _, _, _) >> { arguments ->
             def patchedCircle = arguments[0]
             def previousReference = arguments[1]
             def matcherUri = arguments[2]
+            def isActive = arguments[3]
 
             assert patchedCircle instanceof Circle
             assert patchedCircle.name == "Women"
             assert previousReference == circle.reference
             assert matcherUri == workspace.circleMatcherUrl
+            assert isActive
         }
-        1 * deploymentRepository.findActiveByCircleId(circle.id) >> [deployment]
+        2 * deploymentRepository.findActiveByCircleId(circle.id) >> [deployment]
         1 * buildRepository.findById(_) >> Optional.of(build)
 
         assert response != null
@@ -218,17 +222,19 @@ class PatchCircleInteractorImplTest extends Specification {
 
             return patchedCircle
         }
-        1 * this.circleMatcherService.update(_, _, _) >> { arguments ->
+        1 * this.circleMatcherService.update(_, _, _, _) >> { arguments ->
             def patchedCircle = arguments[0]
             def previousReference = arguments[1]
             def matcherUri = arguments[2]
+            def isActive = arguments[3]
 
             assert patchedCircle instanceof Circle
             assert patchedCircle.name == "Women"
             assert previousReference == circle.reference
             assert matcherUri == workspace.circleMatcherUrl
+            assert isActive
         }
-        1 * deploymentRepository.findActiveByCircleId(circle.id) >> [deployment]
+        2 * deploymentRepository.findActiveByCircleId(circle.id) >> [deployment]
         1 * buildRepository.findById(_) >> Optional.of(build)
 
         assert response != null
@@ -278,17 +284,19 @@ class PatchCircleInteractorImplTest extends Specification {
 
             return patchedCircle
         }
-        1 * this.circleMatcherService.update(_, _, _) >> { arguments ->
+        1 * this.circleMatcherService.update(_, _, _, _) >> { arguments ->
             def patchedCircle = arguments[0]
             def previousReference = arguments[1]
             def matcherUri = arguments[2]
+            def isActive = arguments[3]
 
             assert patchedCircle instanceof Circle
             assert patchedCircle.name == "Men"
             assert previousReference == circle.reference
             assert matcherUri == workspace.circleMatcherUrl
+            assert isActive == false
         }
-        1 * deploymentRepository.findActiveByCircleId(circle.id) >> []
+        2 * deploymentRepository.findActiveByCircleId(circle.id) >> []
         0 * buildRepository.findById(_)
 
         assert response != null
@@ -505,7 +513,8 @@ class PatchCircleInteractorImplTest extends Specification {
                 0,
                 null,
                 isDefault,
-                workspaceId
+                workspaceId,
+                null
         )
     }
 
@@ -525,7 +534,7 @@ class PatchCircleInteractorImplTest extends Specification {
                 'Feature name', 'feature-branch-name', LocalDateTime.now(), author.name, author.id, moduleSnapshotList, '23f1eabd-fb57-419b-a42b-4628941e34ec'))
 
         def circle = new Circle('f8296cfc-6ae1-11ea-bc55-0242ac130003', 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003", null)
 
         def deploymentList = new ArrayList<Deployment>()
         def undeployedAt = deploymentStatusEnum == DeploymentStatusEnum.NOT_DEPLOYED ? LocalDateTime.now() : null
