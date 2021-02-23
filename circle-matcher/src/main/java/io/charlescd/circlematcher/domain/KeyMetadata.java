@@ -16,6 +16,7 @@
 
 package io.charlescd.circlematcher.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
 
 public class KeyMetadata {
@@ -34,6 +35,8 @@ public class KeyMetadata {
 
     private Boolean isDefault;
 
+    private Boolean active;
+
     private LocalDateTime createdAt;
 
     public KeyMetadata() {
@@ -47,6 +50,7 @@ public class KeyMetadata {
         this.name = segmentation.getName();
         this.workspaceId = segmentation.getWorkspaceId();
         this.isDefault = segmentation.getIsDefault();
+        this.active = segmentation.isActive();
         this.createdAt = segmentation.getCreatedAt();
     }
 
@@ -76,6 +80,14 @@ public class KeyMetadata {
 
     public Boolean getIsDefault() {
         return isDefault;
+    }
+
+    public Boolean isActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public LocalDateTime getCreatedAt() {
