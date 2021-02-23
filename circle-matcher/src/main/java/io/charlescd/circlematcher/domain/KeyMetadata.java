@@ -35,7 +35,6 @@ public class KeyMetadata {
 
     private Boolean isDefault;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean active;
 
     private LocalDateTime createdAt;

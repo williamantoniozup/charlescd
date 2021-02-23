@@ -42,20 +42,6 @@ public class KeyMetadataRepository implements RedisRepository {
         return keyMetadata;
     }
 
-    public List<KeyMetadata> findAllOldMetadata() {
-
-        var metadataList = new ArrayList<KeyMetadata>();
-
-        var cursor = this.template.opsForSet().scan(CHARLES_KEY_SET, ScanOptions.scanOptions().build());
-        while (!cursor.isClosed() && cursor.hasNext()) {
-            var metadata = this.objectMapper.convertValue(cursor.next(), KeyMetadata.class);
-            metadataList.add(metadata);
-        }
-        return metadataList
-                .parallelStream()
-                .filter(metadata -> metadata.isActive() == null).collect(Collectors.toList());
-    }
-
     public List<KeyMetadata> findByWorkspaceId(String workspaceId) {
         var metadataList = new ArrayList<KeyMetadata>();
         var cursor = this.template.opsForSet().scan(CHARLES_KEY_SET, ScanOptions.scanOptions()
