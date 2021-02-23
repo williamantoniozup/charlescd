@@ -2,6 +2,8 @@ package manager
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 )
@@ -28,6 +30,8 @@ func (manager Manager) runV2ProxyUndeployments(v2Pipeline V2UndeploymentPipeline
 	for _, proxyDeployment := range v2Pipeline.ProxyDeployments {
 		currentProxyDeployment := map[string]interface{}{} // TODO improve this
 		currentProxyDeployment["default"] = proxyDeployment
+		currentByte, _ := json.Marshal(currentProxyDeployment)
+		fmt.Println(string(currentByte))
 		errs.Go(func() error {
 			return manager.executeV2Manifests(v2Pipeline.ClusterConfig, currentProxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
 		})
