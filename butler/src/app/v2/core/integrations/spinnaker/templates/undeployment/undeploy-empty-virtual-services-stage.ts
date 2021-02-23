@@ -69,15 +69,9 @@ export const getUndeploymentEmptyVirtualServiceStage = (
   },
   name: `Undeploy Virtual Service ${component.name}`,
   refId: `${stageId}`,
-  requisiteStageRefIds: [
-    `${stageId - 1}`
-  ],
+  requisiteStageRefIds: [],
   skipExpressionEvaluation: false,
   source: 'text',
-  stageEnabled: {
-    expression: '${ #stage(\'' + `Undeploy Destination Rules ${component.name}` + '\').status.toString() == \'SUCCEEDED\'}',
-    type: 'expression'
-  },
   trafficManagement: {
     enabled: false,
     options: {
