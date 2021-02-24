@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"octopipe/pkg/cloudprovider"
 
@@ -18,6 +19,8 @@ func (manager Manager) executeV2Manifests(
 	namespace string,
 	action string,
 ) error {
+	currentByte, _ := json.Marshal(manifests)
+	fmt.Println("Manifest: " + string(currentByte))
 	log.WithFields(log.Fields{"function": "executeV2Manifests", "manifests": manifests, "action": action, "namespace": namespace}).Info("START:EXECUTE_V2_MANIFESTS")
 	errs, _ := errgroup.WithContext(context.Background())
 	for _, manifest := range manifests {

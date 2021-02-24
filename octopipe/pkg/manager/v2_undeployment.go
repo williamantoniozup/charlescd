@@ -27,11 +27,11 @@ func (manager Manager) ExecuteV2UndeploymentPipeline(v2Pipeline V2UndeploymentPi
 func (manager Manager) runV2ProxyUndeployments(v2Pipeline V2UndeploymentPipeline) error {
 	log.WithFields(log.Fields{"function": "runV2ProxyUndeployments", "proxyDeployments": v2Pipeline.ProxyDeployments}).Info("START:RUN_V2_PROXY_UNDEPLOYMENTS")
 	errs, _ := errgroup.WithContext(context.Background())
-	for _, proxyDeployment := range v2Pipeline.ProxyDeployments {
+	for i, proxyDeployment := range v2Pipeline.ProxyDeployments {
 		currentProxyDeployment := map[string]interface{}{} // TODO improve this
 		currentProxyDeployment["default"] = proxyDeployment
 		currentByte, _ := json.Marshal(currentProxyDeployment)
-		fmt.Println(string(currentByte))
+		fmt.Println("Proxy"+ string(rune(i))+ ": " + string(currentByte))
 		errs.Go(func() error {
 			return manager.executeV2Manifests(v2Pipeline.ClusterConfig, currentProxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
 		})
