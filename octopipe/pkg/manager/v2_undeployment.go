@@ -30,6 +30,7 @@ func (manager Manager) ExecuteV2UndeploymentPipeline(v2Pipeline V2UndeploymentPi
 }
 
 func (manager Manager) runV2ProxyUndeployments(v2Pipeline V2UndeploymentPipeline) error {
+	errs, _ := errgroup.WithContext(context.Background())
 	for _, proxyDeployment := range v2Pipeline.ProxyDeployments {
 		currentProxyDeployment := map[string]interface{}{} // TODO improve this
 		currentProxyDeployment["default"] = proxyDeployment
