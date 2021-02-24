@@ -33,12 +33,11 @@ func (manager Manager) runV2ProxyUndeployments(v2Pipeline V2UndeploymentPipeline
 	for _, proxyDeployment := range v2Pipeline.ProxyDeployments {
 		currentProxyDeployment := map[string]interface{}{} // TODO improve this
 		currentProxyDeployment["default"] = proxyDeployment
-		err :=  manager.executeV2Manifests(v2Pipeline.ClusterConfig, currentProxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
-		if err != nil {
-			return err
-		}
+		errs.Go(func() error {
+			return manager.executeV2Manifests(v2Pipeline.ClusterConfig, currentProxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
+		})
 	}
-	return nil
+	return errs.Wait()
 }
 
 func (manager Manager) runV2Undeployments(v2Pipeline V2UndeploymentPipeline) error {
