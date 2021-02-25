@@ -36,8 +36,15 @@ func (manager Manager) ExecuteV2DeploymentPipeline(v2Pipeline V2DeploymentPipeli
 		return
 	}
 
-	klog.Info("APPLY VIRTUAL-SERVICE AND DESTINATION-RULES")
-	err = manager.runV2ProxyDeployments(v2Pipeline)
+	klog.Info("APPLY DESTINATION RULES")
+	err = manager.runV2ProxyDeployments(v2Pipeline, v2Pipeline.ProxyDeployments.DestinationRulesManifests)
+	if err != nil {
+		manager.handleV2ProxyDeploymentError(v2Pipeline, err, incomingCircleId)
+		return
+	}
+
+	klog.Info("APPLY VIRTUAL-SERVICE")
+	err = manager.runV2ProxyDeployments(v2Pipeline, v2Pipeline.ProxyDeployments.VirtualServiceManifests)
 	if err != nil {
 		manager.handleV2ProxyDeploymentError(v2Pipeline, err, incomingCircleId)
 		return
@@ -51,10 +58,24 @@ func (manager Manager) ExecuteV2DeploymentPipeline(v2Pipeline V2DeploymentPipeli
 		log.WithFields(customerror.WithLogFields(err)).Error()
 	}
 
-	err = manager.runV2unusedProxyDeployments(v2Pipeline)
+	err = manager.runV2unusedProxyDeployments(v2Pipeline, v2Pipeline.ProxyDeployments.VirtualServiceManifests)
 
 	if err != nil {
 		log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline", "error": err.Error()}).Info("ERROR:RUN_V2_UNUSED_PROXY_DEPLOYMENTS")
+	}
+
+	klog.Info("REMOVE UNUSED FROM VIRTUAL-SERVICE")
+	err = manager.runV2ProxyDeployments(v2Pipeline, v2Pipeline.UnusedProxyDeployments.VirtualServiceManifests)
+	if err != nil {
+		manager.handleV2ProxyDeploymentError(v2Pipeline, err, incomingCircleId)
+		return
+	}
+
+	klog.Info("REMOVE UNUSED FROM DESTINATION-RULES")
+	err = manager.runV2ProxyDeployments(v2Pipeline, v2Pipeline.UnusedProxyDeployments.DestinationRulesManifests)
+	if err != nil {
+		manager.handleV2ProxyDeploymentError(v2Pipeline, err, incomingCircleId)
+		return
 	}
 	log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline"}).Info("FINISH:EXECUTE_V2_DEPLOYMENT_PIPELINE")
 }
@@ -83,9 +104,9 @@ func (manager Manager) runV2Rollbacks(v2Pipeline V2DeploymentPipeline) error {
 	return errs.Wait()
 }
 
-func (manager Manager) runV2ProxyDeployments(v2Pipeline V2DeploymentPipeline) error {
+func (manager Manager) runV2ProxyDeployments(v2Pipeline V2DeploymentPipeline, manifests []map[string]interface{}) error {
 	errs, _ := errgroup.WithContext(context.Background())
-	for _, proxyDeployment := range v2Pipeline.ProxyDeployments {
+	for _, proxyDeployment := range manifests {
 		currentProxyDeployment := map[string]interface{}{} // TODO improve this
 		currentProxyDeployment["default"] = proxyDeployment
 		errs.Go(func() error {
@@ -95,10 +116,10 @@ func (manager Manager) runV2ProxyDeployments(v2Pipeline V2DeploymentPipeline) er
 	return errs.Wait()
 }
 
-func (manager Manager) runV2unusedProxyDeployments(v2Pipeline V2DeploymentPipeline) error {
+func (manager Manager) runV2unusedProxyDeployments(v2Pipeline V2DeploymentPipeline, manifests []map[string]interface{}) error {
 	log.WithFields(log.Fields{"function": "runV2unusedProxyDeployments", "unusedProxyDeployments": v2Pipeline.UnusedProxyDeployments}).Info("START:RUN_V2_UNUSED_PROXY_DEPLOYMENTS")
 	errs, _ := errgroup.WithContext(context.Background())
-	for _, proxyDeployment := range v2Pipeline.UnusedProxyDeployments {
+	for _, proxyDeployment := range manifests {
 		currentProxyDeployment := map[string]interface{}{} // TODO improve this
 		currentProxyDeployment["default"] = proxyDeployment
 		errs.Go(func() error {

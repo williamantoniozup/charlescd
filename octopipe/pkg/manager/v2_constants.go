@@ -20,6 +20,10 @@ const (
 	UNDEPLOY_ACTION = "UNDEPLOY"
 )
 
+type ProxyDeployment struct {
+	VirtualServiceManifests  []map[string]interface{} `json:"virtualServiceManifests"`
+	DestinationRulesManifests  []map[string]interface{} `json:"destinationRulesManifests"`
+}
 type V2Deployment struct {
 	ComponentName		 string					`json:"componentName"`
 	HelmRepositoryConfig repository.Repository  `json:"helmRepositoryConfig"`
@@ -27,20 +31,22 @@ type V2Deployment struct {
 	RollbackIfFailed	 bool					`json:"rollbackIfFailed"`
 }
 
+
+
 type V2DeploymentPipeline struct {
-	Namespace 		 	string						`json:"namespace"`
-	Deployments 	 	[]V2Deployment				`json:"deployments"`
-	UnusedDeployments 	[]V2Deployment				`json:"unusedDeployments"`
-	ProxyDeployments 	[]map[string]interface{}    `json:"proxyDeployments"`
-	UnusedProxyDeployments 	[]map[string]interface{}    `json:"unusedProxyDeployments"`
-	CallbackUrl   		string           			`json:"callbackUrl"`
-	ClusterConfig    	cloudprovider.Cloudprovider `json:"clusterConfig"`
+	Namespace 		 		string						`json:"namespace"`
+	Deployments 	 		[]V2Deployment				`json:"deployments"`
+	UnusedDeployments 		[]V2Deployment				`json:"unusedDeployments"`
+	ProxyDeployments 		ProxyDeployment    `json:"proxyDeployments"`
+	UnusedProxyDeployments 	ProxyDeployment    `json:"unusedProxyDeployments"`
+	CallbackUrl   			string           			`json:"callbackUrl"`
+	ClusterConfig    		cloudprovider.Cloudprovider `json:"clusterConfig"`
 }
 
 type V2UndeploymentPipeline struct {
-	Namespace 		 	string						`json:"namespace"`
-	Undeployments 	 	[]V2Deployment				`json:"undeployments"`
-	ProxyDeployments 	[]map[string]interface{}    `json:"proxyDeployments"`
-	CallbackUrl   		string           			`json:"callbackUrl"`
-	ClusterConfig    	cloudprovider.Cloudprovider `json:"clusterConfig"`
+	Namespace 		 	           string						`json:"namespace"`
+	Undeployments 	 	           []V2Deployment				`json:"undeployments"`
+	ProxyDeployment 	           ProxyDeployment    			`json:"proxyDeployment"`
+	CallbackUrl   		           string           			`json:"callbackUrl"`
+	ClusterConfig    	           cloudprovider.Cloudprovider `json:"clusterConfig"`
 }

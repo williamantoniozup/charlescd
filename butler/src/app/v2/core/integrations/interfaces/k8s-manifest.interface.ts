@@ -98,3 +98,8 @@ export interface K8sManifest {
   metadata: ManifestMetadata
   spec: Spec
 }
+
+export interface ProxyDeployment {
+  virtualServiceManifests: K8sManifest[]
+  destinationRulesManifests: K8sManifest[]
+}

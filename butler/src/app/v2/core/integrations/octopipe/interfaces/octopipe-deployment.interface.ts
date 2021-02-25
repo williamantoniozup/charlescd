@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { K8sManifest } from '../../interfaces/k8s-manifest.interface'
+import {K8sManifest, ProxyDeployment} from '../../interfaces/k8s-manifest.interface'
 import {
   IEKSClusterConfig,
   IGenericClusterConfig
@@ -32,8 +32,8 @@ export interface OctopipeDeploymentRequest {
   namespace: string;
   deployments: OctopipeDeployment[],
   unusedDeployments: OctopipeDeployment[],
-  proxyDeployments: K8sManifest[],
-  unusedProxyDeployments: K8sManifest[],
+  proxyDeployments: ProxyDeployment,
+  unusedProxyDeployments: ProxyDeployment,
   callbackUrl: string
   clusterConfig?: IEKSClusterConfig | IGenericClusterConfig | null
 }
