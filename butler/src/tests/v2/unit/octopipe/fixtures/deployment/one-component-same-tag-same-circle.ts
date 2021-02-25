@@ -40,108 +40,112 @@ export const oneComponentSameTagSameCircleOctopipe: OctopipeDeploymentRequest = 
     }
   ],
   unusedDeployments: [],
-  proxyDeployments: [
-    {
-      apiVersion: 'networking.istio.io/v1alpha3',
-      kind: 'DestinationRule',
-      metadata: {
-        name: 'A',
-        namespace: 'sandbox'
-      },
-      spec: {
-        host: 'A',
-        subsets: [
-          {
-            labels: {
-              component: 'A',
-              tag: 'v2',
-              circleId: 'circle-id'
+  proxyDeployments: {
+    destinationRulesManifests: [
+      {
+        apiVersion: 'networking.istio.io/v1alpha3',
+        kind: 'DestinationRule',
+        metadata: {
+          name: 'A',
+          namespace: 'sandbox'
+        },
+        spec: {
+          host: 'A',
+          subsets: [
+            {
+              labels: {
+                component: 'A',
+                tag: 'v2',
+                circleId: 'circle-id'
+              },
+              name: 'circle-id'
+            }
+          ]
+        }
+      }
+    ],
+    virtualServiceManifests: [
+      {
+        apiVersion: 'networking.istio.io/v1alpha3',
+        kind: 'VirtualService',
+        metadata: {
+          name: 'A',
+          namespace: 'sandbox'
+        },
+        spec: {
+          gateways: [],
+          hosts: [
+            'A'
+          ],
+          http: [
+            {
+              match: [
+                {
+                  headers: {
+                    cookie: {
+                      regex: '.*x-circle-id=circle-id.*'
+                    }
+                  }
+                }
+              ],
+              route: [
+                {
+                  destination: {
+                    host: 'A',
+                    subset: 'circle-id'
+                  },
+                  headers: {
+                    request: {
+                      set: {
+                        'x-circle-source': 'circle-id'
+                      }
+                    },
+                    response: {
+                      set: {
+                        'x-circle-source': 'circle-id'
+                      }
+                    }
+                  }
+                }
+              ]
             },
-            name: 'circle-id'
-          }
-        ]
-      }
-    },
-    {
-      apiVersion: 'networking.istio.io/v1alpha3',
-      kind: 'VirtualService',
-      metadata: {
-        name: 'A',
-        namespace: 'sandbox'
-      },
-      spec: {
-        gateways: [],
-        hosts: [
-          'A'
-        ],
-        http: [
-          {
-            match: [
-              {
-                headers: {
-                  cookie: {
-                    regex: '.*x-circle-id=circle-id.*'
+            {
+              match: [
+                {
+                  headers: {
+                    'x-circle-id': {
+                      exact: 'circle-id'
+                    }
                   }
                 }
-              }
-            ],
-            route: [
-              {
-                destination: {
-                  host: 'A',
-                  subset: 'circle-id'
-                },
-                headers: {
-                  request: {
-                    set: {
-                      'x-circle-source': 'circle-id'
-                    }
+              ],
+              route: [
+                {
+                  destination: {
+                    host: 'A',
+                    subset: 'circle-id'
                   },
-                  response: {
-                    set: {
-                      'x-circle-source': 'circle-id'
+                  headers: {
+                    request: {
+                      set: {
+                        'x-circle-source': 'circle-id'
+                      }
+                    },
+                    response: {
+                      set: {
+                        'x-circle-source': 'circle-id'
+                      }
                     }
                   }
                 }
-              }
-            ]
-          },
-          {
-            match: [
-              {
-                headers: {
-                  'x-circle-id': {
-                    exact: 'circle-id'
-                  }
-                }
-              }
-            ],
-            route: [
-              {
-                destination: {
-                  host: 'A',
-                  subset: 'circle-id'
-                },
-                headers: {
-                  request: {
-                    set: {
-                      'x-circle-source': 'circle-id'
-                    }
-                  },
-                  response: {
-                    set: {
-                      'x-circle-source': 'circle-id'
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        ]
+              ]
+            }
+          ]
+        }
       }
-    }
-  ],
-  unusedProxyDeployments: [],
+    ]
+  },
+  unusedProxyDeployments: { virtualServiceManifests: [], destinationRulesManifests: []},
   callbackUrl: 'http://localhost:8883/butler/v2/executions/execution-id/notify',
   clusterConfig: null
 }

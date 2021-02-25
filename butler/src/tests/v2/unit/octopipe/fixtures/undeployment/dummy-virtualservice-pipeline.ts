@@ -57,100 +57,104 @@ export const dummyVirtualServicePipelineOctopipe: OctopipeUndeploymentRequest = 
       rollbackIfFailed: false
     }
   ],
-  proxyDeployments: [
-    {
-      apiVersion: 'networking.istio.io/v1alpha3',
-      kind: 'VirtualService',
-      metadata: {
-        name: 'A',
-        namespace: 'sandbox'
-      },
-      spec: {
-        gateways: [],
-        hosts: [
-          'A'
-        ],
-        http: [
-          {
-            match: [
-              {
-                headers: {
-                  'unreachable-cookie-name': {
-                    exact: 'unreachable-cookie - value'
+  proxyUndeployments: {
+    virtualServiceManifests: [
+      {
+        apiVersion: 'networking.istio.io/v1alpha3',
+        kind: 'VirtualService',
+        metadata: {
+          name: 'A',
+          namespace: 'sandbox'
+        },
+        spec: {
+          gateways: [],
+          hosts: [
+            'A'
+          ],
+          http: [
+            {
+              match: [
+                {
+                  headers: {
+                    'unreachable-cookie-name': {
+                      exact: 'unreachable-cookie - value'
+                    }
                   }
                 }
-              }
-            ],
-            route: [
-              {
-                destination: {
-                  host: 'unreachable-app-name'
-                }
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      apiVersion: 'networking.istio.io/v1alpha3',
-      kind: 'DestinationRule',
-      metadata: {
-        name: 'A',
-        namespace: 'sandbox'
-      },
-      spec: {
-        host: 'A',
-        subsets: []
-      }
-    },
-    {
-      apiVersion: 'networking.istio.io/v1alpha3',
-      kind: 'VirtualService',
-      metadata: {
-        name: 'B',
-        namespace: 'sandbox'
-      },
-      spec: {
-        gateways: [],
-        hosts: [
-          'B'
-        ],
-        http: [
-          {
-            match: [
-              {
-                headers: {
-                  'unreachable-cookie-name': {
-                    exact: 'unreachable-cookie - value'
+              ],
+              route: [
+                {
+                  destination: {
+                    host: 'unreachable-app-name'
                   }
                 }
-              }
-            ],
-            route: [
-              {
-                destination: {
-                  host: 'unreachable-app-name'
-                }
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      apiVersion: 'networking.istio.io/v1alpha3',
-      kind: 'DestinationRule',
-      metadata: {
-        name: 'B',
-        namespace: 'sandbox'
+              ]
+            }
+          ]
+        }
       },
-      spec: {
-        host: 'B',
-        subsets: []
-      }
-    },
-  ],
+      {
+        apiVersion: 'networking.istio.io/v1alpha3',
+        kind: 'VirtualService',
+        metadata: {
+          name: 'B',
+          namespace: 'sandbox'
+        },
+        spec: {
+          gateways: [],
+          hosts: [
+            'B'
+          ],
+          http: [
+            {
+              match: [
+                {
+                  headers: {
+                    'unreachable-cookie-name': {
+                      exact: 'unreachable-cookie - value'
+                    }
+                  }
+                }
+              ],
+              route: [
+                {
+                  destination: {
+                    host: 'unreachable-app-name'
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+    ],
+    destinationRulesManifests: [
+      {
+        apiVersion: 'networking.istio.io/v1alpha3',
+        kind: 'DestinationRule',
+        metadata: {
+          name: 'A',
+          namespace: 'sandbox'
+        },
+        spec: {
+          host: 'A',
+          subsets: []
+        }
+      },
+      {
+        apiVersion: 'networking.istio.io/v1alpha3',
+        kind: 'DestinationRule',
+        metadata: {
+          name: 'B',
+          namespace: 'sandbox'
+        },
+        spec: {
+          host: 'B',
+          subsets: []
+        }
+      },
+    ],
+  },
   callbackUrl: 'http://localhost:8883/butler/v2/executions/execution-id/notify',
   clusterConfig: null
 }

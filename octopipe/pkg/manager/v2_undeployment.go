@@ -13,13 +13,19 @@ func (manager Manager) ExecuteV2UndeploymentPipeline(v2Pipeline V2UndeploymentPi
 
 	klog.Info("START UNDEPLOY PIPELINE")
 
-	klog.Info("REMOVE VIRTUAL-SERVICE AND DESTINATION-RULES")
-	err := manager.runV2ProxyUndeployments(v2Pipeline)
+	klog.Info("REMOVE VIRTUAL-SERVICE")
+	err := manager.runV2ProxyUndeployments(v2Pipeline, v2Pipeline.ProxyDeployment.VirtualServiceManifests)
 	if err != nil {
 		manager.handleV2ProxyUndeploymentError(v2Pipeline, err, incomingCircleId)
 		return
 	}
 
+	klog.Info("REMOVE DESTINATION RULES")
+	err = manager.runV2ProxyUndeployments(v2Pipeline, v2Pipeline.ProxyDeployment.DestinationRulesManifests)
+	if err != nil {
+		manager.handleV2ProxyUndeploymentError(v2Pipeline, err, incomingCircleId)
+		return
+	}
 	klog.Info("REMOVE COMPONENTS")
 	err = manager.runV2Undeployments(v2Pipeline)
 	if err != nil {
@@ -29,16 +35,16 @@ func (manager Manager) ExecuteV2UndeploymentPipeline(v2Pipeline V2UndeploymentPi
 	manager.triggerV2Callback(v2Pipeline.CallbackUrl, UNDEPLOYMENT_CALLBACK, SUCCEEDED_STATUS, incomingCircleId)
 }
 
-func (manager Manager) runV2ProxyUndeployments(v2Pipeline V2UndeploymentPipeline) error {
-	for _, proxyDeployment := range v2Pipeline.ProxyDeployments {
+func (manager Manager) runV2ProxyUndeployments(v2Pipeline V2UndeploymentPipeline, proxyDeployments []map[string]interface{}) error {
+	errs, _ := errgroup.WithContext(context.Background())
+	for _, proxyDeployment := range proxyDeployments {
 		currentProxyDeployment := map[string]interface{}{} // TODO improve this
 		currentProxyDeployment["default"] = proxyDeployment
-		err :=  manager.executeV2Manifests(v2Pipeline.ClusterConfig, currentProxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
-		if err != nil {
-			return err
-		}
+		errs.Go(func() error {
+			return manager.executeV2Manifests(v2Pipeline.ClusterConfig, currentProxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
+		})
 	}
-	return nil
+	return errs.Wait()
 }
 
 func (manager Manager) runV2Undeployments(v2Pipeline V2UndeploymentPipeline) error {

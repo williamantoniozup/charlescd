@@ -59,138 +59,142 @@ export const oneComponentWithUnusedOctopipe: OctopipeDeploymentRequest = {
       rollbackIfFailed: false
     }
   ],
-  proxyDeployments: [
-    {
-      apiVersion: 'networking.istio.io/v1alpha3',
-      kind: 'DestinationRule',
-      metadata: {
-        name: 'A',
-        namespace: 'sandbox'
-      },
-      spec: {
-        host: 'A',
-        subsets: [
-          {
-            labels: {
-              component: 'A',
-              tag: 'v2',
-              circleId: 'circle-id2'
+  proxyDeployments: {
+    destinationRulesManifests: [
+      {
+        apiVersion: 'networking.istio.io/v1alpha3',
+        kind: 'DestinationRule',
+        metadata: {
+          name: 'A',
+          namespace: 'sandbox'
+        },
+        spec: {
+          host: 'A',
+          subsets: [
+            {
+              labels: {
+                component: 'A',
+                tag: 'v2',
+                circleId: 'circle-id2'
+              },
+              name: 'circle-id2'
             },
-            name: 'circle-id2'
-          },
-          {
-            labels: {
-              component: 'A',
-              tag: 'v0',
-              circleId: 'default-circle-id'
-            },
-            name: 'default-circle-id'
-          }
-        ]
-      }
-    },
-    {
-      apiVersion: 'networking.istio.io/v1alpha3',
-      kind: 'VirtualService',
-      metadata: {
-        name: 'A',
-        namespace: 'sandbox'
+            {
+              labels: {
+                component: 'A',
+                tag: 'v0',
+                circleId: 'default-circle-id'
+              },
+              name: 'default-circle-id'
+            }
+          ]
+        }
       },
-      spec: {
-        gateways: [],
-        hosts: [
-          'A'
-        ],
-        http: [
-          {
-            match: [
-              {
-                headers: {
-                  cookie: {
-                    regex: '.*x-circle-id=circle-id2.*'
+    ],
+    virtualServiceManifests: [
+      {
+        apiVersion: 'networking.istio.io/v1alpha3',
+        kind: 'VirtualService',
+        metadata: {
+          name: 'A',
+          namespace: 'sandbox'
+        },
+        spec: {
+          gateways: [],
+          hosts: [
+            'A'
+          ],
+          http: [
+            {
+              match: [
+                {
+                  headers: {
+                    cookie: {
+                      regex: '.*x-circle-id=circle-id2.*'
+                    }
                   }
                 }
-              }
-            ],
-            route: [
-              {
-                destination: {
-                  host: 'A',
-                  subset: 'circle-id2'
-                },
-                headers: {
-                  request: {
-                    set: {
-                      'x-circle-source': 'circle-id2'
-                    }
+              ],
+              route: [
+                {
+                  destination: {
+                    host: 'A',
+                    subset: 'circle-id2'
                   },
-                  response: {
-                    set: {
-                      'x-circle-source': 'circle-id2'
+                  headers: {
+                    request: {
+                      set: {
+                        'x-circle-source': 'circle-id2'
+                      }
+                    },
+                    response: {
+                      set: {
+                        'x-circle-source': 'circle-id2'
+                      }
                     }
                   }
                 }
-              }
-            ]
-          },
-          {
-            match: [
-              {
-                headers: {
-                  'x-circle-id': {
-                    exact: 'circle-id2'
+              ]
+            },
+            {
+              match: [
+                {
+                  headers: {
+                    'x-circle-id': {
+                      exact: 'circle-id2'
+                    }
                   }
                 }
-              }
-            ],
-            route: [
-              {
-                destination: {
-                  host: 'A',
-                  subset: 'circle-id2'
-                },
-                headers: {
-                  request: {
-                    set: {
-                      'x-circle-source': 'circle-id2'
-                    }
+              ],
+              route: [
+                {
+                  destination: {
+                    host: 'A',
+                    subset: 'circle-id2'
                   },
-                  response: {
-                    set: {
-                      'x-circle-source': 'circle-id2'
+                  headers: {
+                    request: {
+                      set: {
+                        'x-circle-source': 'circle-id2'
+                      }
+                    },
+                    response: {
+                      set: {
+                        'x-circle-source': 'circle-id2'
+                      }
                     }
                   }
                 }
-              }
-            ]
-          },
-          {
-            route: [
-              {
-                destination: {
-                  host: 'A',
-                  subset: 'default-circle-id'
-                },
-                headers: {
-                  request: {
-                    set: {
-                      'x-circle-source': 'default-circle-id'
-                    }
+              ]
+            },
+            {
+              route: [
+                {
+                  destination: {
+                    host: 'A',
+                    subset: 'default-circle-id'
                   },
-                  response: {
-                    set: {
-                      'x-circle-source': 'default-circle-id'
+                  headers: {
+                    request: {
+                      set: {
+                        'x-circle-source': 'default-circle-id'
+                      }
+                    },
+                    response: {
+                      set: {
+                        'x-circle-source': 'default-circle-id'
+                      }
                     }
                   }
                 }
-              }
-            ]
-          }
-        ]
+              ]
+            }
+          ]
+        }
       }
-    }
-  ],
-  unusedProxyDeployments: [],
+    ],
+  },
+  unusedProxyDeployments: { virtualServiceManifests: [], destinationRulesManifests: [] },
   callbackUrl: 'http://localhost:8883/butler/v2/executions/execution-id/notify',
   clusterConfig: null
 }

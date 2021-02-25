@@ -58,126 +58,131 @@ export const completeOctopipeUndeploymentEKSRequest: OctopipeUndeploymentRequest
       rollbackIfFailed: false
     }
   ],
-  proxyDeployments: [
-    {
-      apiVersion: 'networking.istio.io/v1alpha3',
-      kind: 'VirtualService',
-      metadata: {
-        name: 'A',
-        namespace: 'sandbox'
-      },
-      spec: {
-        gateways: [],
-        hosts: [
-          'A'
-        ],
-        http: [
-          {
-            route: [
-              {
-                destination: {
-                  host: 'A',
-                  subset: 'default-circle-id'
-                },
-                headers: {
-                  request: {
-                    set: {
-                      'x-circle-source': 'default-circle-id'
-                    }
+  proxyUndeployments: {
+    virtualServiceManifests: [
+      {
+        apiVersion: 'networking.istio.io/v1alpha3',
+        kind: 'VirtualService',
+        metadata: {
+          name: 'A',
+          namespace: 'sandbox'
+        },
+        spec: {
+          gateways: [],
+          hosts: [
+            'A'
+          ],
+          http: [
+            {
+              route: [
+                {
+                  destination: {
+                    host: 'A',
+                    subset: 'default-circle-id'
                   },
-                  response: {
-                    set: {
-                      'x-circle-source': 'default-circle-id'
+                  headers: {
+                    request: {
+                      set: {
+                        'x-circle-source': 'default-circle-id'
+                      }
+                    },
+                    response: {
+                      set: {
+                        'x-circle-source': 'default-circle-id'
+                      }
                     }
                   }
                 }
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      apiVersion: 'networking.istio.io/v1alpha3',
-      kind: 'DestinationRule',
-      metadata: {
-        name: 'A',
-        namespace: 'sandbox'
+              ]
+            }
+          ]
+        }
       },
-      spec: {
-        host: 'A',
-        subsets: [
-          {
-            labels: {
-              component: 'A',
-              tag: 'v0',
-              circleId: 'default-circle-id'
-            },
-            name: 'default-circle-id'
-          }
-        ]
-      }
-    },
-    {
-      apiVersion: 'networking.istio.io/v1alpha3',
-      kind: 'VirtualService',
-      metadata: {
-        name: 'B',
-        namespace: 'sandbox'
-      },
-      spec: {
-        gateways: [],
-        hosts: [
-          'B'
-        ],
-        http: [
-          {
-            route: [
-              {
-                destination: {
-                  host: 'B',
-                  subset: 'default-circle-id'
-                },
-                headers: {
-                  request: {
-                    set: {
-                      'x-circle-source': 'default-circle-id'
-                    }
+      {
+        apiVersion: 'networking.istio.io/v1alpha3',
+        kind: 'VirtualService',
+        metadata: {
+          name: 'B',
+          namespace: 'sandbox'
+        },
+        spec: {
+          gateways: [],
+          hosts: [
+            'B'
+          ],
+          http: [
+            {
+              route: [
+                {
+                  destination: {
+                    host: 'B',
+                    subset: 'default-circle-id'
                   },
-                  response: {
-                    set: {
-                      'x-circle-source': 'default-circle-id'
+                  headers: {
+                    request: {
+                      set: {
+                        'x-circle-source': 'default-circle-id'
+                      }
+                    },
+                    response: {
+                      set: {
+                        'x-circle-source': 'default-circle-id'
+                      }
                     }
                   }
                 }
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      apiVersion: 'networking.istio.io/v1alpha3',
-      kind: 'DestinationRule',
-      metadata: {
-        name: 'B',
-        namespace: 'sandbox'
+              ]
+            }
+          ]
+        }
       },
-      spec: {
-        host: 'B',
-        subsets: [
-          {
-            labels: {
-              component: 'B',
-              tag: 'v0',
-              circleId: 'default-circle-id'
-            },
-            name: 'default-circle-id'
-          }
-        ]
+    ],
+    destinationRulesManifests: [
+      {
+        apiVersion: 'networking.istio.io/v1alpha3',
+        kind: 'DestinationRule',
+        metadata: {
+          name: 'A',
+          namespace: 'sandbox'
+        },
+        spec: {
+          host: 'A',
+          subsets: [
+            {
+              labels: {
+                component: 'A',
+                tag: 'v0',
+                circleId: 'default-circle-id'
+              },
+              name: 'default-circle-id'
+            }
+          ]
+        }
+      },
+
+      {
+        apiVersion: 'networking.istio.io/v1alpha3',
+        kind: 'DestinationRule',
+        metadata: {
+          name: 'B',
+          namespace: 'sandbox'
+        },
+        spec: {
+          host: 'B',
+          subsets: [
+            {
+              labels: {
+                component: 'B',
+                tag: 'v0',
+                circleId: 'default-circle-id'
+              },
+              name: 'default-circle-id'
+            }
+          ]
+        }
       }
-    }
-  ],
+    ],
+  },
   callbackUrl: 'http://localhost:8883/butler/v2/executions/execution-id/notify',
   clusterConfig: {
     provider: ClusterProviderEnum.EKS,

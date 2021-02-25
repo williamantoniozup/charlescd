@@ -113,396 +113,400 @@ export const completeOctopipeDeploymentRequest: OctopipeDeploymentRequest = {
       rollbackIfFailed: false
     }
   ],
-  proxyDeployments: [
-    {
-      apiVersion: 'networking.istio.io/v1alpha3',
-      kind: 'DestinationRule',
-      metadata: {
-        name: 'A',
-        namespace: 'sandbox'
-      },
-      spec: {
-        host: 'A',
-        subsets: [
-          {
-            labels: {
-              component: 'A',
-              tag: 'v2',
-              circleId: 'circle-id'
+  proxyDeployments: {
+    virtualServiceManifests: [
+      {
+        apiVersion: 'networking.istio.io/v1alpha3',
+        kind: 'VirtualService',
+        metadata: {
+          name: 'A',
+          namespace: 'sandbox'
+        },
+        spec: {
+          gateways: [],
+          hosts: [
+            'A'
+          ],
+          http: [
+            {
+              match: [
+                {
+                  headers: {
+                    cookie: {
+                      regex: '.*x-circle-id=circle-id.*'
+                    }
+                  }
+                }
+              ],
+              route: [
+                {
+                  destination: {
+                    host: 'A',
+                    subset: 'circle-id'
+                  },
+                  headers: {
+                    request: {
+                      set: {
+                        'x-circle-source': 'circle-id'
+                      }
+                    },
+                    response: {
+                      set: {
+                        'x-circle-source': 'circle-id'
+                      }
+                    }
+                  }
+                }
+              ]
             },
-            name: 'circle-id'
-          },
-          {
-            labels: {
-              component: 'A',
-              tag: 'v0',
-              circleId: 'default-circle-id'
+            {
+              match: [
+                {
+                  headers: {
+                    'x-circle-id': {
+                      exact: 'circle-id'
+                    }
+                  }
+                }
+              ],
+              route: [
+                {
+                  destination: {
+                    host: 'A',
+                    subset: 'circle-id'
+                  },
+                  headers: {
+                    request: {
+                      set: {
+                        'x-circle-source': 'circle-id'
+                      }
+                    },
+                    response: {
+                      set: {
+                        'x-circle-source': 'circle-id'
+                      }
+                    }
+                  }
+                }
+              ]
             },
-            name: 'default-circle-id'
-          }
-        ]
-      }
-    },
-    {
-      apiVersion: 'networking.istio.io/v1alpha3',
-      kind: 'VirtualService',
-      metadata: {
-        name: 'A',
-        namespace: 'sandbox'
+            {
+              route: [
+                {
+                  destination: {
+                    host: 'A',
+                    subset: 'default-circle-id'
+                  },
+                  headers: {
+                    request: {
+                      set: {
+                        'x-circle-source': 'default-circle-id'
+                      }
+                    },
+                    response: {
+                      set: {
+                        'x-circle-source': 'default-circle-id'
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
       },
-      spec: {
-        gateways: [],
-        hosts: [
-          'A'
-        ],
-        http: [
-          {
-            match: [
-              {
-                headers: {
-                  cookie: {
-                    regex: '.*x-circle-id=circle-id.*'
+      {
+        apiVersion: 'networking.istio.io/v1alpha3',
+        kind: 'VirtualService',
+        metadata: {
+          name: 'B',
+          namespace: 'sandbox'
+        },
+        spec: {
+          gateways: [],
+          hosts: [
+            'B'
+          ],
+          http: [
+            {
+              match: [
+                {
+                  headers: {
+                    cookie: {
+                      regex: '.*x-circle-id=circle-id.*'
+                    }
                   }
                 }
-              }
-            ],
-            route: [
-              {
-                destination: {
-                  host: 'A',
-                  subset: 'circle-id'
-                },
-                headers: {
-                  request: {
-                    set: {
-                      'x-circle-source': 'circle-id'
-                    }
+              ],
+              route: [
+                {
+                  destination: {
+                    host: 'B',
+                    subset: 'circle-id'
                   },
-                  response: {
-                    set: {
-                      'x-circle-source': 'circle-id'
+                  headers: {
+                    request: {
+                      set: {
+                        'x-circle-source': 'circle-id'
+                      }
+                    },
+                    response: {
+                      set: {
+                        'x-circle-source': 'circle-id'
+                      }
                     }
                   }
                 }
-              }
-            ]
-          },
-          {
-            match: [
-              {
-                headers: {
-                  'x-circle-id': {
-                    exact: 'circle-id'
-                  }
-                }
-              }
-            ],
-            route: [
-              {
-                destination: {
-                  host: 'A',
-                  subset: 'circle-id'
-                },
-                headers: {
-                  request: {
-                    set: {
-                      'x-circle-source': 'circle-id'
-                    }
-                  },
-                  response: {
-                    set: {
-                      'x-circle-source': 'circle-id'
-                    }
-                  }
-                }
-              }
-            ]
-          },
-          {
-            route: [
-              {
-                destination: {
-                  host: 'A',
-                  subset: 'default-circle-id'
-                },
-                headers: {
-                  request: {
-                    set: {
-                      'x-circle-source': 'default-circle-id'
-                    }
-                  },
-                  response: {
-                    set: {
-                      'x-circle-source': 'default-circle-id'
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      apiVersion: 'networking.istio.io/v1alpha3',
-      kind: 'DestinationRule',
-      metadata: {
-        name: 'B',
-        namespace: 'sandbox'
-      },
-      spec: {
-        host: 'B',
-        subsets: [
-          {
-            labels: {
-              component: 'B',
-              tag: 'v2',
-              circleId: 'circle-id'
+              ]
             },
-            name: 'circle-id'
-          },
-          {
-            labels: {
-              component: 'B',
-              tag: 'v0',
-              circleId: 'default-circle-id'
+            {
+              match: [
+                {
+                  headers: {
+                    'x-circle-id': {
+                      exact: 'circle-id'
+                    }
+                  }
+                }
+              ],
+              route: [
+                {
+                  destination: {
+                    host: 'B',
+                    subset: 'circle-id'
+                  },
+                  headers: {
+                    request: {
+                      set: {
+                        'x-circle-source': 'circle-id'
+                      }
+                    },
+                    response: {
+                      set: {
+                        'x-circle-source': 'circle-id'
+                      }
+                    }
+                  }
+                }
+              ]
             },
-            name: 'default-circle-id'
-          }
-        ]
-      }
-    },
-    {
-      apiVersion: 'networking.istio.io/v1alpha3',
-      kind: 'VirtualService',
-      metadata: {
-        name: 'B',
-        namespace: 'sandbox'
+            {
+              route: [
+                {
+                  destination: {
+                    host: 'B',
+                    subset: 'default-circle-id'
+                  },
+                  headers: {
+                    request: {
+                      set: {
+                        'x-circle-source': 'default-circle-id'
+                      }
+                    },
+                    response: {
+                      set: {
+                        'x-circle-source': 'default-circle-id'
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
       },
-      spec: {
-        gateways: [],
-        hosts: [
-          'B'
-        ],
-        http: [
-          {
-            match: [
-              {
-                headers: {
-                  cookie: {
-                    regex: '.*x-circle-id=circle-id.*'
+      {
+        apiVersion: 'networking.istio.io/v1alpha3',
+        kind: 'VirtualService',
+        metadata: {
+          name: 'C',
+          namespace: 'sandbox'
+        },
+        spec: {
+          gateways: [],
+          hosts: [
+            'C'
+          ],
+          http: [
+            {
+              match: [
+                {
+                  headers: {
+                    cookie: {
+                      regex: '.*x-circle-id=circle-id.*'
+                    }
                   }
                 }
-              }
-            ],
-            route: [
-              {
-                destination: {
-                  host: 'B',
-                  subset: 'circle-id'
-                },
-                headers: {
-                  request: {
-                    set: {
-                      'x-circle-source': 'circle-id'
-                    }
+              ],
+              route: [
+                {
+                  destination: {
+                    host: 'C',
+                    subset: 'circle-id'
                   },
-                  response: {
-                    set: {
-                      'x-circle-source': 'circle-id'
+                  headers: {
+                    request: {
+                      set: {
+                        'x-circle-source': 'circle-id'
+                      }
+                    },
+                    response: {
+                      set: {
+                        'x-circle-source': 'circle-id'
+                      }
                     }
                   }
                 }
-              }
-            ]
-          },
-          {
-            match: [
-              {
-                headers: {
-                  'x-circle-id': {
-                    exact: 'circle-id'
-                  }
-                }
-              }
-            ],
-            route: [
-              {
-                destination: {
-                  host: 'B',
-                  subset: 'circle-id'
-                },
-                headers: {
-                  request: {
-                    set: {
-                      'x-circle-source': 'circle-id'
-                    }
-                  },
-                  response: {
-                    set: {
-                      'x-circle-source': 'circle-id'
-                    }
-                  }
-                }
-              }
-            ]
-          },
-          {
-            route: [
-              {
-                destination: {
-                  host: 'B',
-                  subset: 'default-circle-id'
-                },
-                headers: {
-                  request: {
-                    set: {
-                      'x-circle-source': 'default-circle-id'
-                    }
-                  },
-                  response: {
-                    set: {
-                      'x-circle-source': 'default-circle-id'
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      apiVersion: 'networking.istio.io/v1alpha3',
-      kind: 'DestinationRule',
-      metadata: {
-        name: 'C',
-        namespace: 'sandbox'
-      },
-      spec: {
-        host: 'C',
-        subsets: [
-          {
-            labels: {
-              component: 'C',
-              tag: 'v2',
-              circleId: 'circle-id'
+              ]
             },
-            name: 'circle-id'
-          },
-          {
-            labels: {
-              component: 'C',
-              tag: 'v0',
-              circleId: 'default-circle-id'
+            {
+              match: [
+                {
+                  headers: {
+                    'x-circle-id': {
+                      exact: 'circle-id'
+                    }
+                  }
+                }
+              ],
+              route: [
+                {
+                  destination: {
+                    host: 'C',
+                    subset: 'circle-id'
+                  },
+                  headers: {
+                    request: {
+                      set: {
+                        'x-circle-source': 'circle-id'
+                      }
+                    },
+                    response: {
+                      set: {
+                        'x-circle-source': 'circle-id'
+                      }
+                    }
+                  }
+                }
+              ]
             },
-            name: 'default-circle-id'
-          }
-        ]
+            {
+              route: [
+                {
+                  destination: {
+                    host: 'C',
+                    subset: 'default-circle-id'
+                  },
+                  headers: {
+                    request: {
+                      set: {
+                        'x-circle-source': 'default-circle-id'
+                      }
+                    },
+                    response: {
+                      set: {
+                        'x-circle-source': 'default-circle-id'
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
       }
-    },
-    {
-      apiVersion: 'networking.istio.io/v1alpha3',
-      kind: 'VirtualService',
-      metadata: {
-        name: 'C',
-        namespace: 'sandbox'
+    ],
+    destinationRulesManifests: [
+      {
+        apiVersion: 'networking.istio.io/v1alpha3',
+        kind: 'DestinationRule',
+        metadata: {
+          name: 'A',
+          namespace: 'sandbox'
+        },
+        spec: {
+          host: 'A',
+          subsets: [
+            {
+              labels: {
+                component: 'A',
+                tag: 'v2',
+                circleId: 'circle-id'
+              },
+              name: 'circle-id'
+            },
+            {
+              labels: {
+                component: 'A',
+                tag: 'v0',
+                circleId: 'default-circle-id'
+              },
+              name: 'default-circle-id'
+            }
+          ]
+        }
       },
-      spec: {
-        gateways: [],
-        hosts: [
-          'C'
-        ],
-        http: [
-          {
-            match: [
-              {
-                headers: {
-                  cookie: {
-                    regex: '.*x-circle-id=circle-id.*'
-                  }
-                }
-              }
-            ],
-            route: [
-              {
-                destination: {
-                  host: 'C',
-                  subset: 'circle-id'
-                },
-                headers: {
-                  request: {
-                    set: {
-                      'x-circle-source': 'circle-id'
-                    }
-                  },
-                  response: {
-                    set: {
-                      'x-circle-source': 'circle-id'
-                    }
-                  }
-                }
-              }
-            ]
-          },
-          {
-            match: [
-              {
-                headers: {
-                  'x-circle-id': {
-                    exact: 'circle-id'
-                  }
-                }
-              }
-            ],
-            route: [
-              {
-                destination: {
-                  host: 'C',
-                  subset: 'circle-id'
-                },
-                headers: {
-                  request: {
-                    set: {
-                      'x-circle-source': 'circle-id'
-                    }
-                  },
-                  response: {
-                    set: {
-                      'x-circle-source': 'circle-id'
-                    }
-                  }
-                }
-              }
-            ]
-          },
-          {
-            route: [
-              {
-                destination: {
-                  host: 'C',
-                  subset: 'default-circle-id'
-                },
-                headers: {
-                  request: {
-                    set: {
-                      'x-circle-source': 'default-circle-id'
-                    }
-                  },
-                  response: {
-                    set: {
-                      'x-circle-source': 'default-circle-id'
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        ]
-      }
-    }
-  ],
-  unusedProxyDeployments: [],
+      {
+        apiVersion: 'networking.istio.io/v1alpha3',
+        kind: 'DestinationRule',
+        metadata: {
+          name: 'B',
+          namespace: 'sandbox'
+        },
+        spec: {
+          host: 'B',
+          subsets: [
+            {
+              labels: {
+                component: 'B',
+                tag: 'v2',
+                circleId: 'circle-id'
+              },
+              name: 'circle-id'
+            },
+            {
+              labels: {
+                component: 'B',
+                tag: 'v0',
+                circleId: 'default-circle-id'
+              },
+              name: 'default-circle-id'
+            }
+          ]
+        }
+      },
+      {
+        apiVersion: 'networking.istio.io/v1alpha3',
+        kind: 'DestinationRule',
+        metadata: {
+          name: 'C',
+          namespace: 'sandbox'
+        },
+        spec: {
+          host: 'C',
+          subsets: [
+            {
+              labels: {
+                component: 'C',
+                tag: 'v2',
+                circleId: 'circle-id'
+              },
+              name: 'circle-id'
+            },
+            {
+              labels: {
+                component: 'C',
+                tag: 'v0',
+                circleId: 'default-circle-id'
+              },
+              name: 'default-circle-id'
+            }
+          ]
+        }
+      },
+    ]
+  },
+  unusedProxyDeployments: { virtualServiceManifests: [], destinationRulesManifests: [] },
   callbackUrl: 'http://localhost:8883/butler/v2/executions/execution-id/notify',
   clusterConfig: null
 }
