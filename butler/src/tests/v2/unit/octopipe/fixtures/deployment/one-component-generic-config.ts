@@ -43,36 +43,36 @@ export const oneComponentGenericOctopipe: OctopipeDeploymentRequest = {
   unusedDeployments: [],
   proxyDeployments: {
     destinationRulesManifests: [
-        {
-          apiVersion: 'networking.istio.io/v1alpha3',
-          kind: 'DestinationRule',
-          metadata: {
-            name: 'A',
-            namespace: 'sandbox'
-          },
-          spec: {
-            host: 'A',
-            subsets: [
-              {
-                labels: {
-                  component: 'A',
-                  tag: 'v2',
-                  circleId: 'circle-id'
-                },
-                name: 'circle-id'
+      {
+        apiVersion: 'networking.istio.io/v1alpha3',
+        kind: 'DestinationRule',
+        metadata: {
+          name: 'A',
+          namespace: 'sandbox'
+        },
+        spec: {
+          host: 'A',
+          subsets: [
+            {
+              labels: {
+                component: 'A',
+                tag: 'v2',
+                circleId: 'circle-id'
               },
-              {
-                labels: {
-                  component: 'A',
-                  tag: 'v0',
-                  circleId: 'default-circle-id'
-                },
-                name: 'default-circle-id'
-              }
-            ]
-          }
+              name: 'circle-id'
+            },
+            {
+              labels: {
+                component: 'A',
+                tag: 'v0',
+                circleId: 'default-circle-id'
+              },
+              name: 'default-circle-id'
+            }
+          ]
         }
-        ],
+      }
+    ],
     virtualServiceManifests: [
       {
         apiVersion: 'networking.istio.io/v1alpha3',

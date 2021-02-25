@@ -86,8 +86,8 @@ export class OctopipeRequestBuilder {
     }
     deployment.components.forEach(component => {
       const activeByName: Component[] = DeploymentUtils.getActiveComponentsByName(activeComponents, component.name)
-      proxyDeployment.virtualServiceManifests.push(IstioDeploymentManifestsUtils.getDestinationRulesManifest(deployment, component, activeByName))
-      proxyDeployment.destinationRulesManifests.push(IstioDeploymentManifestsUtils.getVirtualServiceManifest(deployment, component, activeByName))
+      proxyDeployment.destinationRulesManifests.push(IstioDeploymentManifestsUtils.getDestinationRulesManifest(deployment, component, activeByName))
+      proxyDeployment.virtualServiceManifests.push(IstioDeploymentManifestsUtils.getVirtualServiceManifest(deployment, component, activeByName))
     })
     return proxyDeployment
   }
