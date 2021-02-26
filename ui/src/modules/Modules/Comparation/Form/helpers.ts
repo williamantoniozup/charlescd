@@ -101,7 +101,9 @@ const destructGithub = (
 
   if (infoSplit.length < 4) {
     const branch = infoSplit[2].split('?');
-    setValue('helmBranch', branch[1].slice(4));
+    if (branch.length > 1) {
+      setValue('helmBranch', branch[1].slice(4));
+    }
   } else {
     const pathBranchList = infoSplit[3].split('?');
     const path = pathBranchList[0];
@@ -129,7 +131,9 @@ const destructGitlab = (
 
   if (infoSplit.length < 4) {
     const pathBranchEncode = infoSplit[2].split('?');
-    setValue('helmBranch', pathBranchEncode[1].slice(4));
+    if (pathBranchEncode.length > 1) {
+      setValue('helmBranch', pathBranchEncode[1].slice(4));
+    }
   } else {
     const pathBranchEncode = infoSplit[3].split('?');
     const path = pathBranchEncode[0].split('%2F').join('/');
