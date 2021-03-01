@@ -14,4 +14,13 @@
  * limitations under the License.
  */
 
-export const microfrontendKey = 'isMicrofrontend';
+import React from 'react';
+import { render, screen } from 'unit-test/testUtils';
+import ParametersForm from '..';
+
+test('render Parameters Form', async () => {
+  render(<ParametersForm />);
+
+  expect(screen.getByText('Type a key')).toBeInTheDocument();
+  expect(screen.getByText('Type a value')).toBeInTheDocument();
+});

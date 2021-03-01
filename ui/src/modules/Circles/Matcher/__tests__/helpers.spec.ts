@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import SingleSpaReact from 'single-spa-react';
-import { setPublicPath } from 'systemjs-webpack-interop';
-import App from './App';
+import { parseParameters } from "../helpers";
 
-setPublicPath('@devcraft/charlescd');
+test('should parse parameters', async () => {
+  const params = {
+    name: 'param 1'
+  }
 
-const lifeCycle = SingleSpaReact({
-  React,
-  ReactDOM,
-  rootComponent: App,
-  domElementGetter: () => document.getElementById('content')
+  expect(parseParameters(JSON.stringify(params))).toEqual(params);
 });
 
-export const bootstrap = lifeCycle.bootstrap;
-export const mount = lifeCycle.mount;
-export const unmount = lifeCycle.unmount;
+test('should try parse parameters and return raw string', async () => {
+  const params = '{ invalid object }';
+
+  expect(parseParameters(params)).toEqual(params);
+});
