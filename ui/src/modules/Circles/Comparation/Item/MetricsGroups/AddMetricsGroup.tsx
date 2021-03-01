@@ -15,12 +15,12 @@
  */
 
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import useForm from 'core/hooks/useForm';
 import Modal from 'core/components/Modal';
 import { useCreateMetricsGroup } from './hooks';
 import Styled from './styled';
 import { MetricsGroup } from './types';
-import { isNotBlank } from 'core/utils/validation';
+import { isNotBlank } from 'core/utils/validations';
 
 type Props = {
   id: string;
