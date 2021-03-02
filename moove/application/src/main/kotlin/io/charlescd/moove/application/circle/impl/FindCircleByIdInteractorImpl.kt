@@ -38,9 +38,9 @@ class FindCircleByIdInteractorImpl(
         circle: Circle,
         workspaceId: String
     ): CircleResponse {
-        println(circle)
-        val deployment = deploymentService.findLastActive(circle.id, workspaceId)
-        println(deployment)
+        val deployment = deploymentService.findActiveList(circle.id).maxBy{
+            it-> it.createdAt
+        }
         val build = deployment?.let { buildService.find(it.buildId) }
         return CircleResponse.from(circle, deployment, build)
     }
