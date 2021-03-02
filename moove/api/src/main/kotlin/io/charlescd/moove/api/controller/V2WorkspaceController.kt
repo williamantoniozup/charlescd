@@ -29,6 +29,7 @@ import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
 import javax.validation.Valid
+import javax.validation.constraints.Size
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
@@ -82,8 +83,8 @@ class V2WorkspaceController(
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     fun findAll(
-        pageRequest: PageRequest,
-        @RequestParam(required = false, name = "name") name: String?
+        @Valid pageRequest: PageRequest,
+        @RequestParam(required = false, name = "name") @Size(max = 10) name: String?
     ): ResourcePageResponse<WorkspaceResponse> {
         return findAllWorkspacesInteractor.execute(pageRequest, name)
     }
@@ -123,14 +124,16 @@ class V2WorkspaceController(
     }
 
     @ApiOperation(value = "Find all Users associated to the given Workspace")
-    @GetMapping("/users")
+    @GetMapping("/{workspaceId}/users")
+    @ResponseStatus(HttpStatus.OK)
     fun findAllWorkspaceUsers(
-        @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestHeader(value = "Authorization") authorization: String,
+        @PathVariable workspaceId: String,
         @RequestParam("name", required = false) name: String?,
         @RequestParam("email", required = false) email: String?,
-        pageable: PageRequest
+        @Valid pageable: PageRequest
     ): ResourcePageResponse<UserResponse> {
-        return this.findAllWorkspaceUsersInteractor.execute(workspaceId, name, email, pageable)
+        return this.findAllWorkspaceUsersInteractor.execute(authorization, workspaceId, name, email, pageable)
     }
 
     @ApiOperation(value = "Verify metrics provider connection to the given Workspace")
