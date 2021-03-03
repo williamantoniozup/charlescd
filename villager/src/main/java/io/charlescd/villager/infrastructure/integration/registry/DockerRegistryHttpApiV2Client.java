@@ -16,70 +16,45 @@
 
 package io.charlescd.villager.infrastructure.integration.registry;
 
-import io.charlescd.villager.infrastructure.integration.registry.authentication.AWSBasicCredentialsProvider;
-import io.charlescd.villager.infrastructure.integration.registry.authentication.AWSCustomProviderChainAuthenticator;
-import io.charlescd.villager.infrastructure.integration.registry.authentication.CommonBasicAuthenticator;
-import io.charlescd.villager.infrastructure.integration.registry.authentication.DockerBearerAuthenticator;
+import io.charlescd.villager.infrastructure.integration.registry.configuration.ConfigParameters;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.util.Optional;
 import javax.enterprise.context.RequestScoped;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import org.apache.commons.lang.StringUtils;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @RequestScoped
 public class DockerRegistryHttpApiV2Client implements RegistryClient {
 
     private Client client;
     private String baseAddress;
+    private ClientBuilder customClientBuilder;
 
-    public DockerRegistryHttpApiV2Client() { }
+    public DockerRegistryHttpApiV2Client(
+            @ConfigProperty(name = "ignore-invalid-certificate", defaultValue = "false") Boolean ignoreSSL
+    ) {
+        this.customClientBuilder = this.createClientBuilder(ignoreSSL);
+    }
 
     public void configureAuthentication(RegistryType type,
                                         DockerRegistryConfigurationEntity.DockerRegistryConnectionData config,
                                         String tagName) {
-        this.client = ClientBuilder.newClient();
+
+        this.client = this.customClientBuilder.build();
         this.baseAddress = config.address;
 
-        switch (type) {
-            case AWS:
-                var awsConfig = (DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData) config;
-                AWSCustomProviderChainAuthenticator providerChain =
-                        new AWSCustomProviderChainAuthenticator(awsConfig.region);
-                if (StringUtils.isNotEmpty(awsConfig.accessKey) && StringUtils.isNotEmpty(awsConfig.secretKey)) {
-                    providerChain.addProviderAsPrimary(
-                            new AWSBasicCredentialsProvider(awsConfig.accessKey, awsConfig.secretKey));
-                }
-                this.client.register(providerChain);
-                break;
-            case AZURE:
-                var azureConfig = (DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData) config;
-                this.client.register(new CommonBasicAuthenticator(azureConfig.username, azureConfig.password));
-                break;
-            case GCP:
-                var gcpConfig = (DockerRegistryConfigurationEntity.GCPDockerRegistryConnectionData) config;
-                this.client.register(new CommonBasicAuthenticator(gcpConfig.username, gcpConfig.jsonKey));
-                break;
-            case DOCKER_HUB:
-                var dockerHubConfig = (DockerRegistryConfigurationEntity.DockerHubDockerRegistryConnectionData) config;
-                this.client.register(
-                        new DockerBearerAuthenticator(dockerHubConfig.organization,
-                                dockerHubConfig.username,
-                                dockerHubConfig.password,
-                                tagName,
-                                "https://auth.docker.io/token",
-                                "registry.docker.io"));
-                break;
-            case HARBOR:
-                var harborConfig = (DockerRegistryConfigurationEntity.HarborDockerRegistryConnectionData) config;
-                this.client.register(new CommonBasicAuthenticator(harborConfig.username, harborConfig.password));
-                break;
-            default:
-                throw new IllegalArgumentException("Registry type is not supported!");
-        }
+        ConfigParameters configParameters = new ConfigParameters(config, tagName);
+        this.client.register(type.configure(configParameters));
     }
 
     @Override
@@ -99,6 +74,13 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
         return Optional.ofNullable(this.client.target(url).request().get());
     }
 
+    @Override
+    public Optional<Response> getV2Path(
+            DockerRegistryConfigurationEntity.DockerRegistryConnectionData connectionData
+    ) {
+        return Optional.ofNullable(this.client.target(this.baseAddress + "/v2/").request().get());
+    }
+
     private String createGetImageUrl(String baseAddress, String name, String tagName) {
 
         UriBuilder builder = UriBuilder.fromUri(baseAddress);
@@ -113,6 +95,36 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
         builder.path("/v2/{organization}/{name}/manifests/{tagName}");
 
         return builder.build(organization, name, tagName).toString();
+    }
+
+    private TrustManager[] createTrustManager() {
+        return new TrustManager[]{new X509TrustManager() {
+            public X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+
+            public void checkClientTrusted(X509Certificate[] certs, String authType) {
+            }
+
+            public void checkServerTrusted(X509Certificate[] certs, String authType) {
+            }
+        }
+        };
+    }
+
+    private ClientBuilder createClientBuilder(Boolean ignoreSSL) {
+        ClientBuilder clientBuilder = ClientBuilder.newBuilder();
+        if (ignoreSSL) {
+            try {
+                SSLContext sslContext = SSLContext.getInstance("SSL");
+                sslContext.init(null, createTrustManager(), new java.security.SecureRandom());
+                clientBuilder = ClientBuilder.newBuilder().sslContext(sslContext);
+            } catch (NoSuchAlgorithmException | KeyManagementException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return clientBuilder;
     }
 
     @Override
