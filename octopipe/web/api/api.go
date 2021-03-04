@@ -18,23 +18,22 @@ package api
 
 import (
 	"errors"
-	"github.com/gin-gonic/gin"
-	log "github.com/sirupsen/logrus"
-	"golang.org/x/time/rate"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
+	"golang.org/x/time/rate"
 )
 
 type API struct {
 	router *gin.Engine
-	v1     *gin.RouterGroup
 	v2     *gin.RouterGroup
 }
 
 const (
-	v1Path                       = "/api/v1"
 	v2Path                       = "/api/v2"
 	DefaultLimitRequestsBySecond = 10
 )
@@ -44,12 +43,10 @@ func NewAPI() *API {
 	router := gin.New()
 	router.Use(throttle(requestLimiter))
 
-	v1 := router.Group(v1Path)
-	v1.GET("/health", health)
-
 	v2 := router.Group(v2Path)
+	v2.GET("/health", health)
 
-	return &API{router, v1, v2}
+	return &API{router, v2}
 }
 
 func health(context *gin.Context) {

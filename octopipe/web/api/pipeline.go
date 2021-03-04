@@ -18,21 +18,12 @@ package api
 
 import (
 	"octopipe/pkg/manager"
-	"octopipe/pkg/pipeline"
 
 	"github.com/gin-gonic/gin"
 )
 
 type PipelineAPI struct {
 	manager manager.UseCases
-}
-
-func (api *API) NewPipelineAPI(managerMain manager.MainUseCases) {
-	path := "/pipelines"
-	manager := managerMain.NewManager()
-	controller := PipelineAPI{manager}
-
-	api.v1.POST(path, controller.CreateOrUpdatePipeline)
 }
 
 func (api *API) NewV2PipelineAPI(managerMain manager.MainUseCases) {
@@ -43,18 +34,8 @@ func (api *API) NewV2PipelineAPI(managerMain manager.MainUseCases) {
 	api.v2.POST("/undeployments", controller.executeV2Undeployment)
 }
 
-func (api *PipelineAPI) CreateOrUpdatePipeline(ctx *gin.Context) {
-	var deprecatedPipeline pipeline.NonAdjustablePipeline
-	ctx.Bind(&deprecatedPipeline)
-
-	pipeline := deprecatedPipeline.ToPipeline()
-	api.manager.ExecuteV1Pipeline(pipeline)
-
-	ctx.JSON(204, nil)
-}
-
 func (api *PipelineAPI) executeV2Deployment(ctx *gin.Context) {
-	var v2Pipeline  manager.V2DeploymentPipeline
+	var v2Pipeline manager.V2DeploymentPipeline
 	ctx.Bind(&v2Pipeline)
 	incomingCircleId := ctx.GetHeader("x-circle-id")
 	go api.manager.ExecuteV2DeploymentPipeline(v2Pipeline, incomingCircleId)

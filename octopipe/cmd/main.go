@@ -52,7 +52,6 @@ func main() {
 	managerMain := manager.NewManagerMain(kubectl, templateMain, deploymentMain, cloudproviderMain, repositoryMain)
 
 	apiServer := api.NewAPI()
-	apiServer.NewPipelineAPI(managerMain)
 	apiServer.NewV2PipelineAPI(managerMain)
 	apiServer.Start()
 }
