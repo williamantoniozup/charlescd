@@ -29,5 +29,6 @@ export interface ManifestConfig {
   componentName: string,
   imageUrl: string,
   namespace?: string,
-  circleId?: string
+  circleId?: string,
+  valuesName: string
 }

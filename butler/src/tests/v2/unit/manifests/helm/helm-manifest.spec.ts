@@ -42,7 +42,8 @@ describe('Generate K8s manifest by helm', () => {
     componentName: 'helm-test-chart',
     imageUrl: 'latest',
     namespace: 'my-namespace',
-    circleId: 'f5d23a57-5607-4306-9993-477e1598cc2a'
+    circleId: 'f5d23a57-5607-4306-9993-477e1598cc2a',
+    valuesName: 'helm-test-chart'
   }
 
   const repositoryStrategyFactory = mockStratetyFactory(async config => await readFiles(basePath, config.resourceName))
@@ -56,7 +57,8 @@ describe('Generate K8s manifest by helm', () => {
         branch: 'master'
       },
       componentName: 'helm-test-chart',
-      imageUrl: 'latest'
+      imageUrl: 'latest',
+      valuesName: 'helm-test-chart'
     }
     const helm = new HelmManifest(new ConsoleLoggerService(), repositoryStrategyFactory)
     const manifest = await helm.generate(manifestConfig)

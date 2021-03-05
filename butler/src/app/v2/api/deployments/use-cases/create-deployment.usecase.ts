@@ -145,7 +145,8 @@ export class CreateDeploymentUseCase {
       componentName: component.componentName,
       imageUrl: component.buildImageUrl,
       namespace: cdConfig.namespace,
-      circleId: circleId
+      circleId: circleId,
+      valuesName: component.valuesName,
     }
     // TODO: utilizar aqui a interface Manifest e obter de um factory
     try {

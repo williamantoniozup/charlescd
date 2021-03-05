@@ -19,11 +19,9 @@ import * as uuid from 'uuid'
 import { spawn } from 'child_process'
 import * as os from 'os'
 import * as path from 'path'
-
 import { Injectable } from '@nestjs/common'
 import * as rimraf from 'rimraf'
 import * as yaml from 'js-yaml'
-
 import { Manifest } from '../manifest'
 import { ManifestConfig } from '../manifest.interface'
 import { Resource, ResourceType } from '../../../core/integrations/interfaces/repository.interface'
@@ -132,7 +130,7 @@ export class HelmManifest implements Manifest {
   }
 
   private getValuesFile(chartPath: string, config: ManifestConfig): string {
-    return `${chartPath}${path.sep}${config.componentName}${path.sep}${config.componentName}.yaml`
+    return `${chartPath}${path.sep}${config.componentName}${path.sep}${config.valuesName}.yaml`
   }
 
   private extractCustomValues(config: ManifestConfig): Record<string, string | undefined> {

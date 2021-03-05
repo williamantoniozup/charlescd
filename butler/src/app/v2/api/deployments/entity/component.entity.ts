@@ -59,6 +59,9 @@ export class ComponentEntityV2 implements Component {
   @Column({ name: 'manifests', type: 'jsonb', array: true })
   public manifests!: KubernetesManifest[]
 
+  @Column({ name: 'values_name' })
+  public valuesName!: string
+
   constructor(
     helmUrl: string,
     buildImageTag: string,
@@ -68,7 +71,9 @@ export class ComponentEntityV2 implements Component {
     hostValue: string | null,
     gatewayName: string | null,
     manifests: KubernetesManifest[],
-    merged = false
+    valuesName: string,
+    merged = false,
+
   ) {
     this.helmUrl = helmUrl
     this.imageTag = buildImageTag
@@ -79,6 +84,7 @@ export class ComponentEntityV2 implements Component {
     this.gatewayName = gatewayName
     this.merged = merged
     this.manifests = manifests
+    this.valuesName = valuesName
   }
 
   public clone(): ComponentEntityV2 {
@@ -91,6 +97,7 @@ export class ComponentEntityV2 implements Component {
       this.hostValue,
       this.gatewayName,
       this.manifests,
+      this.valuesName,
       true
     )
   }

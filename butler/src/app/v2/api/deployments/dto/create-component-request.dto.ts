@@ -55,13 +55,19 @@ export class CreateComponentRequestDto {
   @IsNotEmpty()
   public readonly gatewayName!: string | undefined
 
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  public valuesName: string
+
   constructor(
     componentId: string,
     buildImageUrl: string,
     buildImageTag: string,
     componentName: string,
     hostValue: string | undefined,
-    gatewayName: string | undefined
+    gatewayName: string | undefined,
+    valuesName: string
   ) {
     this.componentId = componentId
     this.buildImageUrl = buildImageUrl
@@ -69,6 +75,7 @@ export class CreateComponentRequestDto {
     this.componentName = componentName
     this.hostValue = hostValue
     this.gatewayName = gatewayName
+    this.valuesName = valuesName
   }
 
   public toEntity(helmRepositoryUrl: string, manifests: KubernetesManifest[]): ComponentEntity {
@@ -80,7 +87,8 @@ export class CreateComponentRequestDto {
       this.componentId,
       this.hostValue ? this.hostValue : null,
       this.gatewayName ? this.gatewayName : null,
-      manifests
+      manifests,
+      this.valuesName
     )
   }
 }
