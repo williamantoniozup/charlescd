@@ -79,7 +79,8 @@ describe('Deployment on existing circle', () => {
               name: 'jilo'
             }
           }
-        ]
+        ],
+          'values'
       )
     ]
     const previousDeployment = new DeploymentEntityV2(

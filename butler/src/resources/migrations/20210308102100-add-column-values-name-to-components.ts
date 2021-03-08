@@ -14,28 +14,19 @@
  * limitations under the License.
  */
 
-import { Deployment } from './'
+import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
-export interface Component {
-    id: string
+export class AddColumnValuesNameToComponents20210308102100 implements MigrationInterface {
 
-    helmUrl: string
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.addColumn('v2components', new TableColumn({
+      name: 'values_name',
+      type: 'varchar',
+      isNullable: true
+    }))
+  }
 
-    imageTag: string
-
-    imageUrl: string
-
-    hostValue: string | null
-
-    gatewayName: string | null
-
-    name: string
-
-    running: boolean
-
-    deployment: Deployment
-}
-export interface HelmConfig {
-    url: string
-    valuesName: string
+  public async down(queryRunner: QueryRunner) : Promise<void> {
+    await queryRunner.dropColumn('v2components', 'values_name')
+  }
 }

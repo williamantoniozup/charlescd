@@ -65,7 +65,10 @@ export class CreateRoutesManifestsUseCase {
   }
 
   public async updateRouteStatus(componentStatus: { circle: string, component: string, status: boolean, kind: string }[]): Promise<DeploymentEntityV2[]>  {
+    console.log(componentStatus)
     const components = groupBy(componentStatus, 'circle')
+    console.log(components)
+    console.log(Object.entries(components))
     const results =  await Promise.all(Object.entries(components).flatMap(async c => {
       const circleId = c[0]
       const status = c[1]

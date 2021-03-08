@@ -82,7 +82,8 @@ describe('DeploymentController v2', () => {
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
           buildImageUrl: 'imageurl.com',
           buildImageTag: 'tag1',
-          componentName: 'component-name'
+          componentName: 'component-name',
+          valuesName: 'values'
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
@@ -175,7 +176,8 @@ describe('DeploymentController v2', () => {
           buildImageTag: 'tag1',
           componentName: 'component-name',
           hostValue: 'host-value',
-          gatewayName: 'gateway-name'
+          gatewayName: 'gateway-name',
+          valuesName: 'values'
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
@@ -203,7 +205,7 @@ describe('DeploymentController v2', () => {
             name: 'component-name',
             running: false,
             hostValue: 'host-value',
-            gatewayName: 'gateway-name'
+            gatewayName: 'gateway-name',
           }
         ],
         created_at: expect.any(String),
@@ -237,7 +239,8 @@ const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfi
       c.componentId,
       c.hostValue,
       c.gatewayName,
-      manifests
+      manifests,
+        'values'
     )
   })
 

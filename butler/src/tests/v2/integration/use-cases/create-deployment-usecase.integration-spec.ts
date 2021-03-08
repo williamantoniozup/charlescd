@@ -101,7 +101,8 @@ describe('CreateDeploymentUsecase v2', () => {
       '777765f8-bb29-49f7-bf2b-3ec956a71583',
       null,
       null,
-      customManifests('A', 'my-namespace', 'imageurl.com')
+      customManifests('A', 'my-namespace', 'imageurl.com'),
+      'values'
     )
     component1.running = false
     component1.id = expect.anything()
@@ -114,7 +115,8 @@ describe('CreateDeploymentUsecase v2', () => {
       '1c29210c-e313-4447-80e3-db89b2359138',
       null,
       null,
-      customManifests('B', 'my-namespace', 'imageurl.com')
+      customManifests('B', 'my-namespace', 'imageurl.com'),
+      'values'
     )
     component2.running = false
     component2.id = expect.anything()
@@ -140,7 +142,8 @@ describe('CreateDeploymentUsecase v2', () => {
           'f1c95177-438c-4c4f-94fd-c207e8d2eb61',
           null,
           null,
-          customManifests('A', 'my-namespace', 'imageurl.com')
+          customManifests('A', 'my-namespace', 'imageurl.com'),
+          'values'
         ),
         new ComponentEntity(
           UrlConstants.helmRepository,
@@ -150,7 +153,8 @@ describe('CreateDeploymentUsecase v2', () => {
           '1c29210c-e313-4447-80e3-db89b2359138',
           null,
           null,
-          customManifests('B', 'my-namespace', 'imageurl.com')
+          customManifests('B', 'my-namespace', 'imageurl.com'),
+          'values'
         )
       ],
       true
@@ -172,7 +176,8 @@ describe('CreateDeploymentUsecase v2', () => {
           '46b83994-bfae-4f1e-84cd-0d18b59735bc',
           null,
           null,
-          customManifests('C', 'my-namespace', 'imageurl.com')
+          customManifests('C', 'my-namespace', 'imageurl.com'),
+          'values'
         ),
         new ComponentEntity(
           UrlConstants.helmRepository,
@@ -182,7 +187,8 @@ describe('CreateDeploymentUsecase v2', () => {
           '5ff6c5f3-fca5-440a-aaf5-ab3c25fdf0f5',
           null,
           null,
-          customManifests('D', 'my-namespace', 'imageurl.com')
+          customManifests('D', 'my-namespace', 'imageurl.com'),
+          'values'
         )
       ],
       true
@@ -204,7 +210,8 @@ describe('CreateDeploymentUsecase v2', () => {
           '222cd8db-3767-45d5-a415-7cca09cccf91',
           null,
           null,
-          customManifests('E', 'my-namespace', 'imageurl.com')
+          customManifests('E', 'my-namespace', 'imageurl.com'),
+          'values'
         ),
         new ComponentEntity(
           UrlConstants.helmRepository,
@@ -214,7 +221,8 @@ describe('CreateDeploymentUsecase v2', () => {
           '32f24614-ecee-4ff5-aae4-2ebd7bb85c56',
           null,
           null,
-          customManifests('F', 'my-namespace', 'imageurl.com')
+          customManifests('F', 'my-namespace', 'imageurl.com'),
+          'values'
         )
       ],
       false

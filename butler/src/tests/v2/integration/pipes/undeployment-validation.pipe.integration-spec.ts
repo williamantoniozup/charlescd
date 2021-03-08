@@ -144,7 +144,8 @@ const createDeploymentAndExecution = async(params: any, fixtureUtilsService: Fix
       c.componentId,
       c.hostValue,
       c.gatewayName,
-      manifests
+      manifests,
+      'values'
     )
     component.running = running
     return component

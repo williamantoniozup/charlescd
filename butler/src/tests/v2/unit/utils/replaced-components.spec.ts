@@ -29,7 +29,8 @@ it('new deployment with active components on default circle', async() => {
       'component-a-id-1',
       null,
       null,
-      []
+      [],
+        'values'
     ),
     new ComponentEntityV2(
       'helm.url',
@@ -39,7 +40,8 @@ it('new deployment with active components on default circle', async() => {
       'component-b-id-2',
       null,
       null,
-      []
+      [],
+        'values'
     ),
     new ComponentEntityV2(
       'helm.url',
@@ -49,7 +51,8 @@ it('new deployment with active components on default circle', async() => {
       'component-c-id-33',
       null,
       null,
-      []
+      [],
+        'values'
     )
   ]
 
@@ -62,7 +65,8 @@ it('new deployment with active components on default circle', async() => {
       'component-a-id-3',
       null,
       null,
-      []
+      [],
+      'values'
     ),
     new ComponentEntityV2(
       'helm.url',
@@ -72,7 +76,8 @@ it('new deployment with active components on default circle', async() => {
       'component-b-id-4',
       null,
       null,
-      []
+      [],
+        'values'
     ),
     new ComponentEntityV2(
       'helm.url',
@@ -82,7 +87,8 @@ it('new deployment with active components on default circle', async() => {
       'component-c-id-5',
       null,
       null,
-      []
+      [],
+      'values'
     )
   ]
 
@@ -126,7 +132,8 @@ it('new deployment with active components on default circle', async() => {
       'component-a-id-11',
       null,
       null,
-      []
+      [],
+        'values'
     ),
     new ComponentEntityV2(
       'helm.url',
@@ -136,7 +143,8 @@ it('new deployment with active components on default circle', async() => {
       'component-b-id-22',
       null,
       null,
-      []
+      [],
+        'values'
     ),
     new ComponentEntityV2(
       'helm.url',
@@ -146,7 +154,8 @@ it('new deployment with active components on default circle', async() => {
       'component-c-id-33',
       null,
       null,
-      []
+      [],
+        'values'
     )
   ]
 

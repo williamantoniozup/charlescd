@@ -36,7 +36,7 @@ export const deploymentFixture = new DeploymentEntityV2(
       null,
       null,
       [],
-      false
+        'values'
     )
   ],
   true,
@@ -54,7 +54,7 @@ function createDeployComponent() {
     null,
     null,
     [],
-    false
+    'values'
   )
 
   component.deployment = new DeploymentEntityV2(
@@ -73,7 +73,7 @@ function createDeployComponent() {
         null,
         null,
         [],
-        false
+          'values'
       )
     ],
     true,
@@ -97,7 +97,7 @@ export const deploymentWithManifestFixture = new DeploymentEntityV2(
       null,
       null,
       customManifests('hello-kubernetes', 'namespace', 'build-image-tag'),
-      false
+        'values'
     )
   ],
   true,
