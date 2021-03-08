@@ -14,110 +14,110 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import React, { useEffect, useCallback, useState } from 'react';
 import map from 'lodash/map';
+import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
-import Modal from 'core/components/Modal';
-import routes from 'core/constants/routes';
-import { saveWorkspace } from 'core/utils/workspace';
-import { isRoot } from 'core/utils/auth';
-import { useSaveWorkspace } from 'modules/Workspaces/hooks';
-import { Workspace } from 'modules/Workspaces/interfaces/Workspace';
-import { removeWizard } from 'modules/Settings/helpers';
+import { isRoot, isIDMEnabled } from 'core/utils/auth';
 import MenuItem from './MenuItem';
 import Styled from './styled';
-import Loader from './Loaders';
-
+import { useWorkspaces } from '../hooks';
+import { useGlobalState, useDispatch } from 'core/state/hooks';
+import { getProfileByKey } from 'core/utils/profile';
+import { useWorkspacesByUser } from 'modules/Users/hooks';
+import InfiniteScroll from 'core/components/InfiniteScroll';
+import { resetContentAction } from '../state/actions';
+import {WorkspacePaginationItem} from '../interfaces/WorkspacePagination';
 interface Props {
-  items: Workspace[];
-  onSearch: (name: string) => void;
-  isLoading?: boolean;
+  onCreate: () => void;
   selectedWorkspace: (name: string) => void;
 }
 
 const WorkspaceMenu = ({
-  items,
-  onSearch,
-  isLoading,
+  onCreate,
   selectedWorkspace
 }: Props) => {
-  const MAX_LENGTH_NAME = 50;
-  const history = useHistory();
-  const [isDisabled, setIsDisabled] = useState(true);
-  const { register, handleSubmit, watch } = useForm();
-  const name = watch('name');
-  const {
-    save,
-    response: saveWorkspaceResponse,
-    loading: saveWorkspaceLoading
-  } = useSaveWorkspace();
-  const [toggleModal, setToggleModal] = useState(false);
+  const [filterWorkspace, , loading] = useWorkspaces();
+  const { findWorkspacesByUser, status } = useWorkspacesByUser();
+  const userId = getProfileByKey('id');
+  const workspaces = getProfileByKey('workspaces');
+  const { list } = useGlobalState(({ workspaces }) => workspaces);
+  const dispatch = useDispatch();
+  const isNotLoading = isRoot() ? !loading : status !== 'pending';
+  const isRenderEmpty = isEmpty(list?.content || workspaces) && isNotLoading;
+  const [name, setName] = useState('');
+
+  const onIDMFlow = useCallback(() => {
+    if (isRoot()) {
+      filterWorkspace();
+    } else {
+      findWorkspacesByUser(userId);
+    }
+  }, [filterWorkspace, findWorkspacesByUser, userId]);
 
   useEffect(() => {
-    if (name !== null) {
-      setIsDisabled(name);
+    if (isIDMEnabled()) {
+      onIDMFlow();
+    } else {
+      if(isRoot()) {
+        dispatch(resetContentAction());
+        filterWorkspace();
+      }
+      else {
+        dispatch(resetContentAction());
+        findWorkspacesByUser(userId);
+      }
     }
-  }, [name, setIsDisabled]);
+  }, [onIDMFlow, filterWorkspace, findWorkspacesByUser, dispatch, userId]);
 
-  const renderWorkspaces = () =>
-    map(items, ({ id, name, status }: Workspace) => (
-      <MenuItem
-        key={id}
-        id={id}
-        name={name}
-        status={status}
-        selectedWorkspace={(name: string) => selectedWorkspace(name)}
-      />
-    ));
+  const onChange = useCallback((value: string) => {
+      setName(value);
+      const page = 0;
+      dispatch(resetContentAction());
+      filterWorkspace(value, page);
+  }, [dispatch, filterWorkspace]);
 
-  const openWorkspaceModal = () => setToggleModal(true);
-
-  const onSubmit = ({ name }: Record<string, string>) => {
-    save({ name });
+  const loadMore = (page: number) => {
+    filterWorkspace(name, page);
   };
 
-  useEffect(() => {
-    if (saveWorkspaceResponse) {
-      removeWizard();
-      saveWorkspace(saveWorkspaceResponse);
-      history.push(routes.credentials);
-    }
-  }, [saveWorkspaceResponse, history]);
+  const renderList = (data: WorkspacePaginationItem[]) =>
+    map(data, item => renderItem(item))
 
-  const renderModal = () =>
-    toggleModal && (
-      <Modal.Default onClose={() => setToggleModal(false)}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Styled.Modal.Title color="light">
-            Create workspace
-          </Styled.Modal.Title>
-          <Styled.Modal.Input
-            name="name"
-            maxLength={MAX_LENGTH_NAME}
-            label="Type a name"
-            ref={register({ required: true, maxLength: MAX_LENGTH_NAME })}
-          />
-          <Styled.Modal.Button
-            type="submit"
-            isDisabled={!isDisabled}
-            isLoading={saveWorkspaceLoading}
-          >
-            Create workspace
-          </Styled.Modal.Button>
-        </form>
-      </Modal.Default>
+  const renderItem = ({ id, name, status }: WorkspacePaginationItem) => (
+    <MenuItem
+      key={id}
+      id={id}
+      name={name}
+      status={status}
+      selectedWorkspace={(name: string) => selectedWorkspace(name)}
+    />
+  );
+
+    const renderEmpty = () => (
+      <Styled.Empty>
+        <Text.h3 color="dark">No workspace was found</Text.h3>
+      </Styled.Empty>
+    );
+
+    const renderContent = () => (
+      <InfiniteScroll
+        hasMore={!list?.last}
+        loadMore={loadMore}
+        isLoading={loading}
+        loader={<Styled.Loader />}
+      >
+        {isRenderEmpty ? renderEmpty() : renderList(list?.content)}
+      </InfiniteScroll>
     );
 
   return (
     <>
-      {isRoot() && renderModal()}
       <Styled.Actions>
         <Styled.Button
           id="workspaceModal"
-          onClick={openWorkspaceModal}
+          onClick={onCreate}
           isDisabled={!isRoot()}
         >
           <LabeledIcon icon="plus-circle" marginContent="5px">
@@ -126,10 +126,13 @@ const WorkspaceMenu = ({
         </Styled.Button>
       </Styled.Actions>
       <Styled.Content>
-        <Styled.SearchInput resume onSearch={onSearch} disabled={!isRoot()} />
-        <Styled.List>
-          {isLoading ? <Loader.List /> : renderWorkspaces()}
-        </Styled.List>
+        <Styled.SearchInput
+          resume
+          onSearch={(value) => onChange(value)}
+          disabled={!isRoot()}
+          maxLength={64}
+        />
+      {renderContent()}
       </Styled.Content>
     </>
   );

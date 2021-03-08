@@ -21,6 +21,8 @@ package tests
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"time"
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
@@ -31,13 +33,11 @@ import (
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
-	"os"
-	"time"
 )
 
 const dbLog = false
 
-const bigString = `That's is a big Field-Value, probably with more than 100 characters. We are testing the validate method.`
+const bigString = `That's is a big Field-Value, probably with more than 100 characters. We are testing the validate method. Now, we have fields that can be filled with more than 300 characters. So, we need more characters here...                                                                                                                                                                          . `
 
 func setupEnv() {
 	os.Setenv("ENV", "TEST")
@@ -71,7 +71,6 @@ func newBasicDatasource() datasource.DataSource {
 	return datasource.DataSource{
 		Name:        "Name",
 		PluginSrc:   "src.so",
-		Health:      false,
 		Data:        json.RawMessage(`{"someProperty": "someValue"}`),
 		WorkspaceID: uuid.New(),
 		DeletedAt:   nil,
@@ -85,15 +84,14 @@ func datasourceInsert(pluginSrc string) (string, datasource.Response) {
 		},
 		Name:        "Name",
 		PluginSrc:   pluginSrc,
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
 		WorkspaceID: uuid.New(),
 		DeletedAt:   nil,
 	}
 
-	return fmt.Sprintf(`INSERT INTO data_sources (id, name, data, workspace_id, health, deleted_at, plugin_src)
-							VALUES ('%s', '%s', PGP_SYM_ENCRYPT('%s', '%s', 'cipher-algo=aes256'), '%s', %t, null, '%s');`,
-		entity.ID, entity.Name, entity.Data, configuration.GetConfiguration("ENCRYPTION_KEY"), entity.WorkspaceID, entity.Health, pluginSrc), entity
+	return fmt.Sprintf(`INSERT INTO data_sources (id, name, data, workspace_id,  deleted_at, plugin_src)
+							VALUES ('%s', '%s', PGP_SYM_ENCRYPT('%s', '%s', 'cipher-algo=aes256'), '%s', null, '%s');`,
+		entity.ID, entity.Name, entity.Data, configuration.GetConfiguration("ENCRYPTION_KEY"), entity.WorkspaceID, pluginSrc), entity
 }
 
 func newBasicMetric() metric.Metric {
