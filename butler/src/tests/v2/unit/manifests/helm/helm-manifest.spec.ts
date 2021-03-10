@@ -27,12 +27,13 @@ import { RequestConfig, Resource, ResourceType } from '../../../../../app/v2/cor
 import { RepositoryStrategyFactory } from '../../../../../app/v2/core/integrations/repository-strategy-factory'
 import { ConsoleLoggerService } from '../../../../../app/v2/core/logs/console/console-logger.service'
 import { HelmManifest } from '../../../../../app/v2/core/manifests/helm/helm-manifest'
+import { ManifestConfig } from '../../../../../app/v2/core/manifests/manifest.interface'
 
 
 
 describe('Generate K8s manifest by helm', () => {
   const basePath = path.join(__dirname, '../../../../../', 'resources/helm-test-chart')
-  const manifestConfig = {
+  const manifestConfig : ManifestConfig = {
     repo: {
       provider: GitProvidersEnum.GITHUB,
       url: 'https://myrepo.com/test',
@@ -56,9 +57,11 @@ describe('Generate K8s manifest by helm', () => {
         token: 'my-token',
         branch: 'master'
       },
+      namespace: 'namespace',
       componentName: 'helm-test-chart',
       imageUrl: 'latest',
-      valuesName: 'helm-test-chart'
+      valuesName: 'helm-test-chart',
+      circleId: 'circle-id'
     }
     const helm = new HelmManifest(new ConsoleLoggerService(), repositoryStrategyFactory)
     const manifest = await helm.generate(manifestConfig)
@@ -67,7 +70,6 @@ describe('Generate K8s manifest by helm', () => {
 
     expect(manifest).toEqual(expected)
   })
-
   it('should generate manifest with custom values', async() => {
     const helm = new HelmManifest(new ConsoleLoggerService(), repositoryStrategyFactory)
     const manifest = await helm.generate(manifestConfig)

@@ -60,6 +60,7 @@ class JdbcModuleRepository(
                            components.latency_threshold                                                    AS component_latency_threshold,
                            components.host_value                                                           AS component_host_value,
                            components.gateway_name                                                         AS component_gateway_name,
+                           components.values_name                                                          AS component_values_name,
                            git_configurations.id                                                           AS git_configuration_id,
                            git_configurations.name                                                         AS git_configuration_name,
                            PGP_SYM_DECRYPT(git_configurations.credentials::bytea, ?, 'cipher-algo=aes256') AS git_configuration_credentials,
@@ -269,8 +270,9 @@ class JdbcModuleRepository(
                            latency_threshold,
                            host_value,
                            gateway_name,
+                           values_name
                            created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
 
         this.jdbcTemplate.batchUpdate(
@@ -285,6 +287,7 @@ class JdbcModuleRepository(
                     it.latencyThreshold,
                     it.hostValue,
                     it.gatewayName,
+                    it.valuesName,
                     LocalDateTime.now()
                 )
             })
@@ -390,6 +393,7 @@ class JdbcModuleRepository(
                    components.latency_threshold                                                    AS component_latency_threshold,
                    components.host_value                                                           AS component_host_value,
                    components.gateway_name                                                         AS component_gateway_name,
+                   components.values_name                                                          AS component_values_name,
                    git_configurations.id                                                           AS git_configuration_id,
                    git_configurations.name                                                         AS git_configuration_name,
                    PGP_SYM_DECRYPT(git_configurations.credentials::bytea, ?, 'cipher-algo=aes256') AS git_configuration_credentials,

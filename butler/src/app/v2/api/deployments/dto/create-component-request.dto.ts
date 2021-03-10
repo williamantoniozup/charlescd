@@ -14,51 +14,32 @@
  * limitations under the License.
  */
 
-import { IsUUID, IsNotEmpty, IsString, Matches, Length, ValidateIf } from 'class-validator'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 import { ApiProperty } from '@nestjs/swagger'
 import { KubernetesManifest } from '../../../core/integrations/interfaces/k8s-manifest.interface'
+import { CreateHelmRequestDto } from "./create-helm-request.dto";
 
 export class CreateComponentRequestDto {
 
   @ApiProperty()
-  @IsUUID()
-  @IsNotEmpty()
   public componentId: string
 
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  @Matches(/^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/)
-  @Length(1, 253)
   public buildImageUrl: string
 
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
   public buildImageTag: string
 
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
   public componentName: string
 
   @ApiProperty()
-  @ValidateIf((obj, value) => { return value })
-  @IsString()
-  @IsNotEmpty()
-  public readonly hostValue!: string | undefined
+  public readonly hostValue?: string | undefined
 
   @ApiProperty()
-  @ValidateIf((obj, value) => { return value })
-  @IsString()
-  @IsNotEmpty()
-  public readonly gatewayName!: string | undefined
+  public readonly gatewayName?: string | undefined
 
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  public valuesName: string
+  public helm : CreateHelmRequestDto
 
   constructor(
     componentId: string,
@@ -67,7 +48,7 @@ export class CreateComponentRequestDto {
     componentName: string,
     hostValue: string | undefined,
     gatewayName: string | undefined,
-    valuesName: string
+    helm: CreateHelmRequestDto,
   ) {
     this.componentId = componentId
     this.buildImageUrl = buildImageUrl
@@ -75,12 +56,12 @@ export class CreateComponentRequestDto {
     this.componentName = componentName
     this.hostValue = hostValue
     this.gatewayName = gatewayName
-    this.valuesName = valuesName
+    this.helm = helm
   }
 
-  public toEntity(helmRepositoryUrl: string, manifests: KubernetesManifest[]): ComponentEntity {
+  public toEntity(manifests: KubernetesManifest[]): ComponentEntity {
     return new ComponentEntity(
-      helmRepositoryUrl,
+      this.helm.url,
       this.buildImageTag,
       this.buildImageUrl,
       this.componentName,
@@ -88,7 +69,7 @@ export class CreateComponentRequestDto {
       this.hostValue ? this.hostValue : null,
       this.gatewayName ? this.gatewayName : null,
       manifests,
-      this.valuesName
+      this.helm.valuesName
     )
   }
 }

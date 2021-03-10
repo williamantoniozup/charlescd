@@ -15,12 +15,11 @@
  */
 
 import 'jest'
-import { CdConfigurationsRepository } from '../../../../app/v2/api/configurations/repository'
 import { ComponentsRepositoryV2 } from '../../../../app/v2/api/deployments/repository'
 import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console'
 import { DeploymentRepositoryV2 } from '../../../../app/v2/api/deployments/repository/deployment.repository'
 import {
-  cdConfigurationFixture, deployComponentsFixture,
+  deployComponentsFixture,
   deploymentWithManifestFixture
 } from '../../fixtures/deployment-entity.fixture'
 import { HookParams } from '../../../../app/v2/operator/params.interface'
@@ -28,14 +27,19 @@ import { ReconcileDeploymentUsecase } from '../../../../app/v2/operator/use-case
 import { K8sClient } from '../../../../app/v2/core/integrations/k8s/client'
 import IEnvConfiguration from '../../../../app/v2/core/configuration/interfaces/env-configuration.interface'
 import { ReconcileDeployment } from '../../../../app/v2/operator/use-cases/reconcile-deployments.usecase'
+import {ExecutionRepository} from "../../../../app/v2/api/deployments/repository/execution.repository";
+import {MooveService} from "../../../../app/v2/core/integrations/moove";
 
 describe('Reconcile deployment usecase spec', () => {
 
   const butlerNamespace = 'butler-namespace'
   const deploymentRepository = new DeploymentRepositoryV2()
   const componentsRepository = new ComponentsRepositoryV2()
-  const cdConfigurationsRepository = new CdConfigurationsRepository()
+
+
   const consoleLoggerService = new ConsoleLoggerService()
+  const executionsRepository = new ExecutionRepository(consoleLoggerService)
+  const mooveService = new MooveService(consoleLoggerService)
   const k8sClient = new K8sClient(consoleLoggerService, { butlerNamespace: butlerNamespace } as IEnvConfiguration)
   const reconcileDeployment = new ReconcileDeployment()
 
@@ -43,7 +47,6 @@ describe('Reconcile deployment usecase spec', () => {
 
   beforeEach(() => {
     jest.spyOn(deploymentRepository, 'findOneOrFail').mockImplementation(async() => deploymentWithManifestFixture)
-    jest.spyOn(cdConfigurationsRepository, 'findDecrypted').mockImplementation(async() => cdConfigurationFixture)
     jest.spyOn(componentsRepository, 'findActiveComponents').mockImplementation(async() => deployComponentsFixture)
 
     hookParams = {
@@ -266,9 +269,9 @@ describe('Reconcile deployment usecase spec', () => {
       k8sClient,
       deploymentRepository,
       componentsRepository,
-      cdConfigurationsRepository,
       consoleLoggerService,
-      reconcileDeployment
+      reconcileDeployment,
+      executionsRepository
     )
 
     const reconcileObj = await reconcileDeploymentUsecase.execute(hookParams)
