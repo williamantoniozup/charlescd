@@ -190,7 +190,8 @@ class JdbcModuleRepository(
                 error_threshold   = ?,
                 latency_threshold = ?,
                 host_value        = ?,
-                gateway_name      = ?
+                gateway_name      = ?,
+                values_name       = ?
             WHERE id = ?
         """
 
@@ -201,6 +202,7 @@ class JdbcModuleRepository(
             component.latencyThreshold,
             component.hostValue,
             component.gatewayName,
+            component.valuesName,
             component.id
         )
     }
@@ -270,7 +272,7 @@ class JdbcModuleRepository(
                            latency_threshold,
                            host_value,
                            gateway_name,
-                           values_name
+                           values_name,
                            created_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """

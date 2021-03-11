@@ -257,3 +257,7 @@ databaseChangeLog:
       file: db/changelog/includes/20210301151000_create_table_butler_configurations.yaml
   - include:
       file: db/changelog/includes/20210301165000_alter_table_workspaces_add_butler_config_column.yaml
+  - include:
+      file: db/changelog/includes/20210311103700_alter_table_components_add_values_name.yaml
+  - include:
+      file: db/changelog/includes/20210311103700_alter_table_components_snapshots_add_values_name.yaml

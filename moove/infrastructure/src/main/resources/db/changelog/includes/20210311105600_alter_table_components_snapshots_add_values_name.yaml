@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20210311103700-1
+      author: thalles.freitas
+      comment: "Add values_name column to components table"
+      changes:
+        - addColumn:
+            tableName: components_snapshots
+            columns:
+              - column:
+                  name: values_name
+                  type: varchar(255)
