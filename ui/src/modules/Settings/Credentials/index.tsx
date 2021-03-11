@@ -126,7 +126,7 @@ const Credentials = ({ onClickHelp }: Props) => {
       <Section.CDConfiguration
         form={form}
         setForm={setForm}
-        data={workspace.cdConfiguration}
+        data={workspace.deploymentConfiguration}
       />
       <Section.CircleMatcher
         form={form}
