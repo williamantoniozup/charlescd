@@ -15,6 +15,7 @@
  */
 
 import React, { useReducer } from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query'
 import { ThemeProvider } from 'styled-components';
 import GlobalStyle from 'core/assets/style/global';
 import THEME from 'core/assets/themes';
@@ -23,18 +24,22 @@ import { rootState, rootReducer } from 'core/state';
 import { setUserAbilities } from 'core/utils/abilities';
 import Routes from './Routes';
 
+ const queryClient = new QueryClient()
+
 const currentTheme = 'dark';
 setUserAbilities();
 
 function App() {
   const globalState = useReducer(rootReducer, rootState);
   return (
-    <ContextProvider value={globalState}>
-      <ThemeProvider theme={THEME[currentTheme]}>
-        <Routes />
-        <GlobalStyle />
-      </ThemeProvider>
-    </ContextProvider>
+    <QueryClientProvider client={queryClient}>
+      <ContextProvider value={globalState}>
+        <ThemeProvider theme={THEME[currentTheme]}>
+          <Routes />
+          <GlobalStyle />
+        </ThemeProvider>
+      </ContextProvider>
+     </QueryClientProvider>
   );
 }
 
