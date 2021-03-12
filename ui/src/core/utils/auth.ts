@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 /*
  * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
@@ -26,13 +25,12 @@ import { HTTP_STATUS } from 'core/enums/HttpStatus';
 import { redirectTo } from './routes';
 import routes from 'core/constants/routes';
 import { getProfileByKey } from 'core/utils/profile';
-import { microfrontendKey } from './microfrontend';
 
 type AccessToken = {
   id?: string;
   name?: string;
   email?: string;
-  isRoot?: boolean;
+  root?: boolean;
   workspaces?: {
     id: string;
     roles: string[];
@@ -66,7 +64,7 @@ export const getAccessTokenDecoded = (): AccessToken => {
 };
 
 export const isRoot = () => {
-  const isRoot = getProfileByKey('isRoot');
+  const isRoot = getProfileByKey('root');
   return isRoot || false;
 };
 
@@ -95,13 +93,12 @@ export const isLogged = () => getAccessToken() && getRefreshToken();
 export const clearSession = () => {
   localStorage.removeItem(accessTokenKey);
   localStorage.removeItem(refreshTokenKey);
-  localStorage.removeItem(microfrontendKey);
   clearCircleId();
   clearProfile();
   clearWorkspace();
 };
 
-export const isIDMAuthFlow = (): boolean => {
+export const isIDMEnabled = (): boolean => {
   const IDMEnabled = window.CHARLESCD_ENVIRONMENT?.REACT_APP_IDM;
 
   return Boolean(parseInt(IDMEnabled));
@@ -121,7 +118,7 @@ export const redirectToIDM = () => {
 };
 
 export const logout = () => {
-  if (isIDMAuthFlow()) {
+  if (isIDMEnabled()) {
     const refreshToken = getRefreshToken();
     const url = `${IDMUrl}/auth/realms/${IDMRealm}${IDMUrlLogout}`;
 
