@@ -16,7 +16,9 @@
 
 package io.charlescd.circlematcher.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
+import org.springframework.util.Assert;
 
 public class KeyMetadata {
 
@@ -34,6 +36,12 @@ public class KeyMetadata {
 
     private Boolean isDefault;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer percentage;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Boolean active;
+
     private LocalDateTime createdAt;
 
     public KeyMetadata() {
@@ -47,6 +55,8 @@ public class KeyMetadata {
         this.name = segmentation.getName();
         this.workspaceId = segmentation.getWorkspaceId();
         this.isDefault = segmentation.getIsDefault();
+        this.percentage = segmentation.getPercentage();
+        this.active = segmentation.isActive();
         this.createdAt = segmentation.getCreatedAt();
     }
 
@@ -76,6 +86,40 @@ public class KeyMetadata {
 
     public Boolean getIsDefault() {
         return isDefault;
+    }
+
+    public boolean isPercentage() {
+        return type.equals(SegmentationType.PERCENTAGE);
+    }
+
+    public Integer getPercentage() {
+        return this.percentage;
+    }
+
+    public void setPercentage(Integer percentage) {
+        this.validatePercentage(percentage, "Percentage must be between 0 and 100");
+        this.percentage = percentage;
+    }
+
+    private void validatePercentage(Integer percentage, String message) {
+        if (percentage != null) {
+            Assert.isTrue(percentage <= 100 && percentage >= 0, message);
+        }
+    }
+
+    public int sumPercentage(Integer percentageToSum) {
+        this.validatePercentage(
+                this.percentage + percentageToSum, "Sum of percentage of circles exceeded 100 or is lower than 0"
+        );
+        return this.percentage += percentageToSum;
+    }
+
+    public Boolean isActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public LocalDateTime getCreatedAt() {

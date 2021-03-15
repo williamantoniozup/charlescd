@@ -99,7 +99,7 @@ class FindCircleComponentsInteractorImplTest extends Specification {
         def response = this.findCircleComponentsInteractor.execute(circleId, workspaceId)
 
         then:
-        1 * this.deploymentRepository.findActiveByCircleId(circleId) >> [deploymentOne, deploymentTwo]
+        1 * this.deploymentRepository.findActiveByCircleIdAndWorkspaceId(circleId, workspaceId) >> [deploymentOne, deploymentTwo]
         1 * this.buildRepository.findById(buildOne.id) >> Optional.of(buildOne)
         1 * this.buildRepository.findById(buildTwo.id) >> Optional.of(buildTwo)
 
@@ -171,7 +171,7 @@ class FindCircleComponentsInteractorImplTest extends Specification {
         def response = this.findCircleComponentsInteractor.execute(circleId, workspaceId)
 
         then:
-        1 * this.deploymentRepository.findActiveByCircleId(circleId) >> [deploymentOne, deploymentTwo]
+        1 * this.deploymentRepository.findActiveByCircleIdAndWorkspaceId(circleId, workspaceId) >> [deploymentOne, deploymentTwo]
         1 * this.buildRepository.findById(buildOne.id) >> Optional.of(buildOne)
         1 * this.buildRepository.findById(buildTwo.id) >> Optional.of(buildTwo)
 
@@ -199,7 +199,7 @@ class FindCircleComponentsInteractorImplTest extends Specification {
         def response = this.findCircleComponentsInteractor.execute(circleId, workspaceId)
 
         then:
-        1 * this.deploymentRepository.findActiveByCircleId(circleId) >> []
+        1 * this.deploymentRepository.findActiveByCircleIdAndWorkspaceId(circleId, workspaceId) >> []
 
         assert response != null
         assert response.size() == 0
@@ -243,7 +243,8 @@ class FindCircleComponentsInteractorImplTest extends Specification {
                 0,
                 null,
                 isDefault,
-                workspaceId
+                workspaceId,
+                null
         )
     }
 
@@ -264,7 +265,7 @@ class FindCircleComponentsInteractorImplTest extends Specification {
                 'Feature name', 'feature-branch-name', LocalDateTime.now(), author.name, author.id, moduleSnapshotList, '23f1eabd-fb57-419b-a42b-4628941e34ec'))
 
         def circle = new Circle('f8296cfc-6ae1-11ea-bc55-0242ac130003', 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003", null)
 
         def deploymentList = new ArrayList<Deployment>()
         def undeployedAt = deploymentStatusEnum == DeploymentStatusEnum.NOT_DEPLOYED ? LocalDateTime.now() : null
