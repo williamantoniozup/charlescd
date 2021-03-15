@@ -61,7 +61,10 @@ class CircleMatcherClientServiceTest extends Specification {
             assert request.workspaceId == circle.workspaceId
             assert request.reference == circle.reference
             assert request.type == circle.matcherType.name()
+            assert request.previousReference == null
+            assert !request.active
             assert request.createdAt == circle.createdAt
+            assert request.percentage == circle.percentage
         }
     }
 
@@ -73,7 +76,7 @@ class CircleMatcherClientServiceTest extends Specification {
         def matcherUri = "http://circle-matcher.com"
 
         when:
-        this.circleMatcherService.update(circle, previousReference, matcherUri)
+        this.circleMatcherService.update(circle, previousReference, matcherUri, false)
 
         then:
         1 * circleMatcherClient.update(_, _, _) >> { arguments ->
@@ -94,7 +97,9 @@ class CircleMatcherClientServiceTest extends Specification {
             assert request.reference == circle.reference
             assert request.type == circle.matcherType.name()
             assert request.previousReference == reference
+            assert !request.active
             assert request.createdAt == circle.createdAt
+            assert request.percentage == circle.percentage
         }
     }
 
@@ -194,7 +199,8 @@ class CircleMatcherClientServiceTest extends Specification {
                 null,
                 null,
                 false,
-                "44446b2a-557b-45c5-91be-1e1db9095556"
+                "44446b2a-557b-45c5-91be-1e1db9095556",
+                null
         )
     }
 }
