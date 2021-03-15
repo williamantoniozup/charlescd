@@ -44,17 +44,6 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
       .getMany()
   }
 
-  public async findDefaultActiveComponents(defaultCircleId: string): Promise<ComponentEntityV2[]> {
-    // WARNING: ALWAYS RETURN COMPONENT WITH ITS DEPLOYMENT
-    return this.createQueryBuilder('v2components')
-      .leftJoinAndSelect('v2components.deployment', 'deployment')
-      .where('deployment.current = true')
-      .andWhere('deployment.default_circle is true')
-      .andWhere('deployment.circle_id = :defaultCircleId', { defaultCircleId })
-      .orderBy('deployment.created_at', 'DESC')
-      .getMany()
-  }
-
   public async findCircleCreatedExecution(circleId: string): Promise<ComponentEntityV2[]> {
     return this.createQueryBuilder('c')
       .leftJoin('v2deployments', 'd', 'c.deployment_id = d.id')
@@ -74,5 +63,15 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
       .andWhere('e.status = :status', { status: DeploymentStatusEnum.CREATED })
       .orderBy('d.created_at', 'DESC')
       .getMany()
+  }
+
+  public async findActiveComponentsByCircleId(circleId: string): Promise<ComponentEntityV2[]> {
+    // WARNING: ALWAYS RETURN COMPONENT WITH ITS DEPLOYMENT
+    return this.createQueryBuilder('v2components')
+        .leftJoinAndSelect('v2components.deployment', 'deployment')
+        .where('deployment.current = true')
+        .andWhere('deployment.circle_id = :circleId', { circleId })
+        .orderBy('deployment.created_at', 'DESC')
+        .getMany()
   }
 }
