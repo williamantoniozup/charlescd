@@ -20,6 +20,10 @@ package tests
 
 import (
 	"encoding/json"
+	"os"
+	"testing"
+	"time"
+
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/dispatcher"
@@ -30,9 +34,6 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"os"
-	"testing"
-	"time"
 )
 
 type SuiteDispatcher struct {
@@ -80,7 +81,6 @@ func (s *SuiteDispatcher) TestStartMetricProviderError() {
 	datasource := datasource.DataSource{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "localhost:908"}`),
 		WorkspaceID: uuid.UUID{},
 		DeletedAt:   nil,
@@ -107,13 +107,13 @@ func (s *SuiteDispatcher) TestStartMetricProviderError() {
 	}
 
 	_, err := s.metricMain.SaveMetric(metric1)
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	time.Sleep(2 * time.Second)
 	stopChan <- true
 
 	execution, err := s.metricMain.FindAllMetricExecutions()
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	require.Equal(s.T(), "ERROR", execution[0].Status)
 }
