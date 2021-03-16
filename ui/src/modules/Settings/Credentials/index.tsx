@@ -15,7 +15,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import useForm from 'core/hooks/useForm';
 import isEmpty from 'lodash/isEmpty';
 import isNull from 'lodash/isNull';
 import { copyToClipboard } from 'core/utils/clipboard';
@@ -38,6 +38,10 @@ interface Props {
   onClickHelp?: (status: boolean) => void;
 }
 
+type FormState = {
+  name: string;
+}
+
 const Credentials = ({ onClickHelp }: Props) => {
   const id = getWorkspaceId();
   const [form, setForm] = useState<string>('');
@@ -54,7 +58,9 @@ const Credentials = ({ onClickHelp }: Props) => {
   const { item: workspace, status } = useGlobalState(
     ({ workspaces }) => workspaces
   );
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, errors } = useForm<FormState>({
+    mode: 'onChange'
+  });
 
   const handleSaveClick = ({ name }: Record<string, string>) => {
     updateWorkspace(name);
@@ -86,6 +92,7 @@ const Credentials = ({ onClickHelp }: Props) => {
           resume={true}
           defaultValue={workspace?.name}
           onClickSave={handleSubmit(handleSaveClick)}
+          isDisabled={!!errors?.name}
         />
       </ContentIcon>
     </Layer>
@@ -118,16 +125,6 @@ const Credentials = ({ onClickHelp }: Props) => {
       actions={renderActions()}
     >
       {isEmpty(form) && renderContent()}
-      <Section.UserGroup
-        form={form}
-        setForm={setForm}
-        data={workspace.userGroups}
-      />
-      <Section.Git
-        form={form}
-        setForm={setForm}
-        data={workspace.gitConfiguration}
-      />
       <Section.Registry
         form={form}
         setForm={setForm}
@@ -157,6 +154,16 @@ const Credentials = ({ onClickHelp }: Props) => {
           getNewActions={getActions}
         />
       )}
+      <Section.Git
+        form={form}
+        setForm={setForm}
+        data={workspace.gitConfiguration}
+      />
+      <Section.UserGroup
+        form={form}
+        setForm={setForm}
+        data={workspace.userGroups}
+      />
     </TabPanel>
   );
 

@@ -43,7 +43,6 @@ import LayerName from './Layer/Name';
 import LayerSegments from './Layer/Segments';
 import LayerRelease from './Layer/Release';
 import LayerComponents from './Layer/Components';
-import LayerMetrics from './Layer/Metrics';
 import LayerMetricsGroups from './Layer/MetricsGroups';
 import CreateSegments from './CreateSegments';
 import MetricsGroups from './MetricsGroups';
@@ -60,13 +59,22 @@ import {
 } from './helpers';
 import { SECTIONS } from './enums';
 import Styled from './styled';
+import get from 'lodash/get';
+import { CirclePercentagePagination } from 'modules/Circles/interfaces/CirclesPagination';
 
 interface Props {
   id: string;
   onChange: (delCircleStatus: string) => void;
+  updateCircle: () => void;
+  circlesListResponse: CirclePercentagePagination;
 }
 
-const CirclesComparationItem = ({ id, onChange }: Props) => {
+const CirclesComparationItem = ({
+  id,
+  onChange,
+  updateCircle,
+  circlesListResponse
+}: Props) => {
   const history = useHistory();
   const dispatch = useDispatch();
   const [activeSection, setActiveSection] = useState<SECTIONS>();
@@ -88,6 +96,7 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
   const [circle, setCircle] = useState<Circle>();
   const { pollingCircle, response } = useCirclePolling();
   const POLLING_DELAY = 15000;
+  const [releaseEnabled, setReleaseEnabled] = useState<boolean>(true);
 
   useEffect(() => {
     if (circleResponse) {
@@ -96,9 +105,20 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
   }, [circleResponse]);
 
   useEffect(() => {
+    if (
+      response &&
+      !response?.deployment && 
+      circle?.deployment?.status === DEPLOYMENT_STATUS.undeploying ) {
+        updateCircle();
+        setCircle(response);
+    }
+  }, [response, circle, updateCircle])
+
+  useEffect(() => {
     if (response) {
       setCircle(response);
     }
+
   }, [response]);
 
   useEffect(() => {
@@ -136,7 +156,7 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
         }
       });
     }
-  }, [undeployStatus, setCircle, circle, resetUndeployStatus]);
+  }, [undeployStatus, setCircle, circle, resetUndeployStatus, updateCircle]);
 
   useEffect(() => {
     if (id === NEW_TAB) {
@@ -154,9 +174,29 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
     }
   }, [delCircleResponse, history, id, onChange]);
 
+  const checkIfReleaseIsEnabled = () => {
+    const sumPercentage: number = get(
+      circlesListResponse,
+      'content[0].sumPercentage',
+      0
+    );
+    const availablePercentage = 100 - sumPercentage;
+    if (availablePercentage < circle.percentage && !circle.deployment) {
+      return setReleaseEnabled(false);
+    }
+    return setReleaseEnabled(true);
+  };
+
+  useEffect(() => {
+    if (circlesListResponse && circle) {
+      checkIfReleaseIsEnabled();
+    }
+  });
+
   const handleDelete = (deployStatus: string) => {
     delCircle(id, deployStatus, circle?.name);
     setAction('');
+    updateCircle();
   };
 
   const saveCircleName = (name: string) => {
@@ -181,13 +221,20 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
         circleData.id
       );
     }
+    updateCircle();
     setActiveSection(undefined);
   };
 
   const onCreateRelease = (deployment: Deployment) => {
     setCircle({ ...circle, deployment });
     setActiveSection(undefined);
+    updateCircle();
   };
+
+  const isInactive = () =>
+    isDeploying(circle?.deployment?.status) ||
+    isUndeploying(circle?.deployment?.status) ||
+    circleCannotBeDeleted(circle);
 
   const renderDropdown = () => (
     <Dropdown>
@@ -227,9 +274,7 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
           icon="delete"
           name="Delete"
           tooltip={getTooltipMessage(circle)}
-          deploying={isDeploying(circle?.deployment?.status)}
-          undeploying={isUndeploying(circle?.deployment?.status)}
-          isInactive={circleCannotBeDeleted(circle)}
+          isInactive={isInactive()}
           onClick={() => setAction('Delete')}
         />
       </Can>
@@ -281,9 +326,12 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
         circle={circle}
         isEditing={isEditing}
         onClickCreate={() => setActiveSection(SECTIONS.SEGMENTS)}
+        percentageCircles={circlesListResponse}
+        setActiveSection={setActiveSection}
       />
       <LayerRelease
         circle={circle}
+        releaseEnabled={releaseEnabled}
         onClickCreate={() => setActiveSection(SECTIONS.RELEASE)}
       />
       <LayerMetricsGroups
@@ -292,9 +340,6 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
         onClickCreate={() => setActiveSection(SECTIONS.GROUP_METRICS)}
       />
       {renderComponents()}
-      {!isDefaultCircle(circle?.name) && circle?.deployment && (
-        <LayerMetrics id={id} />
-      )}
     </>
   );
 

@@ -19,6 +19,7 @@ import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
 import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
+import { isRequiredAndNotBlank } from 'core/utils/validations';
 import { Deployment } from 'modules/Circles/interfaces/Circle';
 import { validationResolver, formatDataModules, validFields } from './helpers';
 import { ModuleForm } from '../interfaces/Module';
@@ -99,7 +100,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
         <Text.h5 color="dark">Type a name for release:</Text.h5>
         <Styled.Input
           name="releaseName"
-          ref={register({ required: true })}
+          ref={register(isRequiredAndNotBlank)}
           label="Release name"
         />
         {fields.map((module, index) => (
@@ -129,7 +130,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
           isLoading={savingBuild}
           isDisabled={isEmptyFields || !isEmpty(errors)}
         >
-          deploy
+          Deploy
         </Styled.Submit>
       </Styled.Form>
     </FormProvider>
