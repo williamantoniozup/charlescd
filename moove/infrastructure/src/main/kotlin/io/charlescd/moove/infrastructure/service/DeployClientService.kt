@@ -34,15 +34,14 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
         const val DEPLOY_CALLBACK_API_PATH = "v2/deployments"
     }
 
-    override fun deploy(deployment: Deployment, build: Build, isDefaultCircle: Boolean, configuration: ButlerConfiguration) {
+    override fun deploy(deployment: Deployment, build: Build, override: Boolean?, configuration: ButlerConfiguration) {
         deployClient.deploy(
             URI.create(configuration.butlerUrl),
             buildDeployRequest(
                 deployment,
                 build,
-                deployment.circle.id,
-                isDefaultCircle,
-                configuration
+                configuration,
+                override ?: false
             )
         )
     }
@@ -58,9 +57,8 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
     private fun buildDeployRequest(
         deployment: Deployment,
         build: Build,
-        circleId: String,
-        isDefault: Boolean,
-        butlerConfiguration: ButlerConfiguration
+        butlerConfiguration: ButlerConfiguration,
+        override: Boolean
     ): DeployRequest {
         return DeployRequest(
             deploymentId = deployment.id,
@@ -68,8 +66,9 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
             callbackUrl = createCallbackUrl(deployment),
             namespace = butlerConfiguration.namespace,
             components = buildComponentsDeployRequest(build),
-            circle = CircleRequest(circleId, isDefault),
-            git = GitRequest(butlerConfiguration.gitToken, butlerConfiguration.gitProvider)
+            circle = CircleRequest(deployment.circle.id, deployment.circle.isDefaultCircle()),
+            git = GitRequest(butlerConfiguration.gitToken, butlerConfiguration.gitProvider),
+            override = override
         )
     }
 
