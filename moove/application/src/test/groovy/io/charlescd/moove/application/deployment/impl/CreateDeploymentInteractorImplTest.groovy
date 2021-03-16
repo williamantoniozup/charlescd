@@ -60,7 +60,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def buildId = "5d4c95b4-6f83-11ea-bc55-0242ac130003"
         def workspaceId = TestUtils.workspaceId
         def authorization = TestUtils.authorization
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, buildId)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, buildId, null)
         def workspace = TestUtils.workspace
 
         when:
@@ -83,7 +83,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def butlerConfigId = TestUtils.butlerConfigId
         def authorization = TestUtils.authorization
         def build = getDummyBuild( BuildStatusEnum.BUILDING, DeploymentStatusEnum.NOT_DEPLOYED, false)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, null)
 
         def workspace = TestUtils.workspace
         def butlerConfig = TestUtils.butlerConfig
@@ -110,7 +110,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def butlerConfigId = TestUtils.butlerConfigId
         def authorization = TestUtils.authorization
         def build = getDummyBuild(BuildStatusEnum.BUILDING, DeploymentStatusEnum.NOT_DEPLOYED, false)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, null)
 
         def workspace = TestUtils.workspace
         def butlerConfig = TestUtils.butlerConfig
@@ -137,7 +137,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def workspaceId = TestUtils.workspaceId
         def butlerConfigId = TestUtils.butlerConfigId
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.NOT_DEPLOYED, false)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, null)
 
         def workspace = TestUtils.workspace
         def butlerConfig = TestUtils.butlerConfig
@@ -165,7 +165,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def workspaceId = TestUtils.workspaceId
         def butlerConfigId = TestUtils.butlerConfigId
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, false)
 
         def workspace = TestUtils.workspace
         def butlerConfig = TestUtils.butlerConfig
@@ -181,18 +181,20 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * butlerConfigurationRepository.find(butlerConfigId) >> Optional.of(butlerConfig)
         1 * circleRepository.findById(circleId) >> Optional.of(build.deployments[0].circle)
         1 * deploymentRepository.save(_) >> _
-        1 * deployService.deploy(_, _, false, _) >> { arguments ->
+        1 * deployService.deploy(_, _, _, _) >> { arguments ->
             def deploymentArgument = arguments[0]
             def buildArgument = arguments[1]
+            def override = arguments[2]
             def configArgument = arguments[3]
 
             assert deploymentArgument instanceof Deployment
             assert buildArgument instanceof Build
             assert configArgument instanceof ButlerConfiguration
-
+            assert !override
             deploymentArgument.status == DeploymentStatusEnum.DEPLOYING
             buildArgument.id == build.id
             configArgument.id == butlerConfig.id
+
         }
 
         notThrown()
@@ -225,7 +227,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def workspaceId = TestUtils.workspaceId
         def butlerConfigId = TestUtils.butlerConfigId
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, true)
-        def createDeploymentRequest = new CreateDeploymentRequest(circle.id, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circle.id, build.id, false)
 
         def workspace = TestUtils.workspace
         def butlerConfig = TestUtils.butlerConfig
@@ -242,15 +244,16 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * circleRepository.findById(circle.id) >> Optional.of(circle)
         0 * deployService.undeploy(_, _)
         1 * deploymentRepository.save(_) >> _
-        1 * deployService.deploy(_, _, true, _) >> { arguments ->
+        1 * deployService.deploy(_, _, _, _) >> { arguments ->
             def deploymentArgument = arguments[0]
             def buildArgument = arguments[1]
+            def override = arguments[2]
             def configArgument = arguments[3]
 
             assert deploymentArgument instanceof Deployment
             assert buildArgument instanceof Build
             assert configArgument instanceof ButlerConfiguration
-
+            assert !override
             deploymentArgument.status == DeploymentStatusEnum.DEPLOYING
             buildArgument.id == build.id
             configArgument.id == butlerConfig.id

@@ -54,7 +54,7 @@ class V2DeploymentController(
     fun createDeployment(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestHeader(value = "Authorization") authorization: String,
-        @Valid @RequestBody createDeploymentRequest: CreateDeploymentRequest,
+        @Valid @RequestBody createDeploymentRequest: CreateDeploymentRequest
     ): DeploymentResponse {
         return this.createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
     }
