@@ -6923,7 +6923,7 @@ spec:
             - name: AMQP_WAIT_MESSAGE_QUEUE
               value: "queue-message-wait"
             - name: AMQP_WAIT_MESSAGE_EXCHANGE
-              value: "xchange-message-wait2"
+              value: "exchange-message-wait"
             - name: AMQP_MESSAGE_ROUTING_KEY
               value: "routing-key-message"
             - name: CONSUMER_MESSAGE_RETRY_EXPIRATION
