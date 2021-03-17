@@ -52,9 +52,9 @@ class SegmentationServiceImplTest extends Specification {
 
         def content = new Content("username", "CONTAINS", values)
         def node = TestUtils.createClauseNode([TestUtils.createNode(content)])
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.REGULAR)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.REGULAR, true)
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
-        def request = TestUtils.createSegmentationRequest(node, SegmentationType.REGULAR)
+        def request = TestUtils.createSegmentationRequest(node, SegmentationType.REGULAR, null, true)
 
         when:
 
@@ -80,9 +80,9 @@ class SegmentationServiceImplTest extends Specification {
 
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, true)
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
-        def request = TestUtils.createSegmentationRequest(node, SegmentationType.SIMPLE_KV)
+        def request = TestUtils.createSegmentationRequest(node, SegmentationType.SIMPLE_KV, null, true)
 
         when:
 
@@ -109,12 +109,12 @@ class SegmentationServiceImplTest extends Specification {
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
 
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.REGULAR)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.REGULAR, true)
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
         def metadataList = new ArrayList()
         metadataList.add(keyMetadata)
 
-        def request = TestUtils.createUpdateSegmentationRequest(node, SegmentationType.REGULAR)
+        def request = TestUtils.createUpdateSegmentationRequest(node, SegmentationType.REGULAR, null, true)
 
         when:
 
@@ -145,12 +145,12 @@ class SegmentationServiceImplTest extends Specification {
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
 
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, true)
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
         def metadataList = new ArrayList()
         metadataList.add(keyMetadata)
 
-        def request = TestUtils.createUpdateSegmentationRequest(node, SegmentationType.SIMPLE_KV)
+        def request = TestUtils.createUpdateSegmentationRequest(node, SegmentationType.SIMPLE_KV, null, true)
 
         when:
 
@@ -179,7 +179,7 @@ class SegmentationServiceImplTest extends Specification {
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
 
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.SIMPLE_KV, true)
         def composedKey = "username:74b21efa-d52f-4266-9e6f-a28f26f7fffd:SIMPLE_KV"
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
         def metadataList = new ArrayList()
@@ -236,7 +236,7 @@ class SegmentationServiceImplTest extends Specification {
 
         def content = TestUtils.createContent(values)
         def node = TestUtils.createNode(content)
-        def segmentation = TestUtils.createSegmentation(node, SegmentationType.REGULAR)
+        def segmentation = TestUtils.createSegmentation(node, SegmentationType.REGULAR, true)
         def keyMetadata = new KeyMetadata(composedKey, segmentation)
         def request = TestUtils.createDefaultSegmentationRequest(node, SegmentationType.REGULAR)
 
