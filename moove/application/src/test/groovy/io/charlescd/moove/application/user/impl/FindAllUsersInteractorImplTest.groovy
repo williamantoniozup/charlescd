@@ -30,10 +30,8 @@ import java.time.LocalDateTime
 class FindAllUsersInteractorImplTest extends Specification {
 
     private FindAllUsersInteractor findAllUsersInteractor
-
-    private UserRepository userRepository = Mock(UserRepository)
-
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
+    private UserRepository userRepository = Mock(UserRepository)
 
     void setup() {
         this.findAllUsersInteractor = new FindAllUsersInteractorImpl(new UserService(userRepository, managementUserSecurityService))
@@ -113,12 +111,6 @@ class FindAllUsersInteractorImplTest extends Specification {
         assert response.content[0].email == user.email
         assert response.content[0].photoUrl == user.photoUrl
         assert response.content[0].createdAt == user.createdAt
-        assert response.content[0].workspaces.size() == user.workspaces.size()
-        assert response.content[0].workspaces[0].id == workspacePermission.id
-        assert response.content[0].workspaces[0].name == workspacePermission.name
-        assert response.content[0].workspaces[0].permissions.size() == workspacePermission.permissions.size()
-        assert response.content[0].workspaces[0].permissions[0] == workspacePermission.permissions[0].name
-
         assert response.totalPages == 1
         assert response.isLast
     }
