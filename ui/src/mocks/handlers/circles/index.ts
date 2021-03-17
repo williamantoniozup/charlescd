@@ -16,17 +16,12 @@
 
 import { rest } from 'msw';
 import { basePath } from 'core/providers/base';
-import { WORKSPACES_LIST, WORKSPACE_DATA } from './responses';
+import { ACTIVE_CIRCLES_LIST } from './responses';
 
 export default [
-  rest.get(`${basePath}/moove/v2/workspaces`, (req, res, ctx) => {
-    return res(
-      ctx.json(WORKSPACES_LIST)
-    )
-  }),
-  rest.get(`${basePath}/moove/v2/workspaces/:workspaceId`, (req, res, ctx) => {
-    return res(
-      ctx.json(WORKSPACE_DATA)
-    )
-  }),
-];
+    rest.get(`${basePath}/moove/v2/circles`, (req, res, ctx) => {
+      return res(
+        ctx.json(ACTIVE_CIRCLES_LIST)
+      )
+    }),
+  ];
