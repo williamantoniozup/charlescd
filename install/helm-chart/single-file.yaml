@@ -6918,14 +6918,22 @@ spec:
               value: "amqp://charlescd_hermes:aGVybWVz@charlescd-rabbitmq:5672/"
             - name: AMQP_MESSAGE_QUEUE
               value: "queue-message"
-            - name: AMQP_DELIVERED_FAIL_QUEUE
-              value: "queue-fail"
-            - name: PUBLISHER_TIME
-              value: "15s"
-            - name: PUBLISHER_ATTEMPTS
-              value: "2"
-            - name: CONSUME_DELIVERED_FAILED_TIME
-              value: "2m"
+            - name: AMQP_MESSAGE_EXCHANGE
+              value: "exchange-message"
+            - name: AMQP_WAIT_MESSAGE_QUEUE
+              value: "queue-message-wait"
+            - name: AMQP_WAIT_MESSAGE_EXCHANGE
+              value: "xchange-message-wait2"
+            - name: AMQP_MESSAGE_ROUTING_KEY
+              value: "routing-key-message"
+            - name: CONSUMER_MESSAGE_RETRY_EXPIRATION
+              value: "10000"
+            - name: CONSUMER_MESSAGE_RETRY_ATTEMPTS
+              value: "3"
+             - name: PUBLISHER_TIME
+              value: "30s"
+             - name: PUBLISHER_ATTEMPTS
+              value: "3"                                            
             - name: SUBSCRIPTION_REGISTER_LIMIT
               value: "5"
           image: zupcharles/charlescd-hermes:0.6.0
