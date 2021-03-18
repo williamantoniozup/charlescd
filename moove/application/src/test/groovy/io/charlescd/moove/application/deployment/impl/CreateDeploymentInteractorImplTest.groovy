@@ -283,122 +283,13 @@ class CreateDeploymentInteractorImplTest extends Specification {
         deploymentResponse.deployedAt == null
     }
 
-    def 'when there is no active deployment in the circle and it is default circle, should not undeploy it and deploy new one'() {
-        given:
-        def author = TestUtils.user
-        def circle = getCircle(true)
-        def workspaceId = TestUtils.workspaceId
-        def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, true)
-        def createDeploymentRequest = new CreateDeploymentRequest(circle.id, build.id)
-        def authorization = TestUtils.authorization
-        def workspace = TestUtils.workspace
-
-        when:
-        def deploymentResponse = createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
-
-        then:
-        1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
-        1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
-        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
-        1 * circleRepository.findById(circle.id) >> Optional.of(circle)
-        1 * deploymentRepository.save(_) >> _
-        1 * deployService.deploy(_, _, true, _) >> { arguments ->
-            def deploymentArgument = arguments[0]
-            def buildArgument = arguments[1]
-
-            assert deploymentArgument instanceof Deployment
-            assert buildArgument instanceof Build
-
-            deploymentArgument.status == DeploymentStatusEnum.DEPLOYING
-            buildArgument.id == build.id
-        }
-
-        notThrown()
-        deploymentResponse.id != null
-        deploymentResponse.author.createdAt != null
-        deploymentResponse.status == DeploymentStatusEnum.DEPLOYING.name()
-        deploymentResponse.author.id == author.id
-        deploymentResponse.author.name == author.name
-        deploymentResponse.author.email == author.email
-        deploymentResponse.author.photoUrl == author.photoUrl
-        deploymentResponse.circle.id == circle.id
-        deploymentResponse.circle.name == circle.name
-        deploymentResponse.circle.author.id == circle.author.id
-        deploymentResponse.circle.author.name == circle.author.name
-        deploymentResponse.circle.author.email == circle.author.email
-        deploymentResponse.circle.author.photoUrl == circle.author.photoUrl
-        deploymentResponse.circle.importedAt == circle.importedAt
-        deploymentResponse.circle.importedKvRecords == circle.importedKvRecords
-        deploymentResponse.circle.matcherType == circle.matcherType.name()
-        deploymentResponse.circle.rules == build.deployments[0].circle.rules
-        deploymentResponse.buildId == build.id
-        deploymentResponse.deployedAt == null
-    }
-
-    def 'when there is no active deployment in the circle and it is not default circle, should not undeploy it and deploy new one'() {
-        given:
-        def authorization = TestUtils.authorization
-        def author = TestUtils.user
-        def workspaceId = TestUtils.workspaceId
-        def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
-        def circle = new Circle(circleId, 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003", null)
-        def notDeployedDeployment = getDeployment(DeploymentStatusEnum.NOT_DEPLOYED, LocalDateTime.now().plusDays(1), LocalDateTime.now(), false)
-
-        def workspace = TestUtils.workspace
-
-        when:
-        def deploymentResponse = createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
-
-        then:
-        1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
-        1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
-        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
-        1 * circleRepository.findById(circleId) >> Optional.of(build.deployments[0].circle)
-        1 * deploymentRepository.save(_) >> _
-        1 * deployService.deploy(_, _, false, _) >> { arguments ->
-            def deploymentArgument = arguments[0]
-            def buildArgument = arguments[1]
-
-            assert deploymentArgument instanceof Deployment
-            assert buildArgument instanceof Build
-
-            deploymentArgument.status == DeploymentStatusEnum.DEPLOYING
-            buildArgument.id == build.id
-        }
-
-        notThrown()
-        deploymentResponse.id != null
-        deploymentResponse.author.createdAt != null
-        deploymentResponse.status == DeploymentStatusEnum.DEPLOYING.name()
-        deploymentResponse.author.id == author.id
-        deploymentResponse.author.name == author.name
-        deploymentResponse.author.email == author.email
-        deploymentResponse.author.photoUrl == author.photoUrl
-        deploymentResponse.circle.id == build.deployments[0].circle.id
-        deploymentResponse.circle.name == build.deployments[0].circle.name
-        deploymentResponse.circle.author.id == build.deployments[0].circle.author.id
-        deploymentResponse.circle.author.name == build.deployments[0].circle.author.name
-        deploymentResponse.circle.author.email == build.deployments[0].circle.author.email
-        deploymentResponse.circle.author.photoUrl == build.deployments[0].circle.author.photoUrl
-        deploymentResponse.circle.importedAt == build.deployments[0].circle.importedAt
-        deploymentResponse.circle.importedKvRecords == build.deployments[0].circle.importedKvRecords
-        deploymentResponse.circle.matcherType == build.deployments[0].circle.matcherType.name()
-        deploymentResponse.circle.rules == build.deployments[0].circle.rules
-        deploymentResponse.buildId == build.id
-        deploymentResponse.deployedAt == null
-    }
-
     def 'when the deploy is in a percentage circle and the limit of active percentage circles should not allow the deploy'() {
         given:
         def author = getDummyUser()
         def circleId = "5d4c9492-6f83-11ea-bc55-0242ac130003"
-        def workspaceId = "5d4c97da-6f83-11ea-bc55-0242ac130003"
+        def workspaceId = TestUtils.workspaceId
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, false)
 
         def percentageCircle = new Circle(circleId, 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
                 author, LocalDateTime.now(), MatcherTypeEnum.PERCENTAGE, null, null, null, false, workspaceId, 20)
@@ -406,9 +297,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
                     author, LocalDateTime.now(), MatcherTypeEnum.PERCENTAGE, null, null, null, false, workspaceId, 90)
         def deployedPercentagesCirclePage = new Page([deployedPercentageCircle], 0, 5, 1)
 
-        def workspace = new Workspace(workspaceId, "CharlesCD", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.COMPLETE, null, "http://matcher.com.br",
-                null, "b9c8ca61-b963-499b-814d-71a66e89eabd", null)
+        def workspace = TestUtils.workspace
         def authorization = TestUtils.authorization
         when:
         createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
@@ -418,15 +307,17 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
+        1 * butlerConfigurationRepository.find(TestUtils.butlerConfigId) >> Optional.of(TestUtils.butlerConfig)
         1 * circleRepository.findById(circleId) >> Optional.of(percentageCircle)
         1 * circleRepository.findCirclesPercentage(workspaceId, null, true, null) >> deployedPercentagesCirclePage
-        0 * deployService.undeploy(_, _)
         0 * deploymentRepository.save(_) >> _
-        0 * deployService.deploy(_, _, false, _) >> {}
+        0 * deployService.deploy(_, _, _, _) >> {
+        }
 
         def ex = thrown(BusinessException)
         println(ex)
         ex.message == 'limit.of.percentage.circles.exceeded'
+
     }
 
     def 'when the deploy is in a percentage circle that was already deployed before and the limit of percentage reached, should allow the deploy'() {
@@ -434,7 +325,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def author = getDummyUser()
         def workspaceId = TestUtils.workspaceId
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, true)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, false)
 
         def percentageCircle = getCircle(false,20)
         def deployedPercentageCircle = getCircle(false, 90)
@@ -452,6 +343,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+        1 * butlerConfigurationRepository.find(TestUtils.butlerConfigId) >> Optional.of(TestUtils.butlerConfig)
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * circleRepository.findById(circleId) >> Optional.of(percentageCircle)
         1 * circleRepository.findCirclesPercentage(workspaceId, null, true, null) >> deployedPercentagesCirclePage
