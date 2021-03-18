@@ -51,7 +51,7 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
             val deployment = createDeployment(request, workspaceId, user)
             checkIfCircleCanBeDeployed(deployment.circle)
             deploymentService.save(deployment)
-            deployService.deploy(deployment, build, deployment.circle.isDefaultCircle(), deploymentConfiguration)
+            deployService.deploy(deployment, build, request.override, deploymentConfiguration)
             return DeploymentResponse.from(deployment, build)
         } else {
             throw BusinessException.of(MooveErrorCode.DEPLOY_INVALID_BUILD).withParameters(build.id)
