@@ -34,19 +34,11 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
         const val DEPLOY_CALLBACK_API_PATH = "v2/deployments"
     }
 
-    override fun deploy(deployment: Deployment, build: Build, override: Boolean?, configuration: ButlerConfiguration) {
-        deployClient.deploy(
-            URI.create(configuration.butlerUrl),
-            buildDeployRequest(
-                deployment,
-                build,
-                configuration,
-                override ?: false
-            )
-        )
+    override fun deploy(deployment: Deployment, build: Build, override: Boolean?, configuration: DeploymentConfiguration) {
+        deployClient.deploy(URI(configuration.butlerUrl), buildDeployRequest(deployment,build, configuration, override ?:false))
     }
 
-    override fun undeploy(deploymentId: String, authorId: String, configuration: ButlerConfiguration) {
+    override fun undeploy(deploymentId: String, authorId: String, configuration: DeploymentConfiguration) {
         deployClient.undeploy(
             URI.create(configuration.butlerUrl),
             deploymentId,
@@ -57,17 +49,17 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
     private fun buildDeployRequest(
         deployment: Deployment,
         build: Build,
-        butlerConfiguration: ButlerConfiguration,
+        deploymentConfiguration: DeploymentConfiguration,
         override: Boolean
     ): DeployRequest {
         return DeployRequest(
             deploymentId = deployment.id,
             authorId = deployment.author.id,
             callbackUrl = createCallbackUrl(deployment),
-            namespace = butlerConfiguration.namespace,
+            namespace = deploymentConfiguration.namespace,
             components = buildComponentsDeployRequest(build),
             circle = CircleRequest(deployment.circle.id, deployment.circle.isDefaultCircle()),
-            git = GitRequest(butlerConfiguration.gitToken, butlerConfiguration.gitProvider),
+            git = GitRequest(deploymentConfiguration.gitToken, deploymentConfiguration.gitProvider),
             overrideCircle = override
         )
     }
