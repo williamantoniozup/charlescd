@@ -48,7 +48,7 @@ class DeployClientServiceTest extends Specification {
         def deploymentConfig = getDummyDeploymentConfiguration(user)
 
         when:
-        deployClientService.deploy(deployment, build, override , deploymentConfigl)
+        deployClientService.deploy(deployment, build, override , deploymentConfig)
 
         then:
         1 * deployClient.deploy(_, _) >> { arguments ->
@@ -180,7 +180,7 @@ class DeployClientServiceTest extends Specification {
         def build = getDummyBuild(user, circle, workspaceId)
         def deployment = getDummyDeployment('1fe2b392-726d-11ea-bc55-0242ac130003', DeploymentStatusEnum.DEPLOYING,
                 user, circle, workspaceId)
-        def butlerConfig = getDummyButlerConfiguration(user)
+        def butlerConfig = getDummyDeploymentConfiguration(user)
 
         when:
         deployClientService.deploy(deployment, build, override, butlerConfig)
@@ -204,7 +204,7 @@ class DeployClientServiceTest extends Specification {
         def build = getDummyBuild(user, circle, workspaceId)
         def deployment = getDummyDeployment('1fe2b392-726d-11ea-bc55-0242ac130003', DeploymentStatusEnum.DEPLOYING,
                 user, circle, workspaceId)
-        def butlerConfig = getDummyButlerConfiguration(user)
+        def butlerConfig = getDummyDeploymentConfiguration(user)
 
         when:
         deployClientService.deploy(deployment, build, override, butlerConfig)
@@ -228,7 +228,7 @@ class DeployClientServiceTest extends Specification {
         def build = getDummyBuild(user, circle, workspaceId)
         def deployment = getDummyDeployment('1fe2b392-726d-11ea-bc55-0242ac130003', DeploymentStatusEnum.DEPLOYING,
                 user, circle, workspaceId)
-        def butlerConfig = getDummyButlerConfiguration(user)
+        def butlerConfig = getDummyDeploymentConfiguration(user)
 
         when:
         deployClientService.deploy(deployment, build, override, butlerConfig)

@@ -309,7 +309,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
-        1 * butlerConfigurationRepository.find(TestUtils.butlerConfigId) >> Optional.of(TestUtils.butlerConfig)
+        1 * deploymentConfigurationRepository.find(TestUtils.deploymentConfigId) >> Optional.of(TestUtils.deploymentConfig)
         1 * circleRepository.findById(circleId) >> Optional.of(percentageCircle)
         1 * circleRepository.findCirclesPercentage(workspaceId, null, true, null) >> deployedPercentagesCirclePage
         0 * deploymentRepository.save(_) >> _
@@ -345,7 +345,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * butlerConfigurationRepository.find(TestUtils.butlerConfigId) >> Optional.of(TestUtils.butlerConfig)
+        1 * deploymentConfigurationRepository.find(TestUtils.deploymentConfigId) >> Optional.of(TestUtils.deploymentConfig)
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * circleRepository.findById(circleId) >> Optional.of(percentageCircle)
         1 * circleRepository.findCirclesPercentage(workspaceId, null, true, null) >> deployedPercentagesCirclePage
