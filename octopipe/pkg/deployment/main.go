@@ -30,7 +30,7 @@ type MainUseCases interface {
 		manifest map[string]interface{},
 		config *rest.Config,
 		kubectl kube.Kubectl,
-		event []event.Event,
+		event *event.EventAgregator,
 	) UseCases
 }
 

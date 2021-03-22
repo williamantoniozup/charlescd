@@ -20,6 +20,7 @@ import (
 	"log"
 	"octopipe/pkg/cloudprovider"
 	"octopipe/pkg/deployment"
+	"octopipe/pkg/event"
 	"octopipe/pkg/manager"
 	"octopipe/pkg/repository"
 	"octopipe/pkg/template"
@@ -44,12 +45,14 @@ func main() {
 		Log:    klogr.New(),
 		Tracer: tracing.NopTracer{},
 	}
-
+	events := &event.EventAgregator{
+		Events: make([]event.Event, 0),
+	}
 	repositoryMain := repository.NewRepositoryMain()
 	templateMain := template.NewTemplateMain(repositoryMain)
 	cloudproviderMain := cloudprovider.NewCloudproviderMain()
 	deploymentMain := deployment.NewDeploymentMain()
-	managerMain := manager.NewManagerMain(kubectl, templateMain, deploymentMain, cloudproviderMain, repositoryMain)
+	managerMain := manager.NewManagerMain(kubectl, templateMain, deploymentMain, cloudproviderMain, repositoryMain, events)
 
 	apiServer := api.NewAPI()
 	apiServer.NewPipelineAPI(managerMain)

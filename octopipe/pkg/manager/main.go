@@ -36,7 +36,7 @@ type ManagerMain struct {
 	deploymentMain    deployment.MainUseCases
 	cloudproviderMain cloudprovider.MainUseCases
 	repositoryMain    repository.MainUseCases
-	events			  []event.Event
+	eventAgregator	 *event.EventAgregator
 }
 
 func NewManagerMain(
@@ -45,7 +45,7 @@ func NewManagerMain(
 	deploymentMain deployment.MainUseCases,
 	cloudprovider cloudprovider.MainUseCases,
 	repositoryMain repository.MainUseCases,
-	events []event.Event,
+	events *event.EventAgregator,
 ) MainUseCases {
 
 	return &ManagerMain{kubectl, templateMain, deploymentMain, cloudprovider, repositoryMain, events}

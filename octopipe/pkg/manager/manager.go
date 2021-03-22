@@ -23,7 +23,6 @@ import (
 	"github.com/argoproj/gitops-engine/pkg/utils/kube"
 	"github.com/argoproj/gitops-engine/pkg/utils/tracing"
 	"k8s.io/klog/klogr"
-	"octopipe/pkg/event"
 	pipelinePKG "octopipe/pkg/pipeline"
 
 	log "github.com/sirupsen/logrus"
@@ -170,7 +169,7 @@ func (manager Manager) executeManifest(pipeline pipelinePKG.Pipeline, step pipel
 		manifest,
 		config,
 		kubectl,
-		make([]event.Event, 1),
+		manager.eventAgregator,
 	)
 	if err != nil {
 		log.WithFields(log.Fields{"function": "executeManifest", "error": err.Error()}).Error("Failed in deployment creation")
@@ -218,8 +217,4 @@ func (manager Manager) getFilesFromRepository(name string, step pipelinePKG.Step
 	}
 
 	return templateContent, valueContent, nil
-}
-
-func AddEventPipeline(event string, pipeline V2DeploymentPipeline) {
-	pipeline.Events = append(pipeline.Events, event)
 }

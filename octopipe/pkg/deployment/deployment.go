@@ -53,7 +53,7 @@ type Deployment struct {
 	manifest  map[string]interface{}
 	config    *rest.Config
 	kubectl   kube.Kubectl
-	events 		[]event.Event
+	events 		*event.EventAgregator
 }
 
 func (main *DeploymentMain) NewDeployment(
@@ -63,7 +63,7 @@ func (main *DeploymentMain) NewDeployment(
 	manifest map[string]interface{},
 	config *rest.Config,
 	kubectl kube.Kubectl,
-	events []event.Event,
+	events *event.EventAgregator,
 ) UseCases {
 	return &Deployment{
 		action:    action,
@@ -157,7 +157,6 @@ func (deployment *Deployment) NewWatcher() error {
 				}
 
 				if healthStatus != nil && healthStatus.Status == health.HealthStatusHealthy {
-					event.AppendInfoEvent(deployment.events, fmt.Sprintf("Resource %s with kind &s is healthy!", resource.GetName(), resource.GroupVersionKind().Kind), )
 					ticker.Stop()
 					return nil
 				}
@@ -182,7 +181,7 @@ func (deployment *Deployment) watchDeploy() error {
 
 func (deployment *Deployment) Deploy() error {
 	manifest := deployment.getUnstructuredManifest()
-
+	deployment.events.AppendInfoEvent(fmt.Sprintf("Applying %s/%s resource", manifest.GetName(), manifest.GroupVersionKind()))
 	_, err := deployment.kubectl.ApplyResource(
 		context.TODO(),
 		deployment.config,
@@ -204,7 +203,6 @@ func (deployment *Deployment) Deploy() error {
 			"deployment.deploy.ApplyResource",
 		)
 	}
-	event.AppendInfoEvent(deployment.events, fmt.Sprintf("Resource %s  with kind %s applied!", manifest.GetName(), manifest.GroupVersionKind().String())
 	return deployment.NewWatcher()
 }
 
