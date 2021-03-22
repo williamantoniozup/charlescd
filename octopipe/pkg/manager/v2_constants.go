@@ -2,6 +2,7 @@ package manager
 
 import (
 	"octopipe/pkg/cloudprovider"
+	"octopipe/pkg/event"
 	"octopipe/pkg/repository"
 	"octopipe/pkg/template/helm"
 )
@@ -9,6 +10,7 @@ import (
 type V2CallbackData struct {
 	Type   string `json:"type"`
 	Status string `json:"status"`
+	Events []event.Event `json:"events"`
 }
 
 // DefaultCircle contains information for helm usage
@@ -47,6 +49,7 @@ type V2DeploymentPipeline struct {
 	UnusedProxyDeployments []map[string]interface{}    `json:"unusedProxyDeployments"`
 	CallbackUrl            string                      `json:"callbackUrl"`
 	ClusterConfig          cloudprovider.Cloudprovider `json:"clusterConfig"`
+	Events 				   []string
 }
 
 type V2UndeploymentPipeline struct {

@@ -18,7 +18,9 @@ package deployment
 
 import (
 	"context"
+	"fmt"
 	"octopipe/pkg/customerror"
+	"octopipe/pkg/event"
 	"os"
 	"strconv"
 	"time"
@@ -51,6 +53,7 @@ type Deployment struct {
 	manifest  map[string]interface{}
 	config    *rest.Config
 	kubectl   kube.Kubectl
+	events 		[]event.Event
 }
 
 func (main *DeploymentMain) NewDeployment(
@@ -60,6 +63,7 @@ func (main *DeploymentMain) NewDeployment(
 	manifest map[string]interface{},
 	config *rest.Config,
 	kubectl kube.Kubectl,
+	events []event.Event,
 ) UseCases {
 	return &Deployment{
 		action:    action,
@@ -68,6 +72,7 @@ func (main *DeploymentMain) NewDeployment(
 		manifest:  manifest,
 		config:    config,
 		kubectl:   kubectl,
+		events: events,
 	}
 }
 
@@ -152,6 +157,7 @@ func (deployment *Deployment) NewWatcher() error {
 				}
 
 				if healthStatus != nil && healthStatus.Status == health.HealthStatusHealthy {
+					event.AppendInfoEvent(deployment.events, fmt.Sprintf("Resource %s with kind &s is healthy!", resource.GetName(), resource.GroupVersionKind().Kind), )
 					ticker.Stop()
 					return nil
 				}
@@ -198,7 +204,7 @@ func (deployment *Deployment) Deploy() error {
 			"deployment.deploy.ApplyResource",
 		)
 	}
-
+	event.AppendInfoEvent(deployment.events, fmt.Sprintf("Resource %s  with kind %s applied!", manifest.GetName(), manifest.GroupVersionKind().String())
 	return deployment.NewWatcher()
 }
 
