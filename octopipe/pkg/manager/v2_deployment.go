@@ -103,7 +103,6 @@ func (manager Manager) ExecuteV2DeploymentPipeline(v2Pipeline V2DeploymentPipeli
 func (manager Manager) extractManifests(v2Pipeline V2DeploymentPipeline) (map[string]interface{}, map[string]interface{}, error) {
 
 	klog.Info("Remove Circle and Default circleIDS")
-	manager.eventAgregator.AppendInfoEvent("Remove circle and default")
 	fmt.Println(manager.eventAgregator.Events)
 	virtualServiceData, err := manager.removeDataFromProxyDeployments(v2Pipeline.ProxyDeployments)
 	if err != nil {
@@ -111,15 +110,19 @@ func (manager Manager) extractManifests(v2Pipeline V2DeploymentPipeline) (map[st
 	}
 
 	klog.Info("Render Helm manifests")
+	manager.eventAgregator.AppendInfoEvent("Rendering helm manifests")
 	mapManifests := map[string]interface{}{}
 	for _, deployment := range v2Pipeline.Deployments {
 		deployment := deployment // https://golang.org/doc/faq#closures_and_goroutines
 		extraVirtualServiceValues := virtualServiceData[deployment.ComponentName]
 		d, err := yaml.Marshal(&extraVirtualServiceValues)
 		if err != nil {
-
+			return nil, nil, err
 		}
 		manifests, err := manager.getV2HelmManifests(deployment, string(d))
+		if err != nil {
+			return nil, nil, err
+		}
 		mapManifests[deployment.ComponentName] = manifests
 	}
 

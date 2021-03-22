@@ -11,6 +11,7 @@ type Event struct {
 	Title string	`json:"title"`
 	Details string	`json:"details,omitempty"`
 }
+
 type EventAgregator struct {
 	Events []Event
 }
@@ -28,7 +29,7 @@ func (e *EventAgregator) AppendErrorEvent(err error) {
 	var customError customerror.Customerror
 	errorBytes, _ := json.Marshal(err)
 	_ = json.Unmarshal(errorBytes, &customError)
-	if !reflect.DeepEqual(customError, customerror.Customerror{}) && len(customError.Detail) >  0 && len(customError.Title) > 0 {
+	if !reflect.DeepEqual(customError, customerror.Customerror{}) && len(customError.Detail) >  0 || len(customError.Title) > 0 {
 		event := Event{
 			EventType: "ERROR",
 			Title: customError.Title,
