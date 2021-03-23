@@ -14,33 +14,19 @@
  * limitations under the License.
  */
 
-import { IsEnum, IsNotEmpty } from 'class-validator'
+import { EntityRepository, Repository } from 'typeorm'
 import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
-import { ExecutionTypeEnum } from '../enums'
-import { ApiProperty } from '@nestjs/swagger'
-import { Event } from '../interfaces/event.interface'
+import { ComponentEntityV2 } from '../entity/component.entity'
+import { DeploymentEvents } from '../entity/event.entity'
 
-export class DeploymentNotificationRequestDto {
+@EntityRepository(DeploymentEvents)
+export class DeploymentEventsRepository extends Repository<DeploymentEvents> {
 
-  @ApiProperty({ enum: DeploymentStatusEnum })
-  @IsNotEmpty()
-  @IsEnum(DeploymentStatusEnum)
-  public status: DeploymentStatusEnum
-
-  @ApiProperty({ enum: ExecutionTypeEnum })
-  @IsNotEmpty()
-  public type: ExecutionTypeEnum
-
-  @IsNotEmpty()
-  public events: Event[]
-
-  constructor(
-    status: DeploymentStatusEnum,
-    type: ExecutionTypeEnum,
-    events: Event[]
-  ) {
-    this.status = status
-    this.type = type
-    this.events = events
+  public async findDeploymentEvents(deploymentId: string): Promise<DeploymentEvents | undefined> {
+    return this.createQueryBuilder('v2deployment_events')
+      .leftJoinAndSelect('v2deployment_events.deployment', 'deployment')
+      .andWhere('deployment.id = :deploymentId', { deploymentId })
+      .getOne()
   }
+
 }

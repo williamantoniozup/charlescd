@@ -24,13 +24,16 @@ import { CreateDeploymentUseCase } from '../use-cases/create-deployment.usecase'
 import { CreateUndeploymentUseCase } from '../use-cases/create-undeployment.usecase'
 import { DeploymentUniquenessPipe } from '../pipes/deployment-uniqueness.pipe'
 import { UndeploymentValidation } from '../pipes/undeployment-validation.pipe'
+import { FindDeploymentEventsByIdUsecase } from '../use-cases/find-deployment-events-by-id.usecase'
+import { DeploymentEvents } from '../entity/event.entity'
 
 @Controller('v2/deployments')
 export class DeploymentsController {
 
   constructor(
     private createDeploymentUseCase: CreateDeploymentUseCase,
-    private createUndeploymentUseCase: CreateUndeploymentUseCase
+    private createUndeploymentUseCase: CreateUndeploymentUseCase,
+    private findDeploymentEventsByIdUseCase: FindDeploymentEventsByIdUsecase
   ) { }
 
   @Post('/')
@@ -44,6 +47,16 @@ export class DeploymentsController {
   ): Promise<ReadDeploymentDto> {
     const processedIncomingCircleId = this.processIncomingCircleIdHeader(incomingCircleId)
     return this.createDeploymentUseCase.execute(createDeploymentRequestDto, processedIncomingCircleId)
+  }
+
+  @Post('/:id/events')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  public async findDeploymentEvents(
+      @Param('id') deploymentId: string,
+      @Headers('x-circle-id') incomingCircleId: string | undefined
+  ): Promise<DeploymentEvents | undefined> {
+    const processedIncomingCircleId = this.processIncomingCircleIdHeader(incomingCircleId)
+    return this.findDeploymentEventsByIdUseCase.execute(deploymentId)
   }
 
   @Post('/:id/undeploy')

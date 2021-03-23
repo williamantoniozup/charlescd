@@ -37,7 +37,7 @@ func (manager Manager) ExecuteV2DeploymentPipeline(v2Pipeline V2DeploymentPipeli
 
 	klog.Info("APPLY COMPONENTS")
 
-	manager.eventAgregator.AppendInfoEvent("Applying domponents")
+	manager.eventAgregator.AppendInfoEvent("Applying components")
 	fmt.Println(manager.eventAgregator.Events)
 
 	err = manager.runV2Deployments(v2Pipeline, helmManifests)
@@ -55,7 +55,7 @@ func (manager Manager) ExecuteV2DeploymentPipeline(v2Pipeline V2DeploymentPipeli
 	}
 
 	klog.Info("Remove Circle and Default circleIDS from unusedProxyDeployments")
-	manager.eventAgregator.AppendInfoEvent("removing circle and default circle from unused proxy deployments")
+
 	virtualServiceUnusedDeploymentsData, err := manager.removeDataFromProxyDeployments(v2Pipeline.UnusedProxyDeployments)
 	if err != nil {
 		manager.handleV2RenderManifestError(v2Pipeline, err, incomingCircleId)
@@ -74,12 +74,17 @@ func (manager Manager) ExecuteV2DeploymentPipeline(v2Pipeline V2DeploymentPipeli
 			return
 		}
 		manifests, err := manager.getV2HelmManifests(deployment, string(d))
+		if err != nil {
+			manager.handleV2RenderManifestError(v2Pipeline, err, incomingCircleId)
+			return
+		}
 		mapUnusedManifests[deployment.ComponentName] = manifests
 	}
 
 	customUnusedVirtualServices, helmUnusedManifests := manager.removeVirtualServiceManifest(mapUnusedManifests)
 
 	klog.Info("APPLY UNUSED VIRTUAL-SERVICE AND DESTINATION-RULES")
+	manager.eventAgregator.AppendInfoEvent("Applying unused virtual service and destination rules")
 	err = manager.runV2unusedProxyDeployments(v2Pipeline, customUnusedVirtualServices)
 	if err != nil {
 		manager.handleV2ProxyDeploymentError(v2Pipeline, err, incomingCircleId)
@@ -103,7 +108,6 @@ func (manager Manager) ExecuteV2DeploymentPipeline(v2Pipeline V2DeploymentPipeli
 func (manager Manager) extractManifests(v2Pipeline V2DeploymentPipeline) (map[string]interface{}, map[string]interface{}, error) {
 
 	klog.Info("Remove Circle and Default circleIDS")
-	fmt.Println(manager.eventAgregator.Events)
 	virtualServiceData, err := manager.removeDataFromProxyDeployments(v2Pipeline.ProxyDeployments)
 	if err != nil {
 		return nil, nil, err
