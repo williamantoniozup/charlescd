@@ -309,11 +309,51 @@ describe('DeploymentController v2', () => {
       defaultCircle: false
     }
     const errorMessages = [
-      '2.buildImageUrl must match /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/ regular expression',
-      '3.buildImageUrl must match /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/ regular expression',
-      '4.buildImageUrl must be shorter than or equal to 253 characters',
-      '0.Duplicated components with the property \'componentName\''
+      'modules.0.components.2.buildImageUrl must match /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/ regular expression',
+      'modules.0.components.3.buildImageUrl must match /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/ regular expression',
+      'modules.0.components.4.buildImageUrl must be shorter than or equal to 253 characters',
+      'modules.0.Duplicated components with the property \'componentName\''
     ]
+    await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+      .expect(400)
+      .expect(response => {
+        expect(response.body).toEqual({ error: 'Bad Request', message: errorMessages, statusCode: 400 })
+      })
+  })
+
+  it('returns error for empty components', async() => {
+    const cdConfiguration = new CdConfigurationEntity(
+      CdTypeEnum.SPINNAKER,
+      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      'config-name',
+      'authorId',
+      'workspaceId'
+    )
+    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      circle: {
+        headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
+      },
+      modules: [
+        {
+          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
+          helmRepository: 'https://some-helm.repo',
+          components: []
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      cdConfigurationId: cdConfiguration.id,
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      defaultCircle: false
+    }
+    const errorMessages = [
+      'components should not be null or empty'
+    ]
+    
     await request(app.getHttpServer())
       .post('/v2/deployments')
       .send(createDeploymentRequest)
@@ -408,7 +448,7 @@ describe('DeploymentController v2', () => {
     }
 
     const errorMessages = [
-      '0.Sum of lengths of componentName and buildImageTag cant be greater than 63'
+      'modules.0.Sum of lengths of componentName and buildImageTag cant be greater than 63'
     ]
 
     await request(app.getHttpServer())
@@ -465,7 +505,7 @@ describe('DeploymentController v2', () => {
     }
 
     const errorMessages = [
-      '0.The tag suplied on the buildImageUrl must match the buildImageTag. Check the values of the component(s) {"componentId":"777765f8-bb29-49f7-bf2b-3ec956a71583","buildImageUrl":"imageurl.com:someTag","buildImageTag":"differentTag","componentName":"my-component","hostValue":"host-value-1","gatewayName":"gateway-name-1"}'
+      'modules.0.The tag suplied on the buildImageUrl must match the buildImageTag. Check the values of the component(s) {"componentId":"777765f8-bb29-49f7-bf2b-3ec956a71583","buildImageUrl":"imageurl.com:someTag","buildImageTag":"differentTag","componentName":"my-component","hostValue":"host-value-1","gatewayName":"gateway-name-1"}'
     ]
 
     await request(app.getHttpServer())

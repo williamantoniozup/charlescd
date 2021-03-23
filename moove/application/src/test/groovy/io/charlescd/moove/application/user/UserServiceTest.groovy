@@ -52,6 +52,18 @@ class UserServiceTest extends Specification {
         notThrown()
     }
 
+    def "when update user should not throw"() {
+        given:
+        def user = getDummyUser("charles@email.com")
+
+        when:
+        this.userService.update(user)
+
+        then:
+        1 * this.userRepository.update(user) >> user
+
+        notThrown()
+    }
 
     def "when find a user by id and not exists should throw a NotFoundException"() {
         given:
@@ -120,10 +132,10 @@ class UserServiceTest extends Specification {
         def email = "charles@email.com"
 
         when:
-        this.userService.find(email)
+        this.userService.findByEmail(email)
 
         then:
-        1 * this.userRepository.findById(email) >> Optional.empty()
+        1 * this.userRepository.findByEmail(email) >> Optional.empty()
 
         def ex = thrown(NotFoundException)
         ex.resourceName == "user"
@@ -134,14 +146,13 @@ class UserServiceTest extends Specification {
         def email = "charles@email.com"
 
         when:
-        this.userService.find(email)
+        this.userService.findByEmail(email)
 
         then:
-        1 * this.userRepository.findById(email) >> Optional.of(getDummyUser(email))
+        1 * this.userRepository.findByEmail(email) >> Optional.of(getDummyUser(email))
 
         notThrown()
     }
-
 
     def "when check if user with email and exists should throw an BusinessException"() {
         given:
@@ -203,6 +214,20 @@ class UserServiceTest extends Specification {
         notThrown()
     }
 
+    def "when get email from token should not throw"() {
+        given:
+        def authorization = "Bearer qwerty-12345-asdf-98760"
+        def email = "charles@email.com"
+
+        when:
+        this.userService.getEmailFromToken(authorization)
+
+        then:
+        1 * this.managementUserSecurityService.getUserEmail(authorization) >> email
+
+        notThrown()
+    }
+
     def "should change user password"() {
         given:
         def userEmail = "charles@email.com"
@@ -248,7 +273,7 @@ class UserServiceTest extends Specification {
         notThrown()
     }
 
-    private User getDummyUser(String email) {
+    private static User getDummyUser(String email) {
         new User("qwerty-12345-asdf-98760", "charles", email, "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
     }
 }
