@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
 import { DeploymentEntityV2 as DeploymentEntity } from './deployment.entity'
 import { Event } from '../interfaces/event.interface'
 
 @Entity('v2deployment_events')
 export class DeploymentEvents {
 
+    @PrimaryGeneratedColumn('uuid')
+    public id!: string
     @Column({ name: 'deployment_id' })
     public deploymentId!: string
     

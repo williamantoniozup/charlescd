@@ -34,7 +34,8 @@ export const getFailureWebhookStage = (deployment: Deployment, stageId: number, 
   name: 'Trigger Failure Webhook',
   payload: {
     status: DeploymentStatusEnum.FAILED,
-    type: ExecutionTypeEnum.DEPLOYMENT
+    type: ExecutionTypeEnum.DEPLOYMENT,
+    events: []
   },
   refId: `${stageId}`,
   requisiteStageRefIds: deployment?.components ? getRequisiteStageRefIds(deployment.components) : [],
