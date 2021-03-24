@@ -23,8 +23,8 @@ import { LogEntity } from '../entity/logs.entity'
 export class LogRepository extends Repository<LogEntity> {
 
   public async findDeploymentLogs(deploymentId: string): Promise<LogEntity | undefined> {
-    return this.createQueryBuilder('v2deployment_events')
-      .leftJoinAndSelect('v2deployment_events.deployment', 'deployment')
+    return this.createQueryBuilder('v2logs')
+      .leftJoinAndSelect('v2logs.deployment', 'deployment')
       .andWhere('deployment.id = :deploymentId', { deploymentId })
       .getOne()
   }
