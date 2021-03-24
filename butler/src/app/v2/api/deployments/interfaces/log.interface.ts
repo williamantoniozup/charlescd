@@ -1,5 +1,6 @@
 export interface Log {
-    logType: string
+    type: string
     title: string
     details: string
+    timestamp: string
 }
