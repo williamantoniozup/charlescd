@@ -17,7 +17,11 @@
 package main
 
 import (
-	"log"
+	"github.com/argoproj/gitops-engine/pkg/utils/kube"
+	"github.com/argoproj/gitops-engine/pkg/utils/tracing"
+	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
+	"k8s.io/klog/klogr"
 	"octopipe/pkg/cloudprovider"
 	"octopipe/pkg/deployment"
 	"octopipe/pkg/log"
@@ -25,12 +29,6 @@ import (
 	"octopipe/pkg/repository"
 	"octopipe/pkg/template"
 	"octopipe/web/api"
-
-	"github.com/argoproj/gitops-engine/pkg/utils/kube"
-	"github.com/argoproj/gitops-engine/pkg/utils/tracing"
-	"github.com/joho/godotenv"
-	"github.com/sirupsen/logrus"
-	"k8s.io/klog/klogr"
 )
 
 func main() {
@@ -38,21 +36,21 @@ func main() {
 	logrus.SetFormatter(&logrus.JSONFormatter{PrettyPrint: true})
 
 	if err := godotenv.Load(); err != nil {
-		log.Print("No .env file found")
+		logrus.Print("No .env file found")
 	}
 
 	kubectl := &kube.KubectlCmd{
 		Log:    klogr.New(),
 		Tracer: tracing.NopTracer{},
 	}
-	events := &log.LogAggregator{
-		Events: make([]log.Event, 0),
+	logs := &log.Aggregator{
+		Logs: make([]log.Log, 0),
 	}
 	repositoryMain := repository.NewRepositoryMain()
 	templateMain := template.NewTemplateMain(repositoryMain)
 	cloudproviderMain := cloudprovider.NewCloudproviderMain()
 	deploymentMain := deployment.NewDeploymentMain()
-	managerMain := manager.NewManagerMain(kubectl, templateMain, deploymentMain, cloudproviderMain, repositoryMain, events)
+	managerMain := manager.NewManagerMain(kubectl, templateMain, deploymentMain, cloudproviderMain, repositoryMain, logs)
 
 	apiServer := api.NewAPI()
 	apiServer.NewPipelineAPI(managerMain)
