@@ -15,10 +15,10 @@
  */
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
 import { DeploymentEntityV2 as DeploymentEntity } from './deployment.entity'
-import { Event } from '../interfaces/event.interface'
+import { Log } from '../interfaces/log.interface'
 
-@Entity('v2deployment_events')
-export class DeploymentEvents {
+@Entity('v2deployment_logs')
+export class LogEntity {
 
     @PrimaryGeneratedColumn('uuid')
     public id!: string
@@ -26,18 +26,18 @@ export class DeploymentEvents {
     public deploymentId!: string
     
 
-    @Column({ name: 'events', type: 'jsonb' })
-    public events!: Event[]
+    @Column({ name: 'logs', type: 'jsonb' })
+    public logs!: Log[]
 
     @JoinColumn({ name: 'deployment_id' })
     @ManyToOne(() => DeploymentEntity)
     public deployment!: DeploymentEntity
     constructor(
       deploymentId: string,
-      events: Event[]
+      logs: Log[]
     ) {  
       this.deploymentId = deploymentId
-      this.events = events
+      this.logs = logs
     }
     
 }

@@ -18,7 +18,7 @@ import { IsEnum, IsNotEmpty } from 'class-validator'
 import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
 import { ExecutionTypeEnum } from '../enums'
 import { ApiProperty } from '@nestjs/swagger'
-import { Event } from '../interfaces/event.interface'
+import { Log } from '../interfaces/log.interface'
 
 export class DeploymentNotificationRequestDto {
 
@@ -32,15 +32,15 @@ export class DeploymentNotificationRequestDto {
   public type: ExecutionTypeEnum
 
   @IsNotEmpty()
-  public events: Event[]
+  public logs: Log[]
 
   constructor(
     status: DeploymentStatusEnum,
     type: ExecutionTypeEnum,
-    events: Event[]
+    logs: Log[]
   ) {
     this.status = status
     this.type = type
-    this.events = events
+    this.logs = logs
   }
 }

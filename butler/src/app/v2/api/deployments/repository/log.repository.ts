@@ -17,12 +17,12 @@
 import { EntityRepository, Repository } from 'typeorm'
 import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
 import { ComponentEntityV2 } from '../entity/component.entity'
-import { DeploymentEvents } from '../entity/event.entity'
+import { LogEntity } from '../entity/logs.entity'
 
-@EntityRepository(DeploymentEvents)
-export class DeploymentEventsRepository extends Repository<DeploymentEvents> {
+@EntityRepository(LogEntity)
+export class LogRepository extends Repository<LogEntity> {
 
-  public async findDeploymentEvents(deploymentId: string): Promise<DeploymentEvents | undefined> {
+  public async findDeploymentLogs(deploymentId: string): Promise<LogEntity | undefined> {
     return this.createQueryBuilder('v2deployment_events')
       .leftJoinAndSelect('v2deployment_events.deployment', 'deployment')
       .andWhere('deployment.id = :deploymentId', { deploymentId })

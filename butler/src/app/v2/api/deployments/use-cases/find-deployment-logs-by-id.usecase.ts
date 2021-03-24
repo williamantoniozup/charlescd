@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 import { InjectRepository } from '@nestjs/typeorm'
-import { DeploymentEvents } from '../entity/event.entity'
-import { DeploymentEventsRepository } from '../repository/event.repository'
+import { Logs } from '../entity/logs.entity'
+import { LogRepository } from '../repository/log.repository'
 
-export class FindDeploymentEventsByIdUsecase {
+export class FindDeploymentLogsByIdUsecase {
 
   constructor(
-        @InjectRepository(DeploymentEvents)
-        private readonly eventsRepository: DeploymentEventsRepository
+        @InjectRepository(Logs)
+        private readonly logsRepository: LogRepository
   ){}
     
-  public async execute(deploymentId: string): Promise<DeploymentEvents | undefined> {
-    return this.eventsRepository.findDeploymentEvents(deploymentId)
+  public async execute(deploymentId: string): Promise<Logs | undefined> {
+    return this.logsRepository.findDeploymentLogs(deploymentId)
   }
 }
