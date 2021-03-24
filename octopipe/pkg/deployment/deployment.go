@@ -20,7 +20,7 @@ import (
 	"context"
 	"fmt"
 	"octopipe/pkg/customerror"
-	"octopipe/pkg/event"
+	"octopipe/pkg/log"
 	"os"
 	"strconv"
 	"time"
@@ -53,7 +53,7 @@ type Deployment struct {
 	manifest  map[string]interface{}
 	config    *rest.Config
 	kubectl   kube.Kubectl
-	events 		*event.EventAgregator
+	events 		*log.Aggregator
 }
 
 func (main *DeploymentMain) NewDeployment(
@@ -63,7 +63,7 @@ func (main *DeploymentMain) NewDeployment(
 	manifest map[string]interface{},
 	config *rest.Config,
 	kubectl kube.Kubectl,
-	events *event.EventAgregator,
+	events *log.Aggregator,
 ) UseCases {
 	return &Deployment{
 		action:    action,
@@ -181,7 +181,7 @@ func (deployment *Deployment) watchDeploy() error {
 
 func (deployment *Deployment) Deploy() error {
 	manifest := deployment.getUnstructuredManifest()
-	deployment.events.AppendInfoEvent(fmt.Sprintf("Applying %s/%s resource", manifest.GetName(), manifest.GroupVersionKind()))
+	deployment.events.AppendInfoLog(fmt.Sprintf("Applying %s/%s resource", manifest.GetName(), manifest.GroupVersionKind()))
 	_, err := deployment.kubectl.ApplyResource(
 		context.TODO(),
 		deployment.config,

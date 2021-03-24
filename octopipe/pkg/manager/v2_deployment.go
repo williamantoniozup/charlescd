@@ -37,8 +37,7 @@ func (manager Manager) ExecuteV2DeploymentPipeline(v2Pipeline V2DeploymentPipeli
 
 	klog.Info("APPLY COMPONENTS")
 
-	manager.eventAgregator.AppendInfoEvent("Applying components")
-	fmt.Println(manager.eventAgregator.Events)
+	manager.logAggregator.AppendInfoLog("Applying components")
 
 	err = manager.runV2Deployments(v2Pipeline, helmManifests)
 	if err != nil {
@@ -47,7 +46,7 @@ func (manager Manager) ExecuteV2DeploymentPipeline(v2Pipeline V2DeploymentPipeli
 	}
 
 	klog.Info("APPLY VIRTUAL-SERVICE AND DESTINATION-RULES")
-	manager.eventAgregator.AppendInfoEvent("Applying virtual service and destination rules")
+	manager.logAggregator.AppendInfoLog("Applying virtual service and destination rules")
 	err = manager.runV2ProxyDeployments(v2Pipeline, customVirtualServices)
 	if err != nil {
 		manager.handleV2ProxyDeploymentError(v2Pipeline, err, incomingCircleId)
@@ -84,7 +83,7 @@ func (manager Manager) ExecuteV2DeploymentPipeline(v2Pipeline V2DeploymentPipeli
 	customUnusedVirtualServices, helmUnusedManifests := manager.removeVirtualServiceManifest(mapUnusedManifests)
 
 	klog.Info("APPLY UNUSED VIRTUAL-SERVICE AND DESTINATION-RULES")
-	manager.eventAgregator.AppendInfoEvent("Applying unused virtual service and destination rules")
+	manager.logAggregator.AppendInfoLog("Applying unused virtual service and destination rules")
 	err = manager.runV2unusedProxyDeployments(v2Pipeline, customUnusedVirtualServices)
 	if err != nil {
 		manager.handleV2ProxyDeploymentError(v2Pipeline, err, incomingCircleId)
@@ -114,7 +113,7 @@ func (manager Manager) extractManifests(v2Pipeline V2DeploymentPipeline) (map[st
 	}
 
 	klog.Info("Render Helm manifests")
-	manager.eventAgregator.AppendInfoEvent("Rendering helm manifests")
+	manager.logAggregator.AppendInfoLog("Rendering helm manifests")
 	mapManifests := map[string]interface{}{}
 	for _, deployment := range v2Pipeline.Deployments {
 		deployment := deployment // https://golang.org/doc/faq#closures_and_goroutines
@@ -145,7 +144,7 @@ func (manager Manager) runV2Deployments(v2Pipeline V2DeploymentPipeline, mapMani
 			return err
 		}
 		for _, manifest := range currentDeployment {
-			deployment := manager.deploymentMain.NewDeployment(DEPLOY_ACTION, false, v2Pipeline.Namespace, manifest.(map[string]interface{}), config, manager.kubectl, manager.eventAgregator)
+			deployment := manager.deploymentMain.NewDeployment(DEPLOY_ACTION, false, v2Pipeline.Namespace, manifest.(map[string]interface{}), config, manager.kubectl, manager.logAggregator)
 			err := deployment.Deploy()
 			if err != nil {
 				return err
@@ -233,11 +232,11 @@ func (manager Manager) runV2UnusedDeployments(v2Pipeline V2DeploymentPipeline, m
 
 func (manager Manager) handleV2DeploymentError(v2Pipeline V2DeploymentPipeline, err error, incomingCircleId string, mapManifests map[string]interface{}) {
 	log.WithFields(customerror.WithLogFields(err)).Error()
-	manager.eventAgregator.AppendErrorEvent(err)
+	manager.logAggregator.AppendErrorLog(err)
 	rollbackErr := manager.runV2Rollbacks(v2Pipeline, mapManifests)
 	if rollbackErr != nil {
 		log.WithFields(customerror.WithLogFields(rollbackErr, "manager.handleV2DeploymentError.runV2Rollbacks")).Error()
-		manager.eventAgregator.AppendErrorEvent(rollbackErr)
+		manager.logAggregator.AppendErrorLog(rollbackErr)
 	}
 	manager.triggerV2Callback(v2Pipeline.CallbackUrl, DEPLOYMENT_CALLBACK, FAILED_STATUS, incomingCircleId)
 }
@@ -245,25 +244,25 @@ func (manager Manager) handleV2DeploymentError(v2Pipeline V2DeploymentPipeline, 
 func (manager Manager) handleV2RemoveDataError(v2Pipeline V2DeploymentPipeline, errList []error, incomingCircleId string) {
 	for _, err := range errList {
 		log.WithFields(customerror.WithLogFields(err)).Error()
-		manager.eventAgregator.AppendErrorEvent(err)
+		manager.logAggregator.AppendErrorLog(err)
 	}
 	manager.triggerV2Callback(v2Pipeline.CallbackUrl, DEPLOYMENT_CALLBACK, FAILED_STATUS, incomingCircleId)
 }
 
 func (manager Manager) handleV2RenderManifestError(v2Pipeline V2DeploymentPipeline, err error, incomingCircleId string) {
 	log.WithFields(customerror.WithLogFields(err)).Error()
-	manager.eventAgregator.AppendErrorEvent(err)
+	manager.logAggregator.AppendErrorLog(err)
 	manager.triggerV2Callback(v2Pipeline.CallbackUrl, DEPLOYMENT_CALLBACK, FAILED_STATUS, incomingCircleId,)
 }
 
 func (manager Manager) handleV2ManifestsError(v2Pipeline V2DeploymentPipeline, err error, incomingCircleId string) {
 	log.WithFields(customerror.WithLogFields(err)).Error()
-	manager.eventAgregator.AppendErrorEvent(err)
+	manager.logAggregator.AppendErrorLog(err)
 	manager.triggerV2Callback(v2Pipeline.CallbackUrl, DEPLOYMENT_CALLBACK, FAILED_STATUS, incomingCircleId)
 }
 
 func (manager Manager) handleV2ProxyDeploymentError(v2Pipeline V2DeploymentPipeline, err error, incomingCircleId string) {
 	log.WithFields(customerror.WithLogFields(err)).Error()
-	manager.eventAgregator.AppendErrorEvent(err)
+	manager.logAggregator.AppendErrorLog(err)
 	manager.triggerV2Callback(v2Pipeline.CallbackUrl, DEPLOYMENT_CALLBACK, FAILED_STATUS, incomingCircleId)
 }

@@ -169,7 +169,7 @@ func (manager Manager) executeManifest(pipeline pipelinePKG.Pipeline, step pipel
 		manifest,
 		config,
 		kubectl,
-		manager.eventAgregator,
+		manager.logAggregator,
 	)
 	if err != nil {
 		log.WithFields(log.Fields{"function": "executeManifest", "error": err.Error()}).Error("Failed in deployment creation")

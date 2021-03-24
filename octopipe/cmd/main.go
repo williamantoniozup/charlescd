@@ -20,7 +20,7 @@ import (
 	"log"
 	"octopipe/pkg/cloudprovider"
 	"octopipe/pkg/deployment"
-	"octopipe/pkg/event"
+	"octopipe/pkg/log"
 	"octopipe/pkg/manager"
 	"octopipe/pkg/repository"
 	"octopipe/pkg/template"
@@ -45,8 +45,8 @@ func main() {
 		Log:    klogr.New(),
 		Tracer: tracing.NopTracer{},
 	}
-	events := &event.EventAgregator{
-		Events: make([]event.Event, 0),
+	events := &log.LogAggregator{
+		Events: make([]log.Event, 0),
 	}
 	repositoryMain := repository.NewRepositoryMain()
 	templateMain := template.NewTemplateMain(repositoryMain)

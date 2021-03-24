@@ -46,7 +46,7 @@ func (manager Manager) applyV2Manifest(
 		return err
 	}
 
-	deployment := manager.deploymentMain.NewDeployment(action, false, namespace, manifest, config, manager.kubectl, manager.eventAgregator)
+	deployment := manager.deploymentMain.NewDeployment(action, false, namespace, manifest, config, manager.kubectl, manager.logAggregator)
 	err = deployment.Do()
 	if err != nil {
 		return err
@@ -113,8 +113,8 @@ func (manager Manager) getFilesFromV2Repository(deployment V2Deployment) (string
 func (manager Manager) triggerV2Callback(callbackUrl string, callbackType string, status string, incomingCircleId string) {
 	klog.Info(fmt.Sprintf("TRIGGER CALLBACK - STATUS: %s - URL: %s", status, callbackUrl))
 	client := http.Client{}
-	callbackData := V2CallbackData{callbackType, status, manager.eventAgregator.Events}
-	request, err := manager.mountV2WebhookRequest(callbackUrl, callbackData, incomingCircleId,)
+	callbackData := V2CallbackData{callbackType, status, manager.logAggregator.Logs}
+	request, err := manager.mountV2WebhookRequest(callbackUrl, callbackData, incomingCircleId)
 	if err != nil {
 		logrus.WithFields(customerror.WithLogFields(customerror.New("Mount webhook request", err.Error(), map[string]string{
 			"url":          callbackUrl,

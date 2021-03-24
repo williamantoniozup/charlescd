@@ -19,7 +19,7 @@ package deployment
 import (
 	"github.com/argoproj/gitops-engine/pkg/utils/kube"
 	"k8s.io/client-go/rest"
-	"octopipe/pkg/event"
+	"octopipe/pkg/log"
 )
 
 type MainUseCases interface {
@@ -30,7 +30,7 @@ type MainUseCases interface {
 		manifest map[string]interface{},
 		config *rest.Config,
 		kubectl kube.Kubectl,
-		event *event.EventAgregator,
+		event *log.Aggregator,
 	) UseCases
 }
 

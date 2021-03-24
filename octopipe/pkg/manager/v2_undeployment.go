@@ -13,13 +13,13 @@ import (
 func (manager Manager) ExecuteV2UndeploymentPipeline(v2Pipeline V2UndeploymentPipeline, incomingCircleId string) {
 
 	klog.Info("START UNDEPLOY PIPELINE")
-
+	manager.logAggregator.AppendInfoLog("starting undeploy pipeline")
 	customVirtualServices, helmManifests, err := manager.extractUndeployManifests(v2Pipeline)
 	if err != nil {
 		manager.handleV2RenderUndeployManifestError(v2Pipeline, err, incomingCircleId)
 		return
 	}
-
+	manager.logAggregator.AppendInfoLog("removing virtual service and destination rules")
 	klog.Info("REMOVE VIRTUAL-SERVICE AND DESTINATION-RULES")
 	err = manager.runV2ProxyUndeployments(v2Pipeline, customVirtualServices)
 	if err != nil {
@@ -28,6 +28,7 @@ func (manager Manager) ExecuteV2UndeploymentPipeline(v2Pipeline V2UndeploymentPi
 	}
 
 	klog.Info("REMOVE COMPONENTS")
+	manager.logAggregator.AppendInfoLog("removing components")
 	err = manager.runV2Undeployments(v2Pipeline, helmManifests)
 	if err != nil {
 		manager.handleV2UndeploymentError(v2Pipeline, err, incomingCircleId)
@@ -44,6 +45,7 @@ func (manager Manager) extractUndeployManifests(v2Pipeline V2UndeploymentPipelin
 	}
 
 	klog.Info("Render Helm manifests")
+	manager.logAggregator.AppendInfoLog("rendering helm manifests")
 	mapManifests := map[string]interface{}{}
 	for _, deployment := range v2Pipeline.Undeployments {
 		deployment := deployment // https://golang.org/doc/faq#closures_and_goroutines
@@ -94,16 +96,19 @@ func (manager Manager) runV2Undeployments(v2Pipeline V2UndeploymentPipeline, map
 
 func (manager Manager) handleV2ProxyUndeploymentError(v2Pipeline V2UndeploymentPipeline, err error, incomingCircleId string) {
 	log.WithFields(customerror.WithLogFields(err)).Error()
+	manager.logAggregator.AppendErrorLog(err)
 	manager.triggerV2Callback(v2Pipeline.CallbackUrl, UNDEPLOYMENT_CALLBACK, FAILED_STATUS, incomingCircleId)
 
 }
 
 func (manager Manager) handleV2UndeploymentError(v2Pipeline V2UndeploymentPipeline, err error, incomingCircleId string) {
 	log.WithFields(customerror.WithLogFields(err)).Error()
+	manager.logAggregator.AppendErrorLog(err)
 	manager.triggerV2Callback(v2Pipeline.CallbackUrl, UNDEPLOYMENT_CALLBACK, FAILED_STATUS, incomingCircleId)
 }
 
 func (manager Manager) handleV2RenderUndeployManifestError(v2Pipeline V2UndeploymentPipeline, err error, incomingCircleId string) {
 	log.WithFields(customerror.WithLogFields(err)).Error()
+	manager.logAggregator.AppendErrorLog(err)
 	manager.triggerV2Callback(v2Pipeline.CallbackUrl, DEPLOYMENT_CALLBACK, FAILED_STATUS, incomingCircleId)
 }
