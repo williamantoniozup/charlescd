@@ -15,8 +15,6 @@
  */
 
 import { EntityRepository, Repository } from 'typeorm'
-import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
-import { ComponentEntityV2 } from '../entity/component.entity'
 import { LogEntity } from '../entity/logs.entity'
 
 @EntityRepository(LogEntity)

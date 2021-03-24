@@ -7,7 +7,7 @@ import (
 )
 
 type Log struct {
-	LogType string `json:"eventType"`
+	LogType string `json:"logType"`
 	Title   string `json:"title"`
 	Details string `json:"details,omitempty"`
 }
