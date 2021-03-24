@@ -36,6 +36,7 @@ import { DeploymentUniquenessPipe } from '../pipes/deployment-uniqueness.pipe'
 import { UndeploymentValidation } from '../pipes/undeployment-validation.pipe'
 import { FindDeploymentLogsByIdUsecase } from '../use-cases/find-deployment-logs-by-id.usecase'
 import { LogEntity } from '../entity/logs.entity'
+import { ReadLogsDto } from '../dto/read-logs.dto'
 
 @Controller('v2/deployments')
 export class DeploymentsController {
@@ -63,7 +64,7 @@ export class DeploymentsController {
   @UsePipes(new ValidationPipe({ transform: true }))
   public async findDeploymentEvents(
       @Param('id') deploymentId: string,
-  ): Promise<LogEntity | undefined> {
+  ): Promise<ReadLogsDto> {
     return this.findDeploymentLogsByIdUseCase.execute(deploymentId)
   }
 
