@@ -484,7 +484,7 @@ export const oneComponentWithUnused: SpinnakerPipeline = {
       payload: {
         status: DeploymentStatusEnum.FAILED,
         type: ExecutionTypeEnum.DEPLOYMENT,
-        events: []
+        logs: []
       },
       refId: '9',
       requisiteStageRefIds: [
@@ -511,7 +511,7 @@ export const oneComponentWithUnused: SpinnakerPipeline = {
       payload: {
         status: DeploymentStatusEnum.SUCCEEDED,
         type: ExecutionTypeEnum.DEPLOYMENT,
-        events: []
+        logs: []
       },
       refId: '10',
       requisiteStageRefIds: [

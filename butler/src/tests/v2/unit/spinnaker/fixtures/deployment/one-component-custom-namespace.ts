@@ -432,7 +432,7 @@ export const oneComponentCustomNamespace: SpinnakerPipeline = {
       payload: {
         status: DeploymentStatusEnum.FAILED,
         type: ExecutionTypeEnum.DEPLOYMENT,
-        events: []
+        logs: []
       },
       refId: '8',
       requisiteStageRefIds: [
@@ -459,7 +459,7 @@ export const oneComponentCustomNamespace: SpinnakerPipeline = {
       payload: {
         status: DeploymentStatusEnum.SUCCEEDED,
         type: ExecutionTypeEnum.DEPLOYMENT,
-        events: []
+        logs: []
       },
       refId: '9',
       requisiteStageRefIds: [

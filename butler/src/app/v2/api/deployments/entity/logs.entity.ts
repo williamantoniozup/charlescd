@@ -17,7 +17,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 't
 import { DeploymentEntityV2 as DeploymentEntity } from './deployment.entity'
 import { Log } from '../interfaces/log.interface'
 
-@Entity('v2deployment_logs')
+@Entity('v2logs')
 export class LogEntity {
 
     @PrimaryGeneratedColumn('uuid')

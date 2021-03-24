@@ -350,7 +350,7 @@ export const oneComponentSameTagSameCircle: SpinnakerPipeline = {
       payload: {
         status: DeploymentStatusEnum.FAILED,
         type: ExecutionTypeEnum.DEPLOYMENT,
-        events: []
+        logs: []
       },
       refId: '7',
       requisiteStageRefIds: [
@@ -377,7 +377,7 @@ export const oneComponentSameTagSameCircle: SpinnakerPipeline = {
       payload: {
         status: DeploymentStatusEnum.SUCCEEDED,
         type: ExecutionTypeEnum.DEPLOYMENT,
-        events: []
+        logs: []
       },
       refId: '8',
       requisiteStageRefIds: [

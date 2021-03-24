@@ -177,6 +177,6 @@ export class ReceiveNotificationUseCase {
   }
 
   private getDeploymentLogs(deploymentNotificationDto: DeploymentNotificationRequestDto, deployment: DeploymentEntityV2) {
-    return new LogEntity(deployment.id, deploymentNotificationDto.events)
+    return new LogEntity(deployment.id, deploymentNotificationDto.logs)
   }
 }

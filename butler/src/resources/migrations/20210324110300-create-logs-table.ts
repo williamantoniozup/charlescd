@@ -15,22 +15,22 @@
  */
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
-export class AddEventsTable20210323110300 implements MigrationInterface {
+export class CreateLogsTable20210324110300 implements MigrationInterface {
 
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     return await queryRunner.query(`
-        CREATE TABLE "public"."v2deployment_events" (
+        CREATE TABLE "public"."v2logs" (
              "id" uuid DEFAULT gen_random_uuid () NOT NULL,
             "deployment_id" uuid NOT NULL,
-            "events" jsonb NOT NULL,
+            "logs" jsonb NOT NULL,
              PRIMARY KEY ( "id" ),
              CONSTRAINT "fk_v2deployments" FOREIGN KEY ( "deployment_id" ) REFERENCES "public"."v2deployments" ( "id" )     
         )`)
   }
   public async down(queryRunner: QueryRunner): Promise<any> {
     return await queryRunner.dropTable(`
-    v2events`)
+    v2logs`)
   }
 
     

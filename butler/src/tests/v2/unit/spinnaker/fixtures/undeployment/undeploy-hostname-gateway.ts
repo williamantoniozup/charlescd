@@ -527,7 +527,7 @@ export const hostnameGatewayUndeploymentPipeline: SpinnakerPipeline = {
       payload: {
         status: DeploymentStatusEnum.FAILED,
         type: ExecutionTypeEnum.UNDEPLOYMENT,
-        events: []
+        logs: []
       },
       refId: '8',
       requisiteStageRefIds: [
@@ -553,7 +553,7 @@ export const hostnameGatewayUndeploymentPipeline: SpinnakerPipeline = {
       payload: {
         status: DeploymentStatusEnum.SUCCEEDED,
         type: ExecutionTypeEnum.UNDEPLOYMENT,
-        events: []
+        logs: []
       },
       refId: '9',
       requisiteStageRefIds: [

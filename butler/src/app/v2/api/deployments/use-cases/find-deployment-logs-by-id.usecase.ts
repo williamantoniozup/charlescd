@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 import { InjectRepository } from '@nestjs/typeorm'
-import { Logs } from '../entity/logs.entity'
+import { LogEntity } from '../entity/logs.entity'
 import { LogRepository } from '../repository/log.repository'
 
 export class FindDeploymentLogsByIdUsecase {
 
   constructor(
-        @InjectRepository(Logs)
+        @InjectRepository(LogEntity)
         private readonly logsRepository: LogRepository
   ){}
     
-  public async execute(deploymentId: string): Promise<Logs | undefined> {
+  public async execute(deploymentId: string): Promise<LogEntity | undefined> {
     return this.logsRepository.findDeploymentLogs(deploymentId)
   }
 }

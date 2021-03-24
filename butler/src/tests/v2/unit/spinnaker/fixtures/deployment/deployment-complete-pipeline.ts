@@ -1263,7 +1263,7 @@ export const completeSpinnakerPipeline: SpinnakerPipeline = {
       payload: {
         status: DeploymentStatusEnum.FAILED,
         type: ExecutionTypeEnum.DEPLOYMENT,
-        events: []
+        logs: []
       },
       refId: '20',
       requisiteStageRefIds: [
@@ -1290,7 +1290,7 @@ export const completeSpinnakerPipeline: SpinnakerPipeline = {
       payload: {
         status: DeploymentStatusEnum.SUCCEEDED,
         type: ExecutionTypeEnum.DEPLOYMENT,
-        events: []
+        logs: []
       },
       refId: '21',
       requisiteStageRefIds: [

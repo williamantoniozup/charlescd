@@ -1404,7 +1404,7 @@ export const completeWithOverridesAndDeleteProxy : SpinnakerPipeline = {
       payload: {
         status: DeploymentStatusEnum.FAILED,
         type: ExecutionTypeEnum.DEPLOYMENT,
-        events: []
+        logs: []
       },
       refId: '23',
       requisiteStageRefIds: [
@@ -1431,7 +1431,7 @@ export const completeWithOverridesAndDeleteProxy : SpinnakerPipeline = {
       payload: {
         status: DeploymentStatusEnum.SUCCEEDED,
         type: ExecutionTypeEnum.DEPLOYMENT,
-        events: []
+        logs: []
       },
       refId: '24',
       requisiteStageRefIds: [
