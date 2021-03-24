@@ -20,7 +20,7 @@ import { LogRepository } from '../repository/log.repository'
 export class FindDeploymentLogsByIdUsecase {
 
   constructor(
-        @InjectRepository(LogEntity)
+        @InjectRepository(LogRepository)
         private readonly logsRepository: LogRepository
   ){}
     
