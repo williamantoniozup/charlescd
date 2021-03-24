@@ -181,7 +181,7 @@ func (deployment *Deployment) watchDeploy() error {
 
 func (deployment *Deployment) Deploy() error {
 	manifest := deployment.getUnstructuredManifest()
-	deployment.events.AppendInfoLog(fmt.Sprintf("Applying resource %s Name=%s ", manifest.GroupVersionKind().String(), manifest.GetName()))
+	deployment.events.AppendInfoLog(fmt.Sprintf("Applying resource %s/%s ", manifest.GetKind(), manifest.GetName()))
 	_, err := deployment.kubectl.ApplyResource(
 		context.TODO(),
 		deployment.config,
