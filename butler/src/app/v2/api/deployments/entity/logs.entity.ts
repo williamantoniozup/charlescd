@@ -16,6 +16,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
 import { DeploymentEntityV2 as DeploymentEntity } from './deployment.entity'
 import { Log } from '../interfaces/log.interface'
+import { ReadLogsDto } from '../dto/read-logs.dto'
 
 @Entity('v2logs')
 export class LogEntity {
@@ -39,5 +40,8 @@ export class LogEntity {
       this.deploymentId = deploymentId
       this.logs = logs
     }
-    
+
+    public toReadDto(): ReadLogsDto {
+      return new ReadLogsDto(this.id, this.logs)
+    }
 }

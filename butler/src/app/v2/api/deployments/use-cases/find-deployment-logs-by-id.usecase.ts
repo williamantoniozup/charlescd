@@ -17,6 +17,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { LogEntity } from '../entity/logs.entity'
 import { LogRepository } from '../repository/log.repository'
 import { NotFoundException } from '@nestjs/common'
+import { ReadLogsDto } from '../dto/read-logs.dto'
 
 export class FindDeploymentLogsByIdUsecase {
 
@@ -25,12 +26,12 @@ export class FindDeploymentLogsByIdUsecase {
         private readonly logsRepository: LogRepository
   ){}
     
-  public async execute(deploymentId: string): Promise<LogEntity> {
+  public async execute(deploymentId: string): Promise<ReadLogsDto> {
     const deploymentLogs = await this.logsRepository.findDeploymentLogs(deploymentId)
     if (!deploymentLogs) {
       throw  new NotFoundException(`No logs found associated with the deployment: ${deploymentId}`)
     }
 
-    return  deploymentLogs
+    return  deploymentLogs.toReadDto()
   }
 }
