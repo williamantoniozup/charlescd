@@ -14,7 +14,17 @@
  * limitations under the License.
  */
 
-import { Body, Controller, Headers, Param, Post, UnprocessableEntityException, UsePipes, ValidationPipe } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Headers,
+  Param,
+  Post,
+  UnprocessableEntityException,
+  UsePipes,
+  ValidationPipe
+} from '@nestjs/common'
 import { validate as uuidValidate } from 'uuid'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 import { ReadDeploymentDto } from '../dto/read-deployment.dto'
@@ -49,7 +59,7 @@ export class DeploymentsController {
     return this.createDeploymentUseCase.execute(createDeploymentRequestDto, processedIncomingCircleId)
   }
 
-  @Post('/:id/logs')
+  @Get('/:id/logs')
   @UsePipes(new ValidationPipe({ transform: true }))
   public async findDeploymentEvents(
       @Param('id') deploymentId: string,
