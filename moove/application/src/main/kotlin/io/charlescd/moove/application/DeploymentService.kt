@@ -18,9 +18,11 @@
 
 package io.charlescd.moove.application
 
-import io.charlescd.moove.domain.*
+import io.charlescd.moove.domain.Deployment
+import io.charlescd.moove.domain.DeploymentStatusEnum
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.DeploymentRepository
+import java.util.*
 import javax.inject.Named
 
 @Named
@@ -30,8 +32,12 @@ class DeploymentService(private val deploymentRepository: DeploymentRepository) 
         return this.deploymentRepository.save(deployment)
     }
 
-    fun findByCircleIdAndWorkspaceId(circleId: String, workspaceId: String): List<Deployment> {
-        return this.deploymentRepository.findByCircleIdAndWorkspaceId(circleId, workspaceId)
+    fun update(deployment: Deployment): Deployment {
+        return this.deploymentRepository.update(deployment)
+    }
+
+    fun findByCircleIdAndStatus(circleId: String, status: DeploymentStatusEnum): Optional<Deployment> {
+        return this.deploymentRepository.find(circleId, status)
     }
 
     fun updateStatus(id: String, status: DeploymentStatusEnum) {
@@ -50,15 +56,35 @@ class DeploymentService(private val deploymentRepository: DeploymentRepository) 
         }
     }
 
+    fun findByIdAndWorkspace(id: String, workspaceId: String): Deployment {
+        return this.deploymentRepository.find(
+            id, workspaceId
+        ).orElseThrow {
+            NotFoundException("deployment", id)
+        }
+    }
+
     fun findLastActive(circleId: String): Deployment? {
         return this.deploymentRepository.findActiveByCircleId(
             circleId
         ).maxBy { it.createdAt }
     }
 
+    fun findLastActive(circleId: String, workspaceId: String): Deployment? {
+        return this.deploymentRepository.findActiveByCircleIdAndWorkspaceId(
+            circleId, workspaceId
+        ).maxBy { it.createdAt }
+    }
+
     fun findActiveList(circleId: String): List<Deployment> {
         return this.deploymentRepository.findActiveByCircleId(
             circleId
+        )
+    }
+
+    fun findActiveList(circleId: String, workspaceId: String): List<Deployment> {
+        return this.deploymentRepository.findActiveByCircleIdAndWorkspaceId(
+            circleId, workspaceId
         )
     }
 }
