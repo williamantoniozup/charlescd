@@ -47,13 +47,13 @@ type UseCases interface {
 }
 
 type Deployment struct {
-	action    string
-	update    bool
-	namespace string
-	manifest  map[string]interface{}
-	config    *rest.Config
-	kubectl   kube.Kubectl
-	events 		*log.Aggregator
+	action        string
+	update        bool
+	namespace     string
+	manifest      map[string]interface{}
+	config        *rest.Config
+	kubectl       kube.Kubectl
+	logAggregator *log.Aggregator
 }
 
 func (main *DeploymentMain) NewDeployment(
@@ -63,16 +63,16 @@ func (main *DeploymentMain) NewDeployment(
 	manifest map[string]interface{},
 	config *rest.Config,
 	kubectl kube.Kubectl,
-	events *log.Aggregator,
+	logAggregator *log.Aggregator,
 ) UseCases {
 	return &Deployment{
-		action:    action,
-		update:    update,
-		namespace: namespace,
-		manifest:  manifest,
-		config:    config,
-		kubectl:   kubectl,
-		events: events,
+		action:        action,
+		update:        update,
+		namespace:     namespace,
+		manifest:      manifest,
+		config:        config,
+		kubectl:       kubectl,
+		logAggregator: logAggregator,
 	}
 }
 
@@ -181,7 +181,7 @@ func (deployment *Deployment) watchDeploy() error {
 
 func (deployment *Deployment) Deploy() error {
 	manifest := deployment.getUnstructuredManifest()
-	deployment.events.AppendInfoLog(fmt.Sprintf("Applying resource %s/%s ", manifest.GetKind(), manifest.GetName()))
+	deployment.logAggregator.AppendInfo(fmt.Sprintf("Applying resource %s/%s ", manifest.GetKind(), manifest.GetName()))
 	_, err := deployment.kubectl.ApplyResource(
 		context.TODO(),
 		deployment.config,
@@ -239,7 +239,7 @@ func (deployment *Deployment) Undeploy() error {
 	if !isResourController(resourceInCluster) {
 		return nil
 	}
-
+	deployment.logAggregator.AppendInfo(fmt.Sprintf("Deleting resource %s/%s ", manifest.GetKind(), manifest.GetName()))
 	err = deployment.kubectl.DeleteResource(context.TODO(), deployment.config, gvk, manifest.GetName(), deployment.namespace, true)
 	if err != nil && k8sErrors.IsNotFound(err) {
 		return nil

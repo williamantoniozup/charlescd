@@ -49,7 +49,6 @@ type V2DeploymentPipeline struct {
 	UnusedProxyDeployments []map[string]interface{}    `json:"unusedProxyDeployments"`
 	CallbackUrl            string                      `json:"callbackUrl"`
 	ClusterConfig          cloudprovider.Cloudprovider `json:"clusterConfig"`
-	Events 				   []string
 }
 
 type V2UndeploymentPipeline struct {
