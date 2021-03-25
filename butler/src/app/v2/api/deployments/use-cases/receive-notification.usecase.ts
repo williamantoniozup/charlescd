@@ -32,6 +32,7 @@ import { DeploymentRepositoryV2 } from '../repository/deployment.repository'
 import { ExecutionRepository } from '../repository/execution.repository'
 import { NotificationStatusEnum } from '../enums/notification-status.enum'
 import { LogEntity } from '../entity/logs.entity'
+import { LogRepository } from '../repository/log.repository'
 
 export class ReceiveNotificationUseCase {
 
@@ -42,6 +43,8 @@ export class ReceiveNotificationUseCase {
     private componentRepository: ComponentsRepositoryV2,
     @InjectRepository(ExecutionRepository)
     private executionRepository: ExecutionRepository,
+    @InjectRepository(LogRepository)
+    private logRepository: LogRepository,
     private readonly consoleLoggerService: ConsoleLoggerService,
     private mooveService: MooveService
   ) {}
@@ -147,6 +150,7 @@ export class ReceiveNotificationUseCase {
   private async handleUndeploymentNotification(executionId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<Execution> {
     this.consoleLoggerService.log('START:HANDLE_UNDEPLOYMENT_NOTIFICATION')
     const execution = await this.executionRepository.findOneOrFail(executionId, { relations: ['deployment', 'deployment.components'] })
+    const undeploymentLogs = await this.getDeploymentLogs(deploymentNotificationDto, execution.deployment)
     execution.finishedAt = DateUtils.now()
     execution.deployment.components = execution.deployment.components.map(c => {
       c.running = false
@@ -165,6 +169,7 @@ export class ReceiveNotificationUseCase {
     try {
       await this.deploymentRepository.save(execution.deployment)
       await this.componentRepository.save(execution.deployment.components)
+      await this.logRepository.save(undeploymentLogs)
       const updatedExecution = await this.executionRepository.save(execution)
       await this.notifyMooveAndUpdateDeployment(updatedExecution)
       this.consoleLoggerService.log('FINISH:HANDLE_UNDEPLOYMENT_NOTIFICATION')
@@ -176,7 +181,12 @@ export class ReceiveNotificationUseCase {
     }
   }
 
-  private getDeploymentLogs(deploymentNotificationDto: DeploymentNotificationRequestDto, deployment: DeploymentEntityV2) {
+  private async getDeploymentLogs(deploymentNotificationDto: DeploymentNotificationRequestDto, deployment: DeploymentEntityV2) {
+    const deploymentLogs = await this.logRepository.findDeploymentLogs(deployment.id)
+    if (deploymentLogs) {
+      deploymentLogs.logs.concat(deploymentNotificationDto.logs)
+      return deploymentLogs
+    }
     return new LogEntity(deployment.id, deploymentNotificationDto.logs)
   }
 }
