@@ -66,7 +66,7 @@ export class ReceiveNotificationUseCase {
     this.consoleLoggerService.log('START:HANDLE_DEPLOYMENT_NOTIFICATION')
     const execution = await this.executionRepository.findOneOrFail({ id: executionId }, { relations: ['deployment', 'deployment.components'] })
     const currentActiveDeployment = await this.deploymentRepository.findOne({ where: { circleId: execution.deployment.circleId, active: true } })
-    const deploymentLogs = this.getDeploymentLogs(deploymentNotificationDto, execution.deployment)
+    const deploymentLogs = await this.getDeploymentLogs(deploymentNotificationDto, execution.deployment)
     execution.finishedAt = DateUtils.now()
     execution.deployment.components = execution.deployment.components.map(c => {
       c.running = false
