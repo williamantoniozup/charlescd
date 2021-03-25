@@ -130,6 +130,7 @@ func (manager Manager) triggerV2Callback(callbackUrl string, callbackType string
 		}))).Error()
 		return
 	}
+	manager.logAggregator.CleanLogs()
 }
 
 func (manager Manager) mountV2WebhookRequest(callbackUrl string, payload V2CallbackData, incomingCircleId string) (*http.Request, error) {

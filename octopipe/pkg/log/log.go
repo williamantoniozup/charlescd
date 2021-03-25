@@ -57,3 +57,7 @@ func (e *Aggregator) AppendErrorAndLog(err error) {
 		e.Logs = append(e.Logs, log)
 	}
 }
+
+func (e *Aggregator) CleanLogs() {
+	e.Logs = make([]Log,0)
+}
