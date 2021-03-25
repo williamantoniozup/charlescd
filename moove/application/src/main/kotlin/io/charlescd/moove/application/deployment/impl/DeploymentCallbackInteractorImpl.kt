@@ -16,35 +16,42 @@
 
 package io.charlescd.moove.application.deployment.impl
 
+import io.charlescd.moove.application.CsvSegmentationService
+import io.charlescd.moove.application.DeploymentService
+import io.charlescd.moove.application.WebhookEventService
+import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.deployment.DeploymentCallbackInteractor
 import io.charlescd.moove.application.deployment.request.DeploymentCallbackRequest
 import io.charlescd.moove.application.deployment.request.DeploymentRequestStatus
-import io.charlescd.moove.domain.Deployment
-import io.charlescd.moove.domain.DeploymentStatusEnum
-import io.charlescd.moove.domain.exceptions.NotFoundException
-import io.charlescd.moove.domain.repository.DeploymentRepository
+import io.charlescd.moove.domain.*
+import io.charlescd.moove.domain.service.CircleMatcherService
 import java.time.LocalDateTime
 import javax.inject.Named
 import javax.transaction.Transactional
 
 @Named
-open class DeploymentCallbackInteractorImpl(private val deploymentRepository: DeploymentRepository) :
-    DeploymentCallbackInteractor {
+open class DeploymentCallbackInteractorImpl(
+    private val deploymentService: DeploymentService,
+    private val webhookEventService: WebhookEventService,
+    private val circleMatcherService: CircleMatcherService,
+    private val workspaceService: WorkspaceService,
+    private val csvSegmentationService: CsvSegmentationService
+) : DeploymentCallbackInteractor {
 
     @Transactional
     override fun execute(id: String, request: DeploymentCallbackRequest) {
-        val deployment = updateDeploymentInfo(findDeployment(id), request)
+        val deployment = updateDeploymentInfo(id, request)
         if (request.isCallbackStatusSuccessful() && !deployment.circle.isDefaultCircle()) {
             updateStatusOfPreviousDeployment(deployment.circle.id)
         }
-        updateDeployment(deployment)
+        updateStatusInCircleMatcher(deployment.circle, request)
+        deploymentService.update(deployment)
+        notifyEvent(request, deployment)
     }
 
-    private fun updateDeployment(deployment: Deployment) {
-        this.deploymentRepository.update(deployment)
-    }
+    private fun updateDeploymentInfo(deploymentId: String, request: DeploymentCallbackRequest): Deployment {
+        val deployment = deploymentService.find(deploymentId)
 
-    private fun updateDeploymentInfo(deployment: Deployment, request: DeploymentCallbackRequest): Deployment {
         return when (request.deploymentStatus) {
             DeploymentRequestStatus.SUCCEEDED -> deployment.copy(
                 status = DeploymentStatusEnum.DEPLOYED,
@@ -61,20 +68,63 @@ open class DeploymentCallbackInteractorImpl(private val deploymentRepository: De
     }
 
     private fun updateStatusOfPreviousDeployment(circleId: String) {
-        this.deploymentRepository.find(circleId, DeploymentStatusEnum.DEPLOYED)
+        this.deploymentService.findByCircleIdAndStatus(circleId, DeploymentStatusEnum.DEPLOYED)
             .map { deployment ->
-                this.deploymentRepository.updateStatus(
+                this.deploymentService.updateStatus(
                     deployment.id,
                     DeploymentStatusEnum.NOT_DEPLOYED
                 )
             }
     }
 
-    private fun findDeployment(id: String): Deployment {
-        return this.deploymentRepository.findById(
-            id
-        ).orElseThrow {
-            NotFoundException("deployment", id)
+    private fun updateStatusInCircleMatcher(circle: Circle, request: DeploymentCallbackRequest) {
+        if (isSuccessCallback(request.deploymentStatus) && !circle.defaultCircle) {
+            val workspace = this.workspaceService.find(circle.workspaceId)
+            val isActive = request.deploymentStatus === DeploymentRequestStatus.SUCCEEDED
+            if (circle.matcherType == MatcherTypeEnum.SIMPLE_KV) {
+                val jsonList = csvSegmentationService.createJsonNodeList(circle.rules)
+                jsonList.chunked(100).map {
+                    this.circleMatcherService.updateImport(circle, circle.reference, it, workspace.circleMatcherUrl!!, isActive)
+                }
+            } else {
+                this.circleMatcherService.update(circle, circle.reference, workspace.circleMatcherUrl!!, isActive)
+            }
         }
+    }
+
+    private fun isSuccessCallback(deploymentStatus: DeploymentRequestStatus): Boolean {
+        return deploymentStatus === DeploymentRequestStatus.SUCCEEDED || deploymentStatus === DeploymentRequestStatus.UNDEPLOYED
+    }
+
+    private fun notifyEvent(request: DeploymentCallbackRequest, deployment: Deployment) {
+        val webhookEventType = getWebhookEventType(request, deployment)
+        val webhookEventSubType = getWebhookEventSubType(webhookEventType)
+        val webhookEventStatus = getWebhookEventStatus(request)
+        webhookEventService.notifyDeploymentEvent(deployment.workspaceId, webhookEventType, webhookEventSubType, webhookEventStatus, deployment)
+    }
+
+    private fun getWebhookEventType(callbackRequest: DeploymentCallbackRequest, deployment: Deployment): WebhookEventTypeEnum {
+        if (callbackRequest.isDeployEvent() || callbackRequest.deploymentStatus == DeploymentRequestStatus.TIMED_OUT) {
+            return WebhookEventTypeEnum.DEPLOY
+        }
+        return WebhookEventTypeEnum.UNDEPLOY
+    }
+
+    private fun getWebhookEventSubType(eventType: WebhookEventTypeEnum): WebhookEventSubTypeEnum {
+        if (eventType == WebhookEventTypeEnum.DEPLOY) {
+            return WebhookEventSubTypeEnum.FINISH_DEPLOY
+        }
+        return WebhookEventSubTypeEnum.FINISH_UNDEPLOY
+    }
+
+    private fun getWebhookEventStatus(callbackRequest: DeploymentCallbackRequest): WebhookEventStatusEnum {
+        if (callbackRequest.isEventStatusSuccessful()) {
+            return WebhookEventStatusEnum.SUCCESS
+        }
+
+        if (callbackRequest.isEventStatusFailure()) {
+            return WebhookEventStatusEnum.FAIL
+        }
+        return WebhookEventStatusEnum.TIMEOUT
     }
 }

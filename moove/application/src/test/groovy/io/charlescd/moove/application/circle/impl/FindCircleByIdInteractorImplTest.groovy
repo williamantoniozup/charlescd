@@ -31,7 +31,7 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-class FindCircleByIdInteractorImplTest extends Specification {
+class   FindCircleByIdInteractorImplTest extends Specification {
 
     private FindCircleByIdInteractor findCircleByIdInteractor
 
@@ -68,9 +68,9 @@ class FindCircleByIdInteractorImplTest extends Specification {
         def response = this.findCircleByIdInteractor.execute(circleId, workspaceId)
 
         then:
-        1 * circleRepository.find(circleId, workspaceId) >> Optional.of(circle)
+        1 * circleRepository.findByIdAndWorkspaceId(circleId, workspaceId) >> Optional.of(circle)
 
-        1 * deploymentRepository.findActiveByCircleId(circleId) >> [deployment]
+        1 * deploymentRepository.findActiveByCircleIdAndWorkspaceId(circleId, workspaceId) >> [deployment]
 
         1 * buildRepository.findById(buildId) >> Optional.of(build)
 
@@ -111,9 +111,9 @@ class FindCircleByIdInteractorImplTest extends Specification {
         def response = this.findCircleByIdInteractor.execute(circleId, workspaceId)
 
         then:
-        1 * circleRepository.find(circleId, workspaceId) >> Optional.of(circle)
+        1 * circleRepository.findByIdAndWorkspaceId(circleId, workspaceId) >> Optional.of(circle)
 
-        1 * deploymentRepository.findActiveByCircleId(circleId) >> []
+        1 * deploymentRepository.findActiveByCircleIdAndWorkspaceId(circleId, workspaceId) >> []
 
         0 * buildRepository.findById(_)
 
@@ -140,7 +140,7 @@ class FindCircleByIdInteractorImplTest extends Specification {
         this.findCircleByIdInteractor.execute(circleId, workspaceId)
 
         then:
-        1 * circleRepository.find(circleId, workspaceId) >> Optional.empty()
+        1 * circleRepository.findByIdAndWorkspaceId(circleId, workspaceId) >> Optional.empty()
 
         0 * deploymentRepository.findActiveByCircleId(circleId) >> []
 
@@ -188,7 +188,9 @@ class FindCircleByIdInteractorImplTest extends Specification {
                 0,
                 null,
                 isDefault,
-                workspaceId
+                workspaceId,
+                false,
+                null
         )
     }
 
@@ -209,7 +211,7 @@ class FindCircleByIdInteractorImplTest extends Specification {
                 'Feature name', 'feature-branch-name', LocalDateTime.now(), author.name, author.id, moduleSnapshotList, '23f1eabd-fb57-419b-a42b-4628941e34ec'))
 
         def circle = new Circle('f8296cfc-6ae1-11ea-bc55-0242ac130003', 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003", false, null)
 
         def deploymentList = new ArrayList<Deployment>()
         def undeployedAt = deploymentStatusEnum == DeploymentStatusEnum.NOT_DEPLOYED ? LocalDateTime.now() : null
