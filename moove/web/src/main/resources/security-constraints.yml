@@ -180,6 +180,12 @@ constraints:
         - POST
         - PATCH
 
+  - pattern: /v2/workspaces/{workspaceId}/groups/**
+    roles:
+      maintenance_write:
+        - POST
+        - DELETE
+
   - pattern: /v2/configurations/metric-configurations/provider-status
     roles:
       maintenance_write:
@@ -204,8 +210,20 @@ constraints:
       maintenance_write:
         - GET
 
+  - pattern: /v1/webhooks/**
+    roles:
+      maintenance_write:
+        - GET
+        - POST
+        - PATCH
+        - DELETE
+
 managementConstraints:
   - pattern: /v2/users/{email:.+}
+    methods:
+      - GET
+
+  - pattern: /v2/users/{id}/workspaces
     methods:
       - GET
 

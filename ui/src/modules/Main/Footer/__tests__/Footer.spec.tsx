@@ -22,8 +22,11 @@ import Footer from '../';
 test('render Footer', async () => {
   render(<Footer />);
 
-  const Component = screen.findByTestId('footer');
-  waitFor(() => expect(Component).toBeInTheDocument());
+  const component = await screen.findByTestId('footer');
+  const version = await screen.findByText('Version 0.6.1');
+
+  expect(component).toBeInTheDocument();
+  expect(version).toBeInTheDocument();
 });
 
 test('render Footer with success notification', async () => {
@@ -38,7 +41,7 @@ test('render Footer with success notification', async () => {
 
   render(<Footer />);
 
-  const Component = screen.findByTestId('footer');
-  waitFor(() => expect(Component).toBeInTheDocument());
-  waitFor(() => expect(screen.findByTestId('notification')).toBeInTheDocument());
+  const component = await screen.findByTestId('footer');
+  await waitFor(() => expect(component).toBeInTheDocument());
+  await waitFor(() => expect(screen.getByTestId('notification')).toBeInTheDocument());
 });

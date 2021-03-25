@@ -36,6 +36,10 @@ const Subtitle = styled(Text.h5)`
   margin: 10px 0px;
 `;
 
+const MinorTitle = styled(Text.h3)`
+  margin: 10px 0px;
+`;
+
 const Content = styled.div`
   display: flex;
   flex-direction: column;
@@ -53,6 +57,17 @@ const Input = styled(FormComponent.Input)`
 const Number = styled(FormComponent.Number)`
   width: 271px;
   margin-bottom: 12px;
+`;
+
+const HelmWrapper = styled.div`
+  margin-top: 40px;
+  margin-bottom: 12px;
+  width: 271px;
+`;
+
+const FieldWrapper = styled.div`
+  margin-bottom: 12px;
+  width: 271px;
 `;
 
 const FieldPopover = styled.div`
@@ -131,22 +146,19 @@ const MoreOptionsButton = styled(ButtonComponent.Default)`
   }
 `;
 
-interface MoreOptions {
-  showMoreOptions: boolean;
-}
-
-const AdvancedOptionWrapper = styled('div')<MoreOptions>`
-  display: ${({ showMoreOptions }) => (showMoreOptions ? 'initial' : 'none')};
-`;
+const AdvancedOptions = styled.div``;
 
 export default {
   Content,
   Title,
+  MinorTitle,
   Subtitle,
   Form,
   Input,
   Number,
   FieldPopover,
+  FieldWrapper,
+  HelmWrapper,
   Popover,
   Icon,
   Button,
@@ -158,6 +170,6 @@ export default {
     Button: ComponentButton,
     MoreOptionsButton: MoreOptionsButton,
     Trash: ComponentTrash,
-    AdvancedOptionWrapper: AdvancedOptionWrapper
+    AdvancedOptions
   }
 };

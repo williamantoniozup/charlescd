@@ -1,9 +1,14 @@
+import { AppConstants } from '../../../../../../app/v2/core/constants'
+
 export const noRepeatedCircleDr = {
-  apiVersion: 'networking.istio.io/v1alpha3',
+  apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
   kind: 'DestinationRule',
   metadata: {
     name: 'A',
-    namespace: 'sandbox'
+    namespace: 'sandbox',
+    annotations: {
+      circles: '["default-circle-id","normal-circle-id"]'
+    }
   },
   spec: {
     host: 'A',

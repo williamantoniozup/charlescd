@@ -20,13 +20,14 @@ package tests
 
 import (
 	"encoding/json"
-	"github.com/ZupIT/charlescd/compass/internal/configuration"
-	datasource2 "github.com/ZupIT/charlescd/compass/internal/datasource"
-	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/ZupIT/charlescd/compass/internal/configuration"
+	datasource2 "github.com/ZupIT/charlescd/compass/internal/datasource"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
@@ -50,7 +51,7 @@ func (s *Suite) BeforeTest(suiteName, testName string) {
 	var err error
 
 	s.DB, err = configuration.GetDBConnection("../../migrations")
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	s.DB.LogMode(dbLog)
 
@@ -68,12 +69,12 @@ func TestInit(t *testing.T) {
 }
 
 func (s *Suite) TestParse() {
-	stringReader := strings.NewReader(`{ "name": "Prometheus do maycao", "pluginId": "4bdcab48-483d-4136-8f41-318a5c7f1ec7", "health": true, "data": { "url": "http://35.238.107.172:9090" } }`)
+	stringReader := strings.NewReader(`{ "name": "Prometheus do maycao", "pluginId": "4bdcab48-483d-4136-8f41-318a5c7f1ec7", "data": { "url": "http://35.238.107.172:9090" } }`)
 	stringReadCloser := ioutil.NopCloser(stringReader)
 
 	res, err := s.repository.Parse(stringReadCloser)
 
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 	require.NotNil(s.T(), res)
 }
 
@@ -83,7 +84,7 @@ func (s *Suite) TestParseError() {
 
 	_, err := s.repository.Parse(stringReadCloser)
 
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *Suite) TestValidate() {
@@ -109,7 +110,7 @@ func (s *Suite) TestFindDataSourceById() {
 	s.DB.Exec(dataSourceInsert)
 	res, err := s.repository.FindById(dataSourceStruct.ID.String())
 
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 	dataSourceStruct.BaseModel = res.BaseModel
 	require.Equal(s.T(), dataSourceStruct, res)
 }
@@ -118,50 +119,29 @@ func (s *Suite) TestFindAllByWorkspace() {
 	dataSourceStruct := datasource2.DataSource{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
 		WorkspaceID: uuid.New(),
 		DeletedAt:   nil,
 	}
 	s.DB.Create(&dataSourceStruct)
 
-	res, err := s.repository.FindAllByWorkspace(dataSourceStruct.WorkspaceID, "true")
+	res, err := s.repository.FindAllByWorkspace(dataSourceStruct.WorkspaceID)
 
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 	require.NotEmpty(s.T(), res)
-	require.Equal(s.T(), true, res[0].Health)
 }
 
 func (s *Suite) TestFindAllByWorkspaceError() {
 	s.DB.Close()
-	_, err := s.repository.FindAllByWorkspace(uuid.New(), "true")
+	_, err := s.repository.FindAllByWorkspace(uuid.New())
 
-	require.Error(s.T(), err)
-}
-
-func (s *Suite) TestFindAllByWorkspaceWithHealth() {
-	dataSourceStruct := datasource2.DataSource{
-		Name:        "DataTest",
-		PluginSrc:   "prometheus",
-		Health:      false,
-		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
-		WorkspaceID: uuid.New(),
-		DeletedAt:   nil,
-	}
-	s.DB.Create(&dataSourceStruct)
-
-	res, err := s.repository.FindAllByWorkspace(dataSourceStruct.WorkspaceID, "")
-
-	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), res)
-	require.Equal(s.T(), false, res[0].Health)
+	require.NotNil(s.T(), err)
 }
 
 func (s *Suite) TestSaveDatasource() {
 	dataSourceStruct := datasource2.Request{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
 		WorkspaceID: uuid.New(),
 		DeletedAt:   nil,
@@ -169,12 +149,11 @@ func (s *Suite) TestSaveDatasource() {
 
 	res, err := s.repository.Save(dataSourceStruct)
 
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 
 	dataSourceStruct.BaseModel = res.BaseModel
 	require.Equal(s.T(), dataSourceStruct.BaseModel, res.BaseModel)
 	require.Equal(s.T(), dataSourceStruct.WorkspaceID, res.WorkspaceID)
-	require.Equal(s.T(), dataSourceStruct.Health, res.Health)
 	require.Equal(s.T(), dataSourceStruct.PluginSrc, res.PluginSrc)
 }
 
@@ -182,7 +161,6 @@ func (s *Suite) TestSaveDatasourceError() {
 	dataSourceStruct := datasource2.Request{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
 		WorkspaceID: uuid.New(),
 		DeletedAt:   nil,
@@ -190,33 +168,7 @@ func (s *Suite) TestSaveDatasourceError() {
 
 	s.DB.Close()
 	_, err := s.repository.Save(dataSourceStruct)
-	require.Error(s.T(), err)
-}
-
-func (s *Suite) TestSaveDatasourceWithHealthInserted() {
-	workspaceId := uuid.New()
-	dataSource := datasource2.DataSource{
-		Name:        "DataTest2",
-		PluginSrc:   "prometheus",
-		Health:      true,
-		Data:        json.RawMessage(`{"url": "localhost:8090"}`),
-		WorkspaceID: workspaceId,
-		DeletedAt:   nil,
-	}
-
-	s.DB.Create(&dataSource)
-
-	dataSourceStruct := datasource2.Request{
-		Name:        "DataTest",
-		PluginSrc:   "prometheus",
-		Health:      true,
-		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
-		WorkspaceID: workspaceId,
-		DeletedAt:   nil,
-	}
-
-	_, err := s.repository.Save(dataSourceStruct)
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *Suite) TestDelete() {
@@ -224,7 +176,6 @@ func (s *Suite) TestDelete() {
 	dataSource := datasource2.DataSource{
 		Name:        "DataTest2",
 		PluginSrc:   "prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "localhost:8090"}`),
 		WorkspaceID: workspaceId,
 		DeletedAt:   nil,
@@ -233,25 +184,25 @@ func (s *Suite) TestDelete() {
 	s.DB.Create(&dataSource)
 
 	err := s.repository.Delete(dataSource.ID.String())
-	require.NoError(s.T(), err)
+	require.Nil(s.T(), err)
 }
 
 func (s *Suite) TestFindByIdNotFoundError() {
 	_, err := s.repository.FindById("any-id")
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *Suite) TestDeleteError() {
 	s.DB.Close()
 	err := s.repository.Delete("any-id")
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *Suite) TestGetMetricsNotFoundError() {
 	datasourceId := uuid.New().String()
 	_, err := s.repository.GetMetrics(datasourceId)
 
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *Suite) TestGetMetricsError() {
@@ -259,7 +210,6 @@ func (s *Suite) TestGetMetricsError() {
 	dataSource := datasource2.DataSource{
 		Name:        "DataTest2",
 		PluginSrc:   "prometheus",
-		Health:      true,
 		Data:        json.RawMessage(`{"url": "localhost:8090"}`),
 		WorkspaceID: workspaceId,
 		DeletedAt:   nil,
@@ -269,21 +219,20 @@ func (s *Suite) TestGetMetricsError() {
 
 	_, err := s.repository.GetMetrics(dataSource.ID.String())
 
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *Suite) TestConnectionJsonError() {
 	jsonData := json.RawMessage(`{"data": "prometheus"}`)
 	err := s.repository.TestConnection("datasource/errorconnection/errorconnection", jsonData)
 
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }
 
 func (s *Suite) TestConnection() {
 	jsonData := json.RawMessage(`{"url": "http://localhost:9090"}`)
 	err := s.repository.TestConnection("datasource/validaction/validaction", jsonData)
 
-	require.NoError(s.T(), err)
 	require.Nil(s.T(), err)
 }
 
@@ -293,5 +242,5 @@ func (s *Suite) TestConnectionPluginDirError() {
 	jsonData := json.RawMessage(`{"url": "http://localhost:9090"}`)
 	err := s.repository.TestConnection("datasource/validaction/validaction", jsonData)
 
-	require.Error(s.T(), err)
+	require.NotNil(s.T(), err)
 }

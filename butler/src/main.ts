@@ -20,7 +20,6 @@ import {
 } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
-import { registerSchema } from 'class-validator'
 import * as rTracer from 'cls-rtracer'
 import * as hpropagate from 'hpropagate'
 import * as morgan from 'morgan'
@@ -28,11 +27,6 @@ import { AppModule } from './app/app.module'
 import { AppConstants } from './app/v2/core/constants'
 import { EntityNotFoundExceptionFilter } from './app/v2/core/filters/entity-not-found-exception.filter'
 import { ConsoleLoggerService } from './app/v2/core/logs/console'
-import {
-  OctopipeEKSConfigurationDataSchema,
-  OctopipeGenericConfigurationDataSchema,
-  SpinnakerConfigurationDataSchema
-} from './app/v2/core/validations/schemas'
 import { Request, Response, Router } from 'express'
 
 const healtCheckRouter = Router()
@@ -50,10 +44,6 @@ async function bootstrap() {
       AppConstants.DEFAULT_CIRCLE_HEADER_NAME
     ]
   })
-
-  registerSchema(SpinnakerConfigurationDataSchema)
-  registerSchema(OctopipeEKSConfigurationDataSchema)
-  registerSchema(OctopipeGenericConfigurationDataSchema)
 
   const appModule: DynamicModule = await AppModule.forRootAsync()
   const app: INestApplication = await NestFactory.create(appModule)
