@@ -45,8 +45,8 @@ open class UpdateCircleWithCsvFileInteractorImpl(
 
     @Transactional
     override fun execute(request: UpdateCircleWithCsvRequest, workspaceId: String): CircleResponse {
-        val circle = circleService.find(request.id)
-        var updatedCircle: Circle
+        val circle = circleService.findByIdAndWorkspaceId(request.id, workspaceId)
+        val updatedCircle: Circle
 
         if (request.shouldUpdateSegmentation()) {
             csvSegmentationService.validate(request.content!!, request.keyName!!)
@@ -77,8 +77,9 @@ open class UpdateCircleWithCsvFileInteractorImpl(
         previousReference: String
     ) {
         val workspace = workspaceService.find(workspaceId)
+        val deployment = deploymentService.findActiveList(circle.id)
         nodeList.chunked(100).map {
-            circleMatcherService.updateImport(circle, previousReference, it, workspace.circleMatcherUrl!!)
+            circleMatcherService.updateImport(circle, previousReference, it, workspace.circleMatcherUrl!!, deployment.isNotEmpty())
         }
     }
 
@@ -90,7 +91,8 @@ open class UpdateCircleWithCsvFileInteractorImpl(
                 importedAt = LocalDateTime.now(),
                 importedKvRecords = jsonNodes.size,
                 rules = csvSegmentationService.createPreview(jsonNodes),
-                reference = UUID.randomUUID().toString()
+                reference = UUID.randomUUID().toString(),
+                percentage = null
             )
         )
     }

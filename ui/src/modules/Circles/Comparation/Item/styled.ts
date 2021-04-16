@@ -15,7 +15,6 @@
  */
 
 import styled from 'styled-components';
-import { ReactComponent as SortSVG } from 'core/assets/svg/sort-left.svg';
 import { slideInLeft, fadeIn } from 'core/assets/style/animate';
 import InputTitleComponent from 'core/components/Form/InputTitle';
 import Dropdown from 'core/components/Dropdown';
@@ -34,6 +33,10 @@ const Actions = styled.div`
   margin-left: auto;
   display: flex;
   flex-direction: row;
+
+  > :first-child {
+    margin-right: 36px;
+  }
 
   > :last-child {
     margin-left: 36px;
@@ -68,33 +71,6 @@ const Content = styled.div`
 
 const Link = styled.a`
   text-decoration: none;
-`;
-
-const MetricsControl = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-content: right;
-  font-size: 12px;
-`;
-
-const MetricsLabel = styled.div`
-  margin-right: 10px;
-`;
-
-const SortLeft = styled(SortSVG)`
-  cursor: pointer;
-  margin-right: 10px;
-  transform: rotate(90deg);
-`;
-
-const SortRight = styled(SortSVG)`
-  cursor: pointer;
-  transform: rotate(-90deg);
-`;
-
-const MetricsTitle = styled.div`
-  display: flex;
-  justify-content: space-between;
 `;
 
 const InputTitle = styled(InputTitleComponent)`
@@ -180,6 +156,28 @@ const MetricsGroupsCard = styled.div`
   height: 40px;
 `;
 
+const WarningPercentageContainer = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  margin-top: 15px;
+  margin-bottom: 15px;
+
+  > span {
+    margin-left: 10px;
+  }
+`;
+
+const FieldErrorWrapper = styled.div`
+  display: flex;
+  margin-top: 2px;
+
+  span {
+    margin-left: 5px;
+    margin-top: 2px;
+  }
+`;
+
 export default {
   Link,
   Actions,
@@ -188,11 +186,6 @@ export default {
   Layer,
   Release,
   Wrapper,
-  MetricsControl,
-  MetricsLabel,
-  SortLeft,
-  SortRight,
-  MetricsTitle,
   InputTitle,
   MetricsGroupsContent,
   MetricsGroupsHeader,
@@ -200,5 +193,7 @@ export default {
   MetricsGroupsCard,
   MetricsGroupsNameContent,
   MetricsGroupsCountContent,
-  MetricsGroupsThresholdsContent
+  MetricsGroupsThresholdsContent,
+  WarningPercentageContainer,
+  FieldErrorWrapper
 };

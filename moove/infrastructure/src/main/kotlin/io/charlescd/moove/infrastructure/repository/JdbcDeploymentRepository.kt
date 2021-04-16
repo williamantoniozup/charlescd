@@ -61,6 +61,7 @@ class JdbcDeploymentRepository(
                        deployment_circle.imported_kv_records AS deployment_circle_imported_kv_records,
                        deployment_circle.imported_at         AS deployment_circle_imported_at,
                        deployment_circle.default_circle      AS deployment_circle_default_circle,
+                       deployment_circle.percentage          AS deployment_circle_percentage,
                        deployment_circle.workspace_id        AS deployment_circle_workspace_id,
                        deployment_circle_user.id             AS deployment_circle_user_id,
                        deployment_circle_user.name           AS deployment_circle_user_name,
@@ -111,6 +112,10 @@ class JdbcDeploymentRepository(
 
     override fun findActiveByCircleId(circleId: String): List<Deployment> {
         return findActiveDeploymentsByCircleId(circleId)
+    }
+
+    override fun findActiveByCircleIdAndWorkspaceId(circleId: String, workspaceId: String): List<Deployment> {
+        return findActiveDeploymentsByCircleIdAndWorkspaceId(circleId, workspaceId)
     }
 
     private fun deleteDeploymentsByCircleId(circleId: String) {
@@ -236,6 +241,19 @@ class JdbcDeploymentRepository(
         return this.jdbcTemplate.query(
             statement.toString(),
             arrayOf(circleId),
+            deploymentExtractor
+        )?.toList() ?: emptyList()
+    }
+
+    private fun findActiveDeploymentsByCircleIdAndWorkspaceId(circleId: String, workspaceId: String): List<Deployment> {
+        val statement = StringBuilder(BASE_QUERY_STATEMENT)
+            .appendln("AND deployments.workspace_id = ?")
+            .appendln("AND deployments.circle_id = ?")
+            .appendln("AND deployments.status not in ('NOT_DEPLOYED','DEPLOY_FAILED')")
+
+        return this.jdbcTemplate.query(
+            statement.toString(),
+            arrayOf(workspaceId, circleId),
             deploymentExtractor
         )?.toList() ?: emptyList()
     }
@@ -406,7 +424,7 @@ class JdbcDeploymentRepository(
 
     private fun createHistoryOrderByClause(): String {
         return """
-                ORDER BY deployments.created_at
+                ORDER BY deployments.created_at DESC
         """
     }
 
