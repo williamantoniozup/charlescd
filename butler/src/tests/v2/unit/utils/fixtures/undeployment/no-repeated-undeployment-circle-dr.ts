@@ -1,9 +1,12 @@
 export const noRepeatedUndeploymentCircleDr = {
-  apiVersion: 'networking.istio.io/v1alpha3',
+  apiVersion: 'networking.istio.io/v1beta1',
   kind: 'DestinationRule',
   metadata: {
     name: 'A',
-    namespace: 'sandbox'
+    namespace: 'sandbox',
+    annotations: {
+      circles: '["default-circle-id"]'
+    }
   },
   spec: {
     host: 'A',

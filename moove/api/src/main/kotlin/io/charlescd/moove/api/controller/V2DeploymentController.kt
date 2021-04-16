@@ -17,10 +17,7 @@
 package io.charlescd.moove.api.controller
 
 import io.charlescd.moove.application.ResourcePageResponse
-import io.charlescd.moove.application.deployment.CreateDeploymentInteractor
-import io.charlescd.moove.application.deployment.DeploymentCallbackInteractor
-import io.charlescd.moove.application.deployment.FindDeploymentsHistoryForCircleInteractor
-import io.charlescd.moove.application.deployment.FindDeploymentsHistoryInteractor
+import io.charlescd.moove.application.deployment.*
 import io.charlescd.moove.application.deployment.request.CreateDeploymentRequest
 import io.charlescd.moove.application.deployment.request.DeploymentCallbackRequest
 import io.charlescd.moove.application.deployment.request.DeploymentHistoryFilterRequest
@@ -42,7 +39,8 @@ class V2DeploymentController(
     private val deploymentCallbackInteractor: DeploymentCallbackInteractor,
     private val createDeploymentInteractor: CreateDeploymentInteractor,
     private val findDeploymentsHistoryForCircleInteractor: FindDeploymentsHistoryForCircleInteractor,
-    private val findDeploymentsHistoryInteractor: FindDeploymentsHistoryInteractor
+    private val findDeploymentsHistoryInteractor: FindDeploymentsHistoryInteractor,
+    private val createUndeploymentInteractor: CreateUndeploymentInteractor
 ) {
     @ApiOperation(value = "Create Deployment")
     @ApiImplicitParam(
@@ -80,7 +78,7 @@ class V2DeploymentController(
     fun deploymentHistoryForCircle(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @PathVariable("circleId") circle: String,
-        pageRequest: PageRequest
+        @Valid pageRequest: PageRequest
     ): ResourcePageResponse<DeploymentHistoryResponse> {
         return this.findDeploymentsHistoryForCircleInteractor.execute(workspaceId, circle, pageRequest)
     }
@@ -94,5 +92,15 @@ class V2DeploymentController(
         pageRequest: PageRequest
     ): SummarizedDeploymentHistoryResponse {
         return this.findDeploymentsHistoryInteractor.execute(workspaceId, filters, pageRequest)
+    }
+
+    @ApiOperation(value = "Create Undeployment")
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/{id}/undeploy")
+    fun undeploy(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @PathVariable("id") id: String
+    ) {
+        return this.createUndeploymentInteractor.execute(id, workspaceId)
     }
 }

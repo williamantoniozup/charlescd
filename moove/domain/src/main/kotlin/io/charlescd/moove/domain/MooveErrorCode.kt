@@ -41,7 +41,7 @@ enum class MooveErrorCode(val key: String) {
     FORBIDDEN("forbidden"),
     WORKSPACE_GIT_CONFIGURATION_IS_MISSING("workspace.git.configuration.is.missing"),
     WORKSPACE_DOCKER_REGISTRY_CONFIGURATION_IS_MISSING("workspace.docker.registry.configuration.is.missing"),
-    WORKSPACE_CD_CONFIGURATION_IS_MISSING("workspace.cd.configuration.is.missing"),
+    WORKSPACE_BUTLER_CONFIGURATION_IS_MISSING("workspace.butler.configuration.is.missing"),
     SOME_OF_INFORMED_FEATURES_DOES_NOT_EXIST_OR_ARE_NOT_READY_TO_GO("some.of.informed.features.does.not.exist.or.are.not.ready.to.go"),
     CIRCLE_DEPLOYMENT_ACTIVE("circle.deployment.active"),
     CANNOT_UPDATE_DEFAULT_CIRCLE("cannot.update.default.circle"),
@@ -59,5 +59,5 @@ enum class MooveErrorCode(val key: String) {
     USER_PASSWORD_DOES_NOT_MATCH("user.password.does.not.match"),
     CANNOT_RESET_YOUR_OWN_PASSWORD("cannot.reset.your.own.password"),
     EXTERNAL_IDM_FORBIDDEN("external.idm.forbidden"),
-    UNEXPECTED_IDM_ERROR("unexpected.idm.error")
+    IDM_UNEXPECTED_ERROR("idm.unexpected.error")
 }

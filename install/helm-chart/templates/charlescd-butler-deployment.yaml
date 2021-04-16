@@ -21,6 +21,7 @@ spec:
         app: {{ .Values.butler.name }}
         version: {{ .Values.butler.name }}
     spec:
+      serviceAccountName: {{ .Release.Name }}-charlescd-butler
       initContainers:
       - name: check-db-ready
         image: postgres:9.6.5
@@ -81,6 +82,8 @@ spec:
                 secretKeyRef:
                   name: deploy-aes256-key
                   key: encryption-key
+            - name: BUTLER_NAMESPACE
+              value: {{ .Release.Namespace }}
           resources:
 {{ toYaml .Values.butler.resources | indent 12 }}
     {{- with .Values.butler.nodeSelector }}
