@@ -18,6 +18,10 @@ import { Component } from '../../../api/deployments/interfaces'
 import { Deployment, DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
 
 const DeploymentUtils = {
+  getDeploymentName: (component: DeploymentComponent, circleId: string): string => {
+    return `${component.name}-${component.imageTag}-${circleId}`
+  },
+
   getActiveSameCircleTagComponent: (activeComponents: Component[], component: DeploymentComponent, circleId: string | null): Component | undefined => {
     const activeByName = DeploymentUtils.getActiveComponentsByName(activeComponents, component.name)
     return activeByName.find(
@@ -57,6 +61,15 @@ export const componentsToBeRemoved = (deployment: Deployment, activeComponents: 
   return sameCircleComponents.filter(c => {
     return removedComponents(deployment.components, c) || updatedComponents(deployment.components, c)
   })
+}
+
+export const unusedComponentProxy = (deployment: Deployment, activeComponents: Component[]): DeploymentComponent[] => {
+  if (componentsToBeRemoved(deployment, activeComponents).length === 0) {
+    return []
+  }
+  const sameCircleComponents = activeComponents.filter(c => c.deployment.circleId === deployment.circleId)
+
+  return sameCircleComponents.filter(c => !deployment.components?.map(dc => dc.name).includes(c.name))
 }
 
 const removedComponents = (deploymentComponents: DeploymentComponent[] | undefined, activeComponent: Component) => {

@@ -20,7 +20,8 @@ import React, {
   useImperativeHandle,
   useState,
   FocusEvent,
-  useEffect
+  useEffect,
+  KeyboardEvent
 } from 'react';
 import Popover from 'core/components/Popover';
 import { InputEvents, ChangeInputEvent } from 'core/interfaces/InputEvents';
@@ -41,6 +42,7 @@ export interface Props extends InputEvents {
   autoComplete?: string;
   defaultValue?: string;
   onChange?: (event: ChangeInputEvent) => void;
+  onKeyPress?: (event: KeyboardEvent<HTMLInputElement>) => void;
   onClick?: (event: React.MouseEvent<HTMLInputElement, MouseEvent>) => void;
   placeholder?: string;
   disabled?: boolean;
@@ -62,6 +64,7 @@ const Input = React.forwardRef(
       readOnly = false,
       autoComplete = 'off',
       onChange,
+      onKeyPress,
       maxLength,
       isLoading,
       hasError,
@@ -74,10 +77,12 @@ const Input = React.forwardRef(
     const isTip = !isEmpty(tipTitle) && !isEmpty(tipDescription);
     const [isFocused, setIsFocused] = useState(true);
 
+    const value = inputRef?.current?.value;
+
     useEffect(() => {
       const isEmptyValue = isEmpty(inputRef.current.value);
       setIsFocused(!isEmptyValue || disabled);
-    }, [rest.defaultValue, disabled]);
+    }, [rest.defaultValue, disabled, value]);
 
     const renderTip = () => (
       <Popover title={tipTitle} icon="info" description={tipDescription} />
@@ -106,6 +111,7 @@ const Input = React.forwardRef(
         data-testid={`input-wrapper-${name}`}
       >
         <Styled.Input
+          id={`input-${type}-${name}`}
           ref={inputRef}
           type={type}
           name={name}
@@ -114,6 +120,7 @@ const Input = React.forwardRef(
           data-testid={`input-${type}-${name}`}
           autoComplete={autoComplete}
           onChange={handleChange}
+          onKeyPress={onKeyPress}
           onClick={() => setIsFocused(true)}
           onBlur={handleFocused}
           disabled={disabled}
@@ -126,6 +133,7 @@ const Input = React.forwardRef(
             isFocused={isFocused}
             hasError={hasError || !isEmpty(error)}
             onClick={() => handleClick()}
+            htmlFor={`input-${type}-${name}`}
           >
             {label}
           </Styled.Label>

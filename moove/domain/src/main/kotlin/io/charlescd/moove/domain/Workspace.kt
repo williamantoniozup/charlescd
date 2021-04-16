@@ -28,14 +28,18 @@ data class Workspace(
     val registryConfigurationId: String? = null,
     val circleMatcherUrl: String? = null,
     val gitConfigurationId: String? = null,
-    val cdConfigurationId: String? = null,
-    val metricConfigurationId: String? = null
+    val metricConfigurationId: String? = null,
+    val deploymentConfigurationId: String? = null
 ) {
     fun checkCurrentWorkspaceStatus(): WorkspaceStatusEnum {
-        return if (cdConfigurationId != null && registryConfigurationId != null) {
+        return if (deploymentConfigurationId != null && registryConfigurationId != null) {
             WorkspaceStatusEnum.COMPLETE
         } else {
             WorkspaceStatusEnum.INCOMPLETE
         }
+    }
+
+    fun hasCircleMatcher(): Boolean {
+        return circleMatcherUrl?.isNotBlank() == true
     }
 }

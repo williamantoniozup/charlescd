@@ -23,6 +23,9 @@ import (
 	"os"
 	"strings"
 	"testing"
+	_log "octopipe/pkg/log"
+	"github.com/argoproj/gitops-engine/pkg/utils/kube/kubetest"
+	"k8s.io/client-go/rest"
 
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
@@ -157,19 +160,18 @@ func toJSON(manifest string) map[string]interface{} {
 }
 
 func TestActionFailed(t *testing.T) {
-	scheme := runtime.NewScheme()
-	client := fake.NewSimpleDynamicClient(scheme)
-
 	deployment := deploymentMain.NewDeployment(
 		"fake",
 		false,
 		"default",
 		toJSON(simpleManifest),
-		client,
+		&rest.Config{},
+		&kubetest.MockKubectlCmd{},
+		&_log.Aggregator{},
 	)
 
 	err := deployment.Do()
-	if err != nil && !strings.Contains(err.Error(), "Failed to execute deployment") {
+	if err != nil && !strings.Contains(err.Error(), "Not recognize deploy action") {
 		t.Error(err)
 	}
 
@@ -184,16 +186,15 @@ func TestCreateResource(t *testing.T) {
 		false,
 		"default",
 		toJSON(simpleManifest),
-		client,
+		&rest.Config{},
+		&kubetest.MockKubectlCmd{},
+		&_log.Aggregator{},
 	)
 
-	err := deployment.Do()
-	if err != nil {
-		t.Fatal(err)
-	}
+	os.Setenv("TIMEOUT_RESOURCE_VERIFICATION", "1")
 
-	_, err = client.Resource(deploymentRes).Namespace("default").Get(context.TODO(), "nginx-deployment", metav1.GetOptions{})
-	if err != nil {
+	err := deployment.Do()
+	if err != nil && !strings.Contains(err.Error(), "Timeout") {
 		t.Error(err)
 	}
 
@@ -213,7 +214,9 @@ func TestUpdateResource(t *testing.T) {
 		false,
 		"default",
 		toJSON(simpleManifestRunning),
-		client,
+		&rest.Config{},
+		&kubetest.MockKubectlCmd{},
+		&_log.Aggregator{},
 	)
 
 	_, err := client.Resource(deploymentRes).Namespace("default").Create(context.TODO(), unstructuredObj, metav1.CreateOptions{})
@@ -224,7 +227,7 @@ func TestUpdateResource(t *testing.T) {
 	os.Setenv("TIMEOUT_RESOURCE_VERIFICATION", "1")
 
 	err = deployment.Do()
-	if err != nil {
+	if err != nil && !strings.Contains(err.Error(), "Timeout") {
 		t.Error(err)
 	}
 }
@@ -242,7 +245,9 @@ func TestUndeployResourceControllerSuccess(t *testing.T) {
 		false,
 		"default",
 		toJSON(simpleManifestRunning),
-		client,
+		&rest.Config{},
+		&kubetest.MockKubectlCmd{},
+		&_log.Aggregator{},
 	)
 
 	_, err := client.Resource(deploymentRes).Namespace("default").Create(context.TODO(), unstructuredObj, metav1.CreateOptions{})
@@ -277,7 +282,9 @@ func TestUndeployNonResourceControllerSuccess(t *testing.T) {
 		false,
 		"default",
 		toJSON(simpleManifest),
-		client,
+		&rest.Config{},
+		&kubetest.MockKubectlCmd{},
+		&_log.Aggregator{},
 	)
 
 	_, err := client.Resource(deploymentRes).Namespace("default").Create(context.TODO(), unstructuredObj, metav1.CreateOptions{})
@@ -308,7 +315,9 @@ func TestUndeployIfNotExist(t *testing.T) {
 		false,
 		"default",
 		toJSON(simpleManifestForUpdate),
-		client,
+		&rest.Config{},
+		&kubetest.MockKubectlCmd{},
+		&_log.Aggregator{},
 	)
 
 	err := deployment.Do()
@@ -320,5 +329,4 @@ func TestUndeployIfNotExist(t *testing.T) {
 	if err != nil && !k8sErrors.IsNotFound(err) {
 		t.Error(err)
 	}
-
 }
