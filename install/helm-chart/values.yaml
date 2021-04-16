@@ -16,8 +16,9 @@ CharlesApplications:
       port: 3000
       initialDelay: 60
     image:
-      registry: zupcharles
+      registry: 462986224002.dkr.ecr.us-east-1.amazonaws.com
       application: charlescd-butler
+      tag: release-darwin-system-token-v-17
     imagePullSecrets: false
     pullPolicy: Always
     service:
@@ -56,8 +57,9 @@ CharlesApplications:
       port: 8080
       initialDelay: 180
     image:
-      registry: zupcharles
+      registry: 462986224002.dkr.ecr.us-east-1.amazonaws.com
       application: charlescd-moove
+      tag: release-darwin-system-token-v-17
     imagePullSecrets: false
     pullPolicy: Always
     service:
@@ -103,8 +105,9 @@ CharlesApplications:
       port: 8080
       initialDelay: 60
     image:
-      registry: zupcharles
+      registry: 462986224002.dkr.ecr.us-east-1.amazonaws.com
       application: charlescd-villager
+      tag: release-darwin-system-token-v-17
     imagePullSecrets: false
     pullPolicy: Always
     service:
@@ -144,8 +147,9 @@ CharlesApplications:
       port: 8080
       initialDelay: 60
     image:
-      registry: zupcharles
-      application: charlescd-octopipe
+      registry: 462986224002.dkr.ecr.us-east-1.amazonaws.com
+      application: octopipe
+      tag: release-darwin-system-token-v-17
     imagePullSecrets: false
     pullPolicy: Always
     service:
@@ -181,8 +185,9 @@ CharlesApplications:
       port: 3000
       initialDelay: 20
     image:
-      registry: zupcharles
+      registry: 462986224002.dkr.ecr.us-east-1.amazonaws.com
       application: charlescd-ui
+      tag: release-darwin-system-token-v-17
     imagePullSecrets: false
     pullPolicy: Always
     service:
@@ -224,8 +229,9 @@ CharlesApplications:
       port: 8080
       initialDelay: 120
     image:
-      registry: zupcharles
+      registry: 462986224002.dkr.ecr.us-east-1.amazonaws.com
       application: charlescd-circle-matcher
+      tag: release-darwin-system-token-v-17
     imagePullSecrets: false
     pullPolicy: Always
     service:
@@ -278,8 +284,9 @@ CharlesApplications:
       port: 8080
       initialDelay: 60
     image:
-      registry: zupcharles
+      registry: 462986224002.dkr.ecr.us-east-1.amazonaws.com
       application: charlescd-compass
+      tag: release-darwin-system-token-v-17
     imagePullSecrets: false
     pullPolicy: Always
     service:
@@ -323,7 +330,7 @@ CharlesApplications:
         password: 7Qs2KuM9gYzw48BS
 
   hermes:
-    enabled: false
+    enabled: true
     name: charlescd-hermes
     sidecarIstio:
       enabled: true
@@ -332,8 +339,9 @@ CharlesApplications:
       port: 8080
       initialDelay: 60
     image:
-      registry: zupcharles
+      registry: 462986224002.dkr.ecr.us-east-1.amazonaws.com
       application: charlescd-hermes
+      tag: release-darwin-system-token-v-17
     imagePullSecrets: false
     pullPolicy: Always
     service:
@@ -373,7 +381,7 @@ CharlesApplications:
     subscriptionRegisterLimit: 5
 
   gate:
-    enabled: false
+    enabled: true
     name: charlescd-gate
     sidecarIstio:
       enabled: true
@@ -382,8 +390,9 @@ CharlesApplications:
       port: 8080
       initialDelay: 60
     image:
-      registry: zupcharles
+      registry: 462986224002.dkr.ecr.us-east-1.amazonaws.com
       application: charlescd-gate
+      tag: release-darwin-system-token-v-17
     imagePullSecrets: false
     pullPolicy: Always
     service:
@@ -528,6 +537,8 @@ envoy:
   compass:
     enabled: true
   hermes:
+    enabled: true
+  gate:
     enabled: true
   cors:
     enabled: true
