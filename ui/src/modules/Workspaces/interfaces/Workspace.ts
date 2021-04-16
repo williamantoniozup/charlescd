@@ -25,7 +25,7 @@ export interface Workspace {
   circleMatcherUrl?: string;
   gitConfiguration?: Configuration;
   userGroups?: UserGroup[];
-  cdConfiguration?: Configuration;
+  deploymentConfiguration?: Configuration;
   metricConfiguration?: MetricConfiguration;
   registryConfiguration?: Configuration;
   webhookConfiguration?: Webhook[];
