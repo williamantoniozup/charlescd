@@ -22,11 +22,13 @@ const Modal = styled(ComponentModal.Default)`
   .modal-container {
     width: 543px;
     padding: 35px 0 28px 0;
+    max-height: 650px;
+    bottom: 100px;
   }
 
   .modal-content {
-    overflow-y: hidden;
-    min-height: 200px;
+    overflow-y: auto;
+    max-height: 600px;
   }
 `;
 
@@ -59,8 +61,8 @@ const Empty = styled.div`
 `;
 
 const Item = styled.div`
-  border-top: 1px solid #3A3A3C;
-  border-bottom: 1px solid #3A3A3C;
+  border-top: 1px solid ${({ theme }) => theme.token.workspace.item.border};
+  border-bottom: 1px solid ${({ theme }) => theme.token.workspace.item.border};
   height: 70px;
   padding: 0 40px;
   display: flex;
@@ -82,7 +84,7 @@ const Subtitle = styled.div`
 const Description = styled.div``;
 
 const Caption = styled.div`
-  margin: 10px 40px;
+  margin: 10px 40px 20px;
 `;
 
 export default {

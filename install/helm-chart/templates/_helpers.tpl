@@ -274,7 +274,7 @@ env:
   - name: REACT_APP_IDM_REDIRECT_URI
     value: {{ .RangeContext.idmRedirectHost }}
   - name: REACT_APP_CHARLES_VERSION
-    value: {{ .ChartContext.Chart.AppVersion }}
+    value: {{ .RangeContext.image.tag | default .ChartContext.Chart.AppVersion }}
 {{- end -}}
 
 {{- define "test.hermes-envs" -}}
@@ -306,7 +306,7 @@ env:
     value: "{{ .RangeContext.amqp.message.exchange}}"
   - name: AMQP_WAIT_MESSAGE_QUEUE
     value: "{{ .RangeContext.amqp.waitMessage.queue}}"
-  - name: AMQP_AMQP_WAIT_MESSAGE_EXCHANGE
+  - name: AMQP_WAIT_MESSAGE_EXCHANGE
     value: "{{ .RangeContext.amqp.waitMessage.exchange}}"
   - name: PUBLISHER_TIME
     value: "{{ .RangeContext.publisher.time}}"

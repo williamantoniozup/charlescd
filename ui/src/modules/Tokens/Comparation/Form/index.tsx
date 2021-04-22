@@ -49,7 +49,7 @@ const FormToken = ({ mode, data }: Props) => {
   const history = useHistory();
   const {
     register, handleSubmit, watch,
-    errors, formState: { isValid }
+    errors, formState: { isValid }, 
   } = methods;
   const nameRef = useRef<HTMLInputElement>(null);
 
@@ -89,8 +89,8 @@ const FormToken = ({ mode, data }: Props) => {
 
   const ModalNewToken = () => (
     <ModalCopy
-      title="Your token has been registered!"
-      description="You can now use the token according to the settings you have created."
+      title="Your token has been created!"
+      description="You have succesfully added a new personal acces token. Copy the token now!"
       token={response?.token}
       onClose={onCloseModalCopy}
     />
@@ -123,6 +123,7 @@ const FormToken = ({ mode, data }: Props) => {
           <ContentIcon icon="token">
             <Form.InputTitle
               name="name"
+              placeholder="Type a name"
               ref={self => {
                 nameRef.current = self;
                 return register(self, 
@@ -140,7 +141,7 @@ const FormToken = ({ mode, data }: Props) => {
             />
             {isModeView && <Info />}
           </ContentIcon>
-          {name && <Workspaces mode={mode} />}
+          {name && !errors?.name?.message && <Workspaces mode={mode} />}
           {(workspaces || allWorkspaces) && (
             <Fragment>
               <Scopes mode={mode} />

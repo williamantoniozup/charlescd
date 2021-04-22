@@ -20,7 +20,6 @@ package authorization
 
 import (
 	"errors"
-
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	"github.com/ZupIT/charlescd/gate/internal/repository"
@@ -57,13 +56,19 @@ func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken stri
 		return logging.NewError("Forbidden", err, logging.InternalError, nil, "authorize.systemToken")
 	}
 
-	if allowed {
-		return nil
-	}
-
 	systemToken, err := authorizeSystemToken.systemTokenRepository.FindByToken(authorizationToken)
 	if err != nil {
 		return logging.WithOperation(err, "authorize.systemToken")
+	}
+
+	if allowed {
+		systemToken.SetLastUsed()
+		authorizeSystemToken.systemTokenRepository.Update(systemToken)
+		return nil
+	}
+
+	if systemToken.Revoked {
+		return logging.NewError("Forbidden", errors.New("forbidden"), logging.ForbiddenError, nil, "authorize.systemToken")
 	}
 
 	if !systemToken.AllWorkspaces {
@@ -89,6 +94,8 @@ func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken stri
 		}
 
 		if allowed {
+			systemToken.SetLastUsed()
+			authorizeSystemToken.systemTokenRepository.Update(systemToken)
 			return nil
 		}
 	}

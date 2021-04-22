@@ -17,6 +17,7 @@
 package io.charlescd.moove.application.module.impl
 
 import io.charlescd.moove.application.ModuleService
+import io.charlescd.moove.application.SystemTokenService
 import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WorkspaceService
@@ -26,7 +27,9 @@ import io.charlescd.moove.application.module.request.ComponentRequest
 import io.charlescd.moove.application.module.request.CreateModuleRequest
 import io.charlescd.moove.application.module.response.ModuleResponse
 import io.charlescd.moove.domain.Module
+import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.repository.ModuleRepository
+import io.charlescd.moove.domain.repository.SystemTokenRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
@@ -39,12 +42,13 @@ class CreateModuleInteractorImplTest extends Specification {
     private ModuleRepository moduleRepository = Mock(ModuleRepository)
     private UserRepository userRepository = Mock(UserRepository)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
         createModuleInteractor = new CreateModuleInteractorImpl(
                 new ModuleService(moduleRepository),
-                new UserService(userRepository, managementUserSecurityService),
+                new UserService(userRepository, systemTokenService, managementUserSecurityService),
                 new WorkspaceService(workspaceRepository, userRepository)
         )
     }
@@ -61,7 +65,7 @@ class CreateModuleInteractorImplTest extends Specification {
 
         def workspace = TestUtils.workspace
         when:
-        def response = createModuleInteractor.execute(request, workspaceId, authorization)
+        def response = createModuleInteractor.execute(request, workspaceId, authorization, null)
 
         then:
         1 * moduleRepository.save(_) >> { arguments ->
@@ -90,6 +94,30 @@ class CreateModuleInteractorImplTest extends Specification {
         assert response.components[0] instanceof ComponentResponse
         assert response.components[0].name == request.components[0].name
         assert response.components[0].createdAt != null
+    }
+
+    def "when there are component with the same name, should return error"() {
+        given:
+        def component1 = new ComponentRequest("Application", 10, 10, 'host', 'gateway')
+        def component2 = new ComponentRequest("Application", 10, 10, 'host', 'gateway')
+        def authorization = TestUtils.authorization
+        def workspaceId = TestUtils.workspaceId
+        def request = new CreateModuleRequest("CharlesCD", "http://github.com.br",
+                "http://github.com.br/helm", [component1, component2])
+
+        def author = TestUtils.user
+
+        when:
+        createModuleInteractor.execute(request, workspaceId, authorization, null)
+
+        then:
+        0 * moduleRepository.save(_)
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
+        0 * workspaceRepository.find(workspaceId)
+
+        def exception = thrown(BusinessException)
+        assert exception.message == "duplicated.component.name.error"
     }
 }
 
