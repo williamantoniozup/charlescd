@@ -577,6 +577,7 @@ rabbitmq:
   auth:
     username: guest
     password: guest
+    existingErlangSecret: charlescd-rabbitmq-erl
   configuration: |-
     ## Username and password
     ##
