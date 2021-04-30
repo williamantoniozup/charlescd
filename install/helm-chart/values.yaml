@@ -18,7 +18,7 @@ CharlesApplications:
     image:
       registry: 462986224002.dkr.ecr.us-east-1.amazonaws.com
       application: charlescd-butler
-      tag: release-darwin-system-token-m-v5
+      tag: release-darwin-system-token-m-v6
     imagePullSecrets: false
     pullPolicy: Always
     service:
@@ -59,7 +59,7 @@ CharlesApplications:
     image:
       registry: 462986224002.dkr.ecr.us-east-1.amazonaws.com
       application: charlescd-moove
-      tag: release-darwin-system-token-m-v5
+      tag: release-darwin-system-token-m-v6
     imagePullSecrets: false
     pullPolicy: Always
     service:
@@ -107,7 +107,7 @@ CharlesApplications:
     image:
       registry: 462986224002.dkr.ecr.us-east-1.amazonaws.com
       application: charlescd-villager
-      tag: release-darwin-system-token-m-v5
+      tag: release-darwin-system-token-m-v6
     imagePullSecrets: false
     pullPolicy: Always
     service:
@@ -149,7 +149,7 @@ CharlesApplications:
     image:
       registry: 462986224002.dkr.ecr.us-east-1.amazonaws.com
       application: octopipe
-      tag: release-darwin-system-token-m-v5
+      tag: release-darwin-system-token-m-v6
     imagePullSecrets: false
     pullPolicy: Always
     service:
@@ -187,7 +187,7 @@ CharlesApplications:
     image:
       registry: 462986224002.dkr.ecr.us-east-1.amazonaws.com
       application: charlescd-ui
-      tag: release-darwin-system-token-m-v5
+      tag: release-darwin-system-token-m-v6
     imagePullSecrets: false
     pullPolicy: Always
     service:
@@ -231,7 +231,7 @@ CharlesApplications:
     image:
       registry: 462986224002.dkr.ecr.us-east-1.amazonaws.com
       application: charlescd-circle-matcher
-      tag: release-darwin-system-token-m-v5
+      tag: release-darwin-system-token-m-v6
     imagePullSecrets: false
     pullPolicy: Always
     service:
@@ -286,7 +286,7 @@ CharlesApplications:
     image:
       registry: 462986224002.dkr.ecr.us-east-1.amazonaws.com
       application: charlescd-compass
-      tag: release-darwin-system-token-m-v5
+      tag: release-darwin-system-token-m-v6
     imagePullSecrets: false
     pullPolicy: Always
     service:
@@ -341,7 +341,7 @@ CharlesApplications:
     image:
       registry: 462986224002.dkr.ecr.us-east-1.amazonaws.com
       application: charlescd-hermes
-      tag: release-darwin-system-token-m-v5
+      tag: release-darwin-system-token-m-v6
     imagePullSecrets: false
     pullPolicy: Always
     service:
@@ -392,7 +392,7 @@ CharlesApplications:
     image:
       registry: 462986224002.dkr.ecr.us-east-1.amazonaws.com
       application: charlescd-gate
-      tag: release-darwin-system-token-m-v5
+      tag: release-darwin-system-token-m-v6
     imagePullSecrets: false
     pullPolicy: Always
     service:
