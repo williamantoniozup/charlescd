@@ -28,11 +28,13 @@ import { EntityManager } from 'typeorm'
 import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { MetadataScopeEnum } from '../../../../app/v2/api/deployments/enums/metadata-scope.enum'
 import { LogEntity } from '../../../../app/v2/api/deployments/entity/logs.entity'
+import {K8sClient} from "../../../../app/v2/core/integrations/k8s/client";
 
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
   let app: INestApplication
   let manager: EntityManager
+
   beforeAll(async() => {
     const module = Test.createTestingModule({
       imports: [
@@ -1289,4 +1291,5 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         })
       })
   })
+
 })
