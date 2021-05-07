@@ -2,8 +2,7 @@ name: moove dev-release
 
 on:
   push:
-    branches: [ release-darwin-* ]
-
+    branches: [ release-darwin-*, test-ci ]
 jobs:
   build_and_push_prerelease:
     runs-on: ubuntu-latest
