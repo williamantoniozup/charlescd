@@ -1,15 +1,14 @@
 name: build moove
-name: build moove
 
 on:
   push:
-    branches: [ main]
+    branches: [ main ]
     paths:
       - 'moove/**'
     tags: 
       - '!*'
   pull_request:
-    branches: [ main, charlescd-release-1.0.0 ]
+    branches: [ main ]
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - 'moove/**'
