@@ -28,6 +28,10 @@ jobs:
         key: ${{ runner.os }}-maven-${{ hashFiles('./moove/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-
+    - name: maven-settings-xml-action
+      uses: whelk-io/maven-settings-xml-action@v14
+      with:
+        mirrors: '[{ "id": "mirror-scalaz", "mirrorOf": "scalaz-bintray", "url": "http://dl.bintray.com/scalaz/releases" }]'
     - name: Build
       run: mvn -B clean install -Dinsecure.repositories=WARN 
       working-directory: ./moove
