@@ -17,6 +17,8 @@
 /dist
 /public/config.js
 
+.docz
+
 # misc
 .DS_Store
 .env.development
