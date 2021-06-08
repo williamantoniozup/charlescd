@@ -20,7 +20,6 @@ import { useFormContext, useFieldArray } from 'react-hook-form';
 import StyledRule from 'modules/Circles/Segments/styled';
 import { operatorsOptions } from './constants';
 import Icon from 'core/components/Icon';
-import { getOperator } from './helpers';
 
 const BasicQueryForm = () => {
   const { control, register } = useFormContext();
@@ -46,16 +45,13 @@ const BasicQueryForm = () => {
             </StyledRule.RuleTrash>
             <StyledRule.Input
               type="hidden"
-              ref={register()}
-              name={`filters[${index}].id`}
-              defaultValue={field.id}
+              {...register(`filters[${index}].id` as const)}
+              defaultValue={field.fieldId}
             />
             <StyledRule.Input
               label="Filter"
-              name={`filters[${index}].field`}
-              ref={register({ required: true })}
+              {...register(`filters[${index}].field` as const, { required: true })}
               maxLength={100}
-              defaultValue={field.field}
             />
             <StyledRule.Select
               options={operatorsOptions}
@@ -63,14 +59,11 @@ const BasicQueryForm = () => {
               rules={{ required: true }}
               label="Conditional"
               name={`filters[${index}].operator`}
-              defaultValue={getOperator(field.operator)}
             />
             <StyledRule.Input
               label="Value"
-              name={`filters[${index}].value`}
-              ref={register({ required: true })}
+              {...register(`filters[${index}].value` as const, { required: true })}
               maxLength={100}
-              defaultValue={field.value}
             />
           </StyledRule.Rule>
         </Styled.RuleWrapper>

@@ -15,7 +15,7 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useFormContext, ArrayField } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { useFindAllModules } from 'modules/Modules/hooks/module';
 import { Option } from 'core/components/Form/Select/interfaces';
 import debounce from 'lodash/debounce';
@@ -31,7 +31,7 @@ interface Props {
   onClose: () => void;
   onError: (hasError: boolean) => void;
   isNotUnique?: boolean;
-  module?: Partial<ArrayField<Record<string, string>, 'id'>>;
+  module?: any;
 }
 
 interface TagProps {
@@ -48,12 +48,12 @@ const Module = ({ index, onClose, onError, isNotUnique }: Props) => {
   const prefixName = `modules[${index}]`;
   const { getComponentTag, status } = useComponentTags();
   const {
-    errors,
     register,
     control,
     getValues,
     setValue,
-    clearErrors
+    clearErrors,
+    formState: { errors }
   } = useFormContext();
 
   useEffect(() => {
@@ -141,12 +141,10 @@ const Module = ({ index, onClose, onError, isNotUnique }: Props) => {
       <Styled.SelectWrapper>
         <Styled.Module.Input
           type="hidden"
-          name={`${prefixName}.tag`}
-          ref={register({ required: true })}
+          {...register(`${prefixName}.tag` as const, { required: true })}
         />
         <Styled.Module.Input
-          name={`${prefixName}.version`}
-          ref={register(isRequiredAndNotBlank)}
+          {...register(`${prefixName}.version` as const, { required: true })}
           // eslint-disable-next-line react-hooks/exhaustive-deps
           onChange={useCallback(debounce(onSearchTag, 700), [])}
           isLoading={status.isPending}

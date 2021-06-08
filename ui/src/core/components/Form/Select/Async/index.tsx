@@ -64,9 +64,10 @@ const AsyncSelect = ({
 }: Props) => (
   <div data-testid={`select-${name}`}>
     <Controller
-      render={({ onChange: onControllerChange }) => {
+      render={({ field }) => {
         return (
           <Select
+            {...field}
             defaultOptions={defaultOptions}
             placeholder={label}
             className={className}
@@ -79,9 +80,9 @@ const AsyncSelect = ({
             hideSelectedOptions={hideSelectedOptions}
             loadOptions={loadOptions}
             hasError={hasError}
+            options={options}
             onChange={selected => {
               onChange?.(selected);
-              onControllerChange(selected?.value);
 
               return selected?.value;
             }}
@@ -91,7 +92,6 @@ const AsyncSelect = ({
       defaultValue={defaultValue?.value}
       rules={rules}
       control={control}
-      options={options}
       name={name}
     />
   </div>

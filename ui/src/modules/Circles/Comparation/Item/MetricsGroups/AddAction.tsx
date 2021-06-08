@@ -50,9 +50,8 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
   const {
     handleSubmit,
     register,
-    errors,
     control,
-    formState: { isValid }
+    formState: { isValid, errors }
   } = useForm<ActionForm>({ mode: 'onChange', defaultValues: action ?? {} });
   const { saveAction } = useSaveAction(action?.id);
   const { getAllActionsTypesData } = useActionTypes();
@@ -165,7 +164,7 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
         <Styled.Layer>
           <Styled.Input
             name="nickname"
-            ref={register({ required: true })}
+            {...register({ required: true })}
             label="Type a nickname for action"
             maxLength={100}
           />

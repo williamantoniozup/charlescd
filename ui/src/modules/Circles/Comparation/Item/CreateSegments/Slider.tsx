@@ -26,7 +26,7 @@ interface Props {
 }
 
 const SliderPercentage = ({ limitValue, isDisabled }: Props) => {
-  const { register, setValue, watch, errors } = useFormContext();
+  const { register, setValue, watch, formState: { errors } } = useFormContext();
   const [sliderValue, setSliderValue] = useState<number>(0);
   const sliderFormValue = watch('slider');
 
@@ -58,13 +58,12 @@ const SliderPercentage = ({ limitValue, isDisabled }: Props) => {
           {limitValue}%
         </Text>
         <Styled.SliderNumberInput
-          name="slider"
           max={100}
           placeholder="Value"
           disabled={isDisabled}
-          ref={register({
+          {...register('slider', { 
             required: 'Percentage is required.',
-            validate: value => validatePercentage(Number(value), limitValue)
+            validate: (value) => validatePercentage(Number(value), limitValue)
           })}
         />
       </Styled.SliderInputContainer>

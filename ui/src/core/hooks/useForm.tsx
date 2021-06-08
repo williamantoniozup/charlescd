@@ -18,8 +18,8 @@ import { isNotBlank, trimValue } from 'core/utils/validations';
 import {
   useForm as useHookForm,
   RegisterOptions,
-  UseFormOptions,
-  UseFormMethods,
+  UseFormProps,
+  UseFormReturn,
   FieldValues,
   FieldName
 } from 'react-hook-form';
@@ -27,14 +27,14 @@ import {
 function useForm<
   TFieldValues extends FieldValues = FieldValues,
   TContext extends object = object
->(params?: UseFormOptions<TFieldValues, TContext>) {
-  const formMethods: UseFormMethods<TFieldValues> = useHookForm<
+>(params?: UseFormProps<TFieldValues, TContext>) {
+  const formMethods: UseFormReturn <TFieldValues> = useHookForm<
     TFieldValues,
     TContext
   >(params);
 
   function customRegisterFieldRef(registerOptions?: RegisterOptions) {
-    const customRules: RegisterOptions = {
+    const customRules: any = {
       ...registerOptions,
       validate: {
         ...registerOptions?.validate,
@@ -46,17 +46,9 @@ function useForm<
     return formMethods.register(customRules);
   }
 
-  function customRegisterManual(
-    fieldName?: FieldName<TFieldValues>,
-    options?: RegisterOptions
-  ) {
-    return formMethods.register(fieldName, options);
-  }
-
   return {
     ...formMethods,
-    register: customRegisterFieldRef,
-    registerManual: customRegisterManual
+    register: customRegisterFieldRef
   };
 }
 

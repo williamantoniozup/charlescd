@@ -49,9 +49,8 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
     handleSubmit,
     register,
     control,
-    errors,
     watch,
-    formState: { isValid }
+    formState: { isValid, errors }
   } = formMethods;
   const [isBasicQuery, setIsBasicQuery] = useState(true);
   const { getMetricsProviders } = useMetricProviders();
@@ -140,8 +139,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
         >
           <Styled.Layer>
             <Styled.Input
-              name="nickname"
-              ref={register(isRequiredAndNotBlank)}
+              {...register('nickname', { required: true })}
               label="Type a nickname for the metric"
               maxLength={100}
             />
@@ -207,8 +205,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                   <>
                     <Styled.AdvancedQueryWrapper>
                       <Input
-                        name="query"
-                        ref={register(isRequiredAndNotBlank)}
+                        {...register('query', { required: true })}
                         hasError={!!errors?.query}
                         label="Type a query"
                       />
@@ -253,9 +250,8 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                       />
 
                       <Styled.InputNumber
-                        name="threshold"
                         label="Threshold"
-                        ref={register(isRequiredAndNotBlank)}
+                        {...register('threshold', { required: true })}
                         maxLength={100}
                       />
                     </StyledRule.Rule>

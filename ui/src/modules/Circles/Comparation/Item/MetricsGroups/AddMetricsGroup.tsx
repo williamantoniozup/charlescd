@@ -64,10 +64,7 @@ const AddMetricsGroup = ({
         <Styled.Modal.Input
           name="name"
           label="Type a name for the metrics group"
-          ref={register({
-            required: true,
-            validate: isNotBlank
-          })}
+          {...register({required: true})}
           maxLength={100}
         />
         <Styled.Modal.Button

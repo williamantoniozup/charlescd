@@ -64,14 +64,14 @@ const ImportCSV = ({ id, name, onSaveCircle }: Props) => {
       </Styled.HelpText>
       <Styled.Input
         label="Type a key"
-        ref={register({ required: true })}
+        {...register({ required: true })}
         name="keyName"
       />
       <Styled.InputWrapper>
         <Styled.HelpText tag="H5" color="dark">
           Select the .CSV to upload:
         </Styled.HelpText>
-        <InputFile ref={register({ required: true })} />
+        <InputFile {...register({ required: true })} />
       </Styled.InputWrapper>
       {isSaving && <Loader />}
       <Styled.ButtonDefault

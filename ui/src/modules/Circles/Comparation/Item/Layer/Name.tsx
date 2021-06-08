@@ -33,7 +33,7 @@ type FormValues = {
 }
 
 const LayerName = ({ name, onSave, isDefault }: Props) => {
-  const { register, handleSubmit, getValues, errors } = useForm<FormValues>({
+  const { register, handleSubmit, getValues, formState: { errors } } = useForm<FormValues>({
     mode: 'onChange'
   });
 
@@ -48,7 +48,7 @@ const LayerName = ({ name, onSave, isDefault }: Props) => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Styled.InputTitle
             name="name"
-            ref={register({
+            {...register({
               required: isRequired(),
               maxLength: maxLength()
             })}

@@ -42,8 +42,9 @@ const AceEditorForm = ({
   placeholder
 }: Props) => (
   <Controller
-    as={
-      <AceEditor
+    render={({ field }) => 
+      <AceEditor 
+        {...field}
         mode={mode}
         onChange={onChange}
         value={value}
@@ -51,12 +52,12 @@ const AceEditorForm = ({
         height={height}
         width={width}
         placeholder={placeholder}
+        className={className}
       />
     }
     rules={rules}
     name={name}
     control={control}
-    className={className}
     defaultValue={defaultValue}
   />
 );

@@ -46,8 +46,7 @@ const Account = () => {
   const {
     register,
     handleSubmit,
-    errors,
-    formState: { isValid }
+    formState: { isValid, errors }
   } = useForm<User>({
     mode: 'onChange'
   });
@@ -99,10 +98,7 @@ const Account = () => {
                 key={currentUser.name}
                 name="name"
                 resume
-                ref={register({
-                  required: isRequired(),
-                  maxLength: maxLength()
-                })}
+                {...register({ required: isRequired(), maxLength: maxLength() })}
                 defaultValue={currentUser.name}
                 onClickSave={handleSubmit(onSubmit)}
                 isDisabled={!isValid}

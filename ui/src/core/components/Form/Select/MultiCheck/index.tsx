@@ -50,19 +50,24 @@ const MultiCheck = ({
 }: Props) => (
   <div data-testid={`select-${name}`}>
     <Controller
-      as={<Select />}
-      options={options}
+      render={({ field }) => 
+        <Select
+          {...field}
+          options={options}
+          customOption={customOption}
+          className={className}
+          placeholder={label}
+          label={label}
+          isLoading={isLoading}
+          onChange={(selectedOptions: any) => {
+            onChange && onChange(selectedOptions);
+            return selectedOptions
+          }}
+          defaultValue={defaultValue}
+        />
+      }
       name={name}
       control={control}
-      customOption={customOption}
-      className={className}
-      defaultValue={defaultValue}
-      label={label}
-      isLoading={isLoading}
-      onChange={([selectedOptions]: [OptionTypeBase[]]) => {
-        onChange && onChange(selectedOptions);
-        return selectedOptions;
-      }}
     />
   </div>
 );

@@ -52,7 +52,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
     mode: 'onChange',
     resolver: validationResolver
   });
-  const { register, control, handleSubmit, watch, errors, getValues } = form;
+  const { register, control, handleSubmit, watch, getValues, formState: { errors } } = form;
   const watchFields = watch();
   const { fields, append, remove } = useFieldArray({
     control,
@@ -110,8 +110,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
       >
         <Text tag="H5" color="dark">Type a name for release:</Text>
         <Styled.Input
-          name="releaseName"
-          ref={register(isRequiredAndNotBlank)}
+          {...register('releaseName', { required: true})}
           label="Release name"
         />
         {fields.map((module, index) => (

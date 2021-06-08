@@ -56,9 +56,10 @@ const Single = ({
 }: Props) => (
   <div data-testid={`select-${name}`}>
     <Controller
-      render={({ onChange: onControllerChange }) => {
+      render={({ field }) => {
         return (
           <Select
+            {...field}
             placeholder={label}
             className={className}
             isDisabled={isDisabled}
@@ -72,7 +73,6 @@ const Single = ({
             hasError={hasError}
             onChange={selected => {
               onChange?.(selected);
-              onControllerChange(selected?.value);
 
               return selected?.value;
             }}

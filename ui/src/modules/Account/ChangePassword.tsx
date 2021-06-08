@@ -38,8 +38,7 @@ const ChangePassword = ({ onSubmit }: Props) => {
     register,
     handleSubmit,
     watch,
-    errors,
-    formState,
+    formState: { errors, isValid },
     getValues
   } = useForm<FormState>({
     mode: 'onChange',
@@ -68,11 +67,8 @@ const ChangePassword = ({ onSubmit }: Props) => {
       </Styled.Modal.Info>
       <Styled.Password
         label="Enter your current password"
-        name="oldPassword"
         error={errors?.oldPassword?.message}
-        ref={register({
-          required: isRequired()
-        })}
+        {...register('oldPassword', { required: isRequired() })}
       />
       <Styled.Modal.Info tag="H5" color="dark">
         Your new password must be at least 10 characters long, uppercase,
@@ -80,19 +76,14 @@ const ChangePassword = ({ onSubmit }: Props) => {
       </Styled.Modal.Info>
       <Styled.Password
         label="New password"
-        name="newPassword"
         error={errors?.newPassword?.message}
-        ref={register({
-          required: isRequired()
-        })}
+        {...register('newPassword', { required: isRequired() })}
       />
       <Styled.Password
         label="Confirm new password"
         name="confirmPassword"
         error={errors?.confirmPassword?.message}
-        ref={register({
-          required: isRequired()
-        })}
+        {...register('confirmPassword', { required: isRequired() })}
       />
       <Styled.CheckPassword password={newPassword} confirmPass={confirmPass} />
       <ButtonDefault
@@ -100,7 +91,7 @@ const ChangePassword = ({ onSubmit }: Props) => {
         type="submit"
         size="EXTRA_SMALL"
         isLoading={status.isPending}
-        isDisabled={!formState.isValid}
+        isDisabled={!isValid}
       >
         Save
       </ButtonDefault>
