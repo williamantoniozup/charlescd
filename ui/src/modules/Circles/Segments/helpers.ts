@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ArrayField } from 'react-hook-form';
+import { UseFieldArrayProps } from 'react-hook-form';
 import size from 'lodash/size';
 import options from './conditional.options';
 import { RULE_SIZE, RULE_OPERATOR, BUTTON_RULE } from './constants';
@@ -38,7 +38,7 @@ const getGroupClauseHeight = (size: number) =>
   (size * RULE_SIZE - RULE_SIZE) / HALF;
 
 export const getGroupVerticalLine = (
-  fields: Partial<ArrayField<Record<string, string>, 'id'>>[]
+  fields: any[]
 ) => {
   let height = 0;
   let top = 0;

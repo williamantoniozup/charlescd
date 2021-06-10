@@ -17,7 +17,7 @@
 import React from 'react';
 import map from 'lodash/map';
 import size from 'lodash/size';
-import { ArrayField, useFormContext } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { RADIX } from './constants';
 import Rule from './Rule';
 import Styled from './styled';
@@ -31,7 +31,7 @@ import {
 interface Props {
   prefixName: string;
   viewMode: boolean;
-  clauses: Partial<ArrayField<Record<string, object>, 'id'>>;
+  clauses: any;
   onRemoveRule?: (clauseIndex: number) => void;
   hasGroup?: boolean;
 }
@@ -63,7 +63,7 @@ const Clause = ({
           <Styled.InputOperator
             readOnly
             type="text"
-            ref={register()}
+            {...register(logicalOperatorName)}
             name={logicalOperatorName}
             onClick={() => changeOperatorValue(logicalOperatorName, form)}
             defaultValue={clauses?.logicalOperator?.toString()}
@@ -72,7 +72,7 @@ const Clause = ({
       )}
       <Styled.Input
         type="hidden"
-        ref={register()}
+        {...register(`${prefixName}.type`)}
         name={`${prefixName}.type`}
         defaultValue="CLAUSE"
       />

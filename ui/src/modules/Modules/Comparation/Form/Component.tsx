@@ -48,7 +48,7 @@ interface Props {
 }
 
 const Component = ({ component, module, onClose, onUpdate }: Props) => {
-  const { register, handleSubmit, watch, getValues, errors } = useForm({mode: 'onChange'});
+  const { register, handleSubmit, watch, getValues, formState: { errors } } = useForm({mode: 'onChange'});
   const [isDisabled, setIsDisabled] = useState(true);
   const {
     saveComponent,
@@ -112,13 +112,13 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
         label="Enter host value"
         name="hostValue"
         defaultValue={component?.hostValue}
-        ref={register()}
+        {...register()}
       />
       <Styled.Input
         label="Enter gateway name"
         name="gatewayName"
         defaultValue={component?.gatewayName}
-        ref={register()}
+        {...register()}
       />
     </Styled.Components.AdvancedOptions>
   )
@@ -137,7 +137,7 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
           label="Enter name component"
           name="name"
           defaultValue={component?.name}
-          ref={register({ 
+          {...register({ 
             required: true,
             maxLength: maxLength(50) 
           })}
@@ -147,14 +147,14 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
           label="Latency Threshold (ms)"
           name="latencyThreshold"
           defaultValue={component?.latencyThreshold}
-          ref={register({ required: true })}
+          {...register({ required: true })}
         />
         <Styled.FieldPopover>
           <Styled.Number
             label="Http Error Threshold (%)"
             name="errorThreshold"
             defaultValue={component?.errorThreshold}
-            ref={register({ required: true })}
+            {...register({ required: true })}
           />
         </Styled.FieldPopover>
         <Styled.Subtitle

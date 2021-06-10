@@ -19,8 +19,7 @@ import isEmpty from 'lodash/isEmpty';
 import {
   useFieldArray,
   useForm,
-  FormProvider,
-  ArrayField
+  FormProvider
 } from 'react-hook-form';
 import Icon from 'core/components/Icon';
 import { Rule as IRule } from './interfaces/Rule';
@@ -65,13 +64,13 @@ const Segments = ({ rules, viewMode = true, onSubmit, isSaving }: Props) => {
     control: form.control,
     name: 'clauses'
   });
-  const { addGroup, addRule, removeRule } = useSegment(fieldArray, form);
+  const { addGroup, addRule, removeRule } = useSegment(fieldArray, form as any);
   const fields = fieldArray.fields;
   const group = getGroupVerticalLine(fields);
   const hasGroup = fields.length > ONE;
 
   const renderGroup = (
-    group: Partial<ArrayField<Record<string, any>, 'id'>>,
+    group: any,
     index: number
   ) => {
     return (
@@ -127,14 +126,14 @@ const Segments = ({ rules, viewMode = true, onSubmit, isSaving }: Props) => {
               <Styled.InputOperator
                 readOnly
                 type="text"
-                ref={register()}
+                {...register('logicalOperator')}
                 name="logicalOperator"
                 onClick={() => changeOperatorValue('logicalOperator', form)}
                 defaultValue={rules?.logicalOperator}
               />
             </Styled.Operator>
           )}
-          <Styled.Input type="hidden" ref={form.register} name="type" />
+          <Styled.Input type="hidden" {...form.register} name="type" />
           {renderGroups()}
         </Styled.Group>
         {!viewMode && (

@@ -40,8 +40,7 @@ const UserGroups = () => {
   const {
     register,
     handleSubmit,
-    errors,
-    formState: { isValid }
+    formState: { isValid, errors }
   } = useForm({
     mode: 'onChange'
   });
@@ -69,10 +68,7 @@ const UserGroups = () => {
           name="name"
           label="Type a name"
           error={errors?.name?.message}
-          ref={register({
-            required: isRequired(),
-            maxLength: maxLength()
-          })}
+          {...register({ required: isRequired(), maxLength: maxLength() })}
         />
         <Styled.Modal.Button
           id="user-group"

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Styled from './styled';
-import { useFormContext, ArrayField } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { Component } from 'modules/Modules/interfaces/Component';
 import { isRequiredAndNotBlank, maxLength } from 'core/utils/validations';
 import filter from 'lodash/filter';
@@ -8,12 +8,12 @@ import filter from 'lodash/filter';
 interface Props {
   remove: (index?: number | number[] | undefined) => void;
   field: Component;
-  fields: Partial<ArrayField>;
+  fields: Partial<any>;
   index: number;
 }
 
 const ComponentForm = ({ field, fields, index, remove }: Props) => {
-  const { register, unregister, getValues, errors } = useFormContext();
+  const { register, unregister, getValues, formState: { errors } } = useFormContext();
   const [editMoreOptions, setEditMoreOptions] = useState(false);
   const one = 1;
 
@@ -50,8 +50,8 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
           label="Enter name"
           name={`components[${index}].name`}
           error={errors?.components?.[index]?.name.message}
-          ref={register({
-            ...isRequiredAndNotBlank,
+          {...register(`components[${index}].name` as const, {
+            required: true,
             maxLength: maxLength(50),
             validate: {
               ...isRequiredAndNotBlank.validate,
@@ -63,13 +63,13 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
         <Styled.Components.Number
           name={`components[${index}].latencyThreshold`}
           label="Latency Threshold (ms)"
-          ref={register(isRequiredAndNotBlank)}
+          {...register(`components[${index}].latencyThreshold` as const, isRequiredAndNotBlank)}
           defaultValue={field.latencyThreshold}
         />
         <Styled.Components.Number
           name={`components[${index}].errorThreshold`}
           label="Http Error Threshold (%)"
-          ref={register(isRequiredAndNotBlank)}
+          {...register(`components[${index}].errorThreshold` as const, isRequiredAndNotBlank)}
           defaultValue={field.errorThreshold}
         />
       </Styled.Components.Wrapper>
@@ -84,7 +84,7 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
             <Styled.Input
               label="Insert a host for virtual service use"
               name={`components[${index}].hostValue`}
-              ref={register(isRequiredAndNotBlank)}
+              {...register(`components[${index}].hostValue` as const, isRequiredAndNotBlank)}
               defaultValue={field.hostValue}
             />
             <Styled.Popover
@@ -100,7 +100,7 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
             <Styled.Input
               label="Insert a ingress name if necessary"
               name={`components[${index}].gatewayName`}
-              ref={register(isRequiredAndNotBlank)}
+              {...register(`components[${index}].gatewayName` as const, isRequiredAndNotBlank)}
               defaultValue={field.gatewayName}
             />
             <Styled.Popover

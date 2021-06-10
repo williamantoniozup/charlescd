@@ -15,7 +15,6 @@
  */
 
 import React from 'react';
-import { ArrayField } from 'react-hook-form';
 import Icon from 'core/components/Icon';
 import { Component } from 'modules/Circles/interfaces/Circle';
 import { component } from './constants';
@@ -24,9 +23,9 @@ import ComponentForm from './ComponentForm';
 
 interface Props {
   fieldArray: {
-    append: (value: Partial<ArrayField> | Partial<ArrayField>[]) => void;
+    append: (value: Partial<any> | Partial<any>[]) => void;
     remove: (index?: number | number[] | undefined) => void;
-    fields: Partial<ArrayField>;
+    fields: Partial<any>;
   };
 }
 

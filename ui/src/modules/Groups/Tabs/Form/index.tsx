@@ -37,7 +37,7 @@ type FormValues = {
 }
 
 const Form = ({ userGroup, onAddUser, onEdit }: Props) => {
-  const { register, handleSubmit, errors } = useForm<FormValues>({ mode: 'onBlur' });
+  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({ mode: 'onBlur' });
   const [userCounter, setUserCounter] = useState(0);
 
   useEffect(() => {
@@ -74,7 +74,7 @@ const Form = ({ userGroup, onAddUser, onEdit }: Props) => {
           <InputTitle
             resume
             name="name"
-            ref={register({
+            {...register({
               required: isRequired(),
               maxLength: maxLength()
             })}

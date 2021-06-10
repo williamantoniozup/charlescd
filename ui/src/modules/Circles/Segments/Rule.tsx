@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { isRequiredAndNotBlank } from 'core/utils/validations';
 import React from 'react';
-import { ArrayField, useFormContext } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import options from './conditional.options';
 import { getCondition } from './helpers';
 import Styled from './styled';
@@ -24,12 +23,7 @@ import Styled from './styled';
 export interface Props {
   prefixName: string;
   viewMode: boolean;
-  rule: Partial<
-    ArrayField<
-      Record<string, { condition: string; key: string; value: string }>,
-      'id'
-    >
-  >;
+  rule: any;
   isGroup?: boolean;
   onRemoveRule?: Function;
   hasGroup?: boolean;
@@ -64,13 +58,13 @@ const Rule = ({
       </Styled.RuleTrash>
       <Styled.Input
         type="hidden"
-        ref={register()}
+        {...register(`${prefixName}.type`)}
         name={`${prefixName}.type`}
         defaultValue="RULE"
       />
       <Styled.Input
         label="Key"
-        ref={register(isRequiredAndNotBlank)}
+        {...register(`${prefixName}.content.key`, { required: true })}
         disabled={viewMode}
         name={`${prefixName}.content.key`}
         defaultValue={rule?.content?.key}
@@ -86,7 +80,7 @@ const Rule = ({
       />
       <Styled.Input
         label="Value"
-        ref={register(isRequiredAndNotBlank)}
+        {...register(`${prefixName}.content.value[0]`, { required: true })}
         disabled={viewMode}
         name={`${prefixName}.content.value[0]`}
         defaultValue={rule?.content?.value}

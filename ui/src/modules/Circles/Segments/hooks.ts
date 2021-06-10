@@ -15,7 +15,6 @@
  */
 
 import { useEffect, useState } from 'react';
-import { ArrayField } from 'react-hook-form';
 import filter from 'lodash/filter';
 import { CLAUSE, RULE } from './constants';
 
@@ -35,7 +34,7 @@ type FieldArray = {
   ) => void;
 };
 
-type Group = Partial<ArrayField<Record<string, string>, 'id'>>;
+type Group = any;
 
 const updateRule = (form: Form, groupIndex: number) => {
   const groups = form.getValues({ nest: true });
