@@ -1,0 +1,3864 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Charles",
+    "description": "Charles APIs remodeling proposal.",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    },
+    "version": "0.0.1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Default Server URL"
+    }
+  ],
+  "security": [
+    {
+      "bearer": [
+        "bearer"
+      ]
+    },
+    {
+      "app_key": [
+        "app_key"
+      ]
+    }
+  ],
+  "paths": {
+    "/v1/workspaces": {
+      "get": {
+        "summary": "List workspaces",
+        "description": "List all the workspaces the user has access to, sorted by the oldest to the newer",
+        "tags": [
+          "Workspace V1"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pageSize"
+          },
+          {
+            "$ref": "#/components/parameters/pageNumber"
+          },
+          {
+            "$ref": "#/components/parameters/nameFilter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The list of workspaces",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pageResponse"
+                    },
+                    {
+                      "properties": {
+                        "content": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/workspaceResponse"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create workspace",
+        "description": "Create a new Workspace, the only required property is the name, the other one are optional for creation, but for the workspace to works needs the other configuration",
+        "tags": [
+          "Workspace V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/workspaceRequest"
+                  }
+                ],
+                "properties": {
+                  "deployConfig": {
+                    "$ref": "#/components/schemas/deploymentConfigSchema"
+                  },
+                  "circleMatcher": {
+                    "$ref": "#/components/schemas/circleMatcherSchema"
+                  },
+                  "gitconfig": {
+                    "$ref": "#/components/schemas/gitConfigSchema"
+                  },
+                  "datasources": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/datasourceRequest"
+                    }
+                  },
+                  "actions": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/actionRequest"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The workspace that was created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/workspaceFullResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathWorkspaceId"
+        }
+      ],
+      "get": {
+        "summary": "Get workspace by id",
+        "description": "If the user has the permissions to see it, retrieve the requested workspace",
+        "tags": [
+          "Workspace V1"
+        ],
+        "responses": {
+          "200": {
+            "description": "The workspace requested",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/workspaceFullResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete workspace",
+        "description": "Deletes the workspace, this deletion is made in a logical manner",
+        "tags": [
+          "Workspace V1"
+        ],
+        "responses": {
+          "204": {
+            "description": "If the workspace was deleted successfully"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update name",
+        "description": "Updates the workspace name",
+        "tags": [
+          "Workspace V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/workspaceRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The updated workspace"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/status": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathWorkspaceId"
+        }
+      ],
+      "get": {
+        "summary": "The workspace status",
+        "description": "Verify the status of the workspace and all it's settings",
+        "tags": [
+          "Workspace V1"
+        ],
+        "responses": {
+          "200": {
+            "description": "The workspace status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/workspaceStatusResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/configurations/matcher": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathWorkspaceId"
+        }
+      ],
+      "patch": {
+        "summary": "Set Matcher URL",
+        "description": "Save the circle matcher URl for that workspace, if an URl already exists, it's value is updated",
+        "tags": [
+          "Workspace V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/circleMatcherSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "If the matcher URL was saved successfully"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletes a matcher configuration",
+        "description": "Deletes the matcher configuration from the specified workspace",
+        "tags": [
+          "Workspace V1"
+        ],
+        "responses": {
+          "204": {
+            "description": "When the matcher configuration was deleted successfully"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists, or there is no matcher to be deleted"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/configurations/matcher/validate": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathWorkspaceId"
+        }
+      ],
+      "post": {
+        "summary": "Validate circle matcher",
+        "description": "Validate the circle matcher URl, and checks if it's reachable, this is recommended before it's creation",
+        "tags": [
+          "Workspace V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/circleMatcherSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "If the matcher is reachable"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/configurations/deployment": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathWorkspaceId"
+        }
+      ],
+      "patch": {
+        "summary": "Set deployment configuration",
+        "description": "Save the deployment configuration for that workspace, if a configuration already exists, it's value is updated",
+        "tags": [
+          "Workspace V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/deploymentConfigSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "If the deployment configuration was updated successfully"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletes a deployment configuration",
+        "description": "Deletes the deployment configuration from the specified workspace",
+        "tags": [
+          "Workspace V1"
+        ],
+        "responses": {
+          "204": {
+            "description": "When the deployment configuration was deleted successfully"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists, or there is no matcher to be deleted"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/configurations/deployment/validate": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathWorkspaceId"
+        }
+      ],
+      "post": {
+        "summary": "Validate deployment config ",
+        "description": "Validate the deployment configuration, and checks if it's reachable, this is recommended before it's creation",
+        "tags": [
+          "Workspace V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/deploymentConfigSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "If deployment system is reachable"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/configurations/git": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathWorkspaceId"
+        }
+      ],
+      "patch": {
+        "summary": "Set git configuration",
+        "description": "Save the git configuration for that workspace, if a configration already exists, it's value is updated",
+        "tags": [
+          "Workspace V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/gitConfigSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "If the git configuration was updated successfully"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletes a git configuration",
+        "description": "Deletes the git configuration from the specified workspace",
+        "tags": [
+          "Workspace V1"
+        ],
+        "responses": {
+          "204": {
+            "description": "When the git configuration was deleted successfully"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists, or there is no matcher to be deleted"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/configurations/git/validate": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathWorkspaceId"
+        }
+      ],
+      "post": {
+        "summary": "Validate git configuration",
+        "description": "Validate the git configuration and checks if it's reachable, this is recommended before it's creation",
+        "tags": [
+          "Workspace V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/gitConfigSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "If butler is reachable"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/configurations/datasources": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathWorkspaceId"
+        }
+      ],
+      "post": {
+        "summary": "Create new datasource configuration",
+        "description": "Creates a new datasource configuration for the workspace",
+        "tags": [
+          "Workspace V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/datasourceRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "When the datasource configuration was set successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/datasourceResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "List all the datasources",
+        "description": "List all the datasources registered for the workspace",
+        "tags": [
+          "Workspace V1"
+        ],
+        "responses": {
+          "200": {
+            "description": "the datasources from the workspace",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/datasourceResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/configurations/datasources/validate": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathWorkspaceId"
+        }
+      ],
+      "post": {
+        "summary": "Validate datasource connection",
+        "description": "Validate if the datasource is reachable, this is recommended before it's creation",
+        "tags": [
+          "Workspace V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/datasourceValidationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "If the datasource is reachable"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/configurations/datasources/{datasourceId}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathWorkspaceId"
+        },
+        {
+          "description": "The datasource id",
+          "name": "datasourceId",
+          "in": "path",
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "delete": {
+        "summary": "Delete datasource configuration",
+        "description": "Deletes the datasource configuration from the workspace",
+        "tags": [
+          "Workspace V1"
+        ],
+        "responses": {
+          "204": {
+            "description": "The datasource was deleted successfully"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace or the datasource not exist"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/configurations/actions": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathWorkspaceId"
+        }
+      ],
+      "post": {
+        "summary": "Create new action configuration",
+        "description": "Creates a new action configuration for the workspace",
+        "tags": [
+          "Workspace V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/actionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The action rollout was configured with success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/actionResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "List all the actions",
+        "description": "List all the actions registered for the workspace",
+        "tags": [
+          "Workspace V1"
+        ],
+        "responses": {
+          "200": {
+            "description": "The actions configured for that workspace",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/actionResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/configurations/actions/validate": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathWorkspaceId"
+        }
+      ],
+      "post": {
+        "summary": "Validate action",
+        "description": "Validate if the action works, and all its configurations are ok, this is recommended before it's creation",
+        "tags": [
+          "Workspace V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/actionValidationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "If the action is working"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/configurations/actions/{actionId}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathWorkspaceId"
+        },
+        {
+          "description": "The action id",
+          "name": "actionId",
+          "in": "path",
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "delete": {
+        "summary": "Delete action configuration",
+        "description": "Deletes the action configuration from the workspace",
+        "tags": [
+          "Workspace V1"
+        ],
+        "responses": {
+          "204": {
+            "description": "The action configuration was excluded successfully"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace or the datasource not exist"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/user-groups": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathWorkspaceId"
+        }
+      ],
+      "post": {
+        "summary": "Associate user group to workspace",
+        "description": "Associates an user group to a workspace with it's permissions",
+        "tags": [
+          "Workspace V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/userGroupWorkspaceRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "If the group was associated to the workspace successfully"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace or the group does not exist"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "List user groups at workspace",
+        "description": "List all user groups registered at workspace",
+        "tags": [
+          "Workspace V1"
+        ],
+        "responses": {
+          "200": {
+            "description": "If the group was associated to the workspace successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userGroupWorkspaceResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exist"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/user-groups/{groupId}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathWorkspaceId"
+        },
+        {
+          "description": "The user group id",
+          "name": "groupId",
+          "in": "path",
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "delete": {
+        "summary": "Disassociate user group from workspace",
+        "description": "Disassociate an user group from a workspace",
+        "tags": [
+          "Workspace V1"
+        ],
+        "responses": {
+          "204": {
+            "description": "If the group was Disassociate from the workspace successfully"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace or the group does not exist"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/routing": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathWorkspaceId"
+        }
+      ],
+      "get": {
+        "summary": "Workspace routing",
+        "description": "The present routing of the workspace, basically return the virtual service and the destination rules",
+        "tags": [
+          "Workspace V1"
+        ],
+        "responses": {
+          "200": {
+            "description": "The routing information"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exist"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/plugins": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        }
+      ],
+      "get": {
+        "summary": "List available plugins",
+        "description": "List all available plugins, and the API allow filtering for listing the plugins by type",
+        "tags": [
+          "Plugin V1"
+        ],
+        "parameters": [
+          {
+            "description": "The plugin type filter",
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "datasource"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The available plugins",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/pluginResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/circles": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        }
+      ],
+      "get": {
+        "summary": "List circles",
+        "description": "List all the circles in the workspace that the user has access to, the API can receive filters, like circle status (active, inactive), this API is paginated and sorted, the default sorting is the creation date descending, with the newer circles first",
+        "tags": [
+          "Circle V1"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pageSize"
+          },
+          {
+            "$ref": "#/components/parameters/pageNumber"
+          },
+          {
+            "$ref": "#/components/parameters/nameFilter"
+          },
+          {
+            "description": "If the circles are active",
+            "name": "active",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The list of circles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pageResponse"
+                    },
+                    {
+                      "properties": {
+                        "content": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/circleResponse"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create circle",
+        "description": "Create a new circle with it's segmentation rules",
+        "tags": [
+          "Circle V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/circleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The circle that was created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/circleFullResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/circles/csv": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        }
+      ],
+      "post": {
+        "summary": "Create circle CSV",
+        "description": "Create a new circle with a CSV file with the segmentation rules",
+        "tags": [
+          "Circle V1"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/circleCsvRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The circle that was created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/circleFullResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/circles/{circleId}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathCircleId"
+        },
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        }
+      ],
+      "delete": {
+        "summary": "Delete circle",
+        "description": "Deletes the circle",
+        "tags": [
+          "Circle V1"
+        ],
+        "responses": {
+          "204": {
+            "description": "The circle was deleted successfully"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The circle does not exist"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get circle",
+        "description": "Get the requested circle, if the user has the permissions to",
+        "tags": [
+          "Circle V1"
+        ],
+        "responses": {
+          "200": {
+            "description": "The circle full information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/circleFullResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The circle does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update circle name",
+        "description": "Updates circle's name",
+        "tags": [
+          "Circle V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/circleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated circle",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/circleFullResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The circle does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/circles/{circleId}/status": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "$ref": "#/components/parameters/pathCircleId"
+        }
+      ],
+      "get": {
+        "summary": "Circle status",
+        "description": "Show the status of the cluster and applications for each component",
+        "tags": [
+          "Circle V1"
+        ],
+        "responses": {
+          "200": {
+            "description": "The status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/circleComponentStatusResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The circle does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/circles/{circleId}/segmentation": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathCircleId"
+        },
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        }
+      ],
+      "patch": {
+        "summary": "Update the circle segmentation",
+        "description": "Updates the circle's segmentation rules",
+        "tags": [
+          "Circle V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/circleRuleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The circle's rules was updated successfully"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The circle does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/circles/{circleId}/segmentation/csv": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathCircleId"
+        },
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        }
+      ],
+      "patch": {
+        "summary": "Update the circle segmentation with a csv",
+        "description": "Updates the circle's segmentation rules with a csv file",
+        "tags": [
+          "Circle V1"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/circleCsvRuleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The circle's rules was updated successfully"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The circle does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/circles/identify": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        }
+      ],
+      "post": {
+        "summary": "Identify",
+        "description": "Call the circle matcher of the workspace with the passed identify payload to verify in which circles the possible user belongs",
+        "tags": [
+          "Circle V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/identifyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The circles which the user may be part of",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/identifyResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/circles/open-sea": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        }
+      ],
+      "get": {
+        "summary": "Get open sea",
+        "description": "Get open sea information",
+        "tags": [
+          "Circle V1"
+        ],
+        "responses": {
+          "200": {
+            "description": "Open sea information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/openSeaResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/components": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        }
+      ],
+      "get": {
+        "summary": "Get components",
+        "description": "Get all components in the workspace",
+        "tags": [
+          "Component V1"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pageSize"
+          },
+          {
+            "$ref": "#/components/parameters/pageNumber"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Components information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pageResponse"
+                    }
+                  ],
+                  "properties": {
+                    "content": {
+                      "items": {
+                        "$ref": "#/components/schemas/componentResponse"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create components",
+        "description": "Create the components in the workspace",
+        "tags": [
+          "Component V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/componentSchema"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Components information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/componentResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/components/{componentId}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "in": "path",
+          "name": "componentId",
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "delete": {
+        "summary": "Delete components",
+        "description": "Delete a component from workspace",
+        "tags": [
+          "Component V1"
+        ],
+        "responses": {
+          "204": {
+            "description": "When the component was removed successfully"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace or the component does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get component",
+        "description": "Get component information",
+        "tags": [
+          "Component V1"
+        ],
+        "responses": {
+          "200": {
+            "description": "Component complete information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/componentSchema"
+                    },
+                    {
+                      "$ref": "#/components/schemas/componentResponse"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update component",
+        "description": "Updates the component",
+        "tags": [
+          "Component V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/componentSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Components information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/componentResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/user-groups": {
+      "get": {
+        "summary": "List user groups",
+        "description": "List all user groups registered",
+        "tags": [
+          "UserGroup V1"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pageNumber"
+          },
+          {
+            "$ref": "#/components/parameters/pageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The user groups",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pageResponse"
+                    },
+                    {
+                      "properties": {
+                        "content": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/userGroupsResponse"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create user group",
+        "description": "Creates a new user group",
+        "tags": [
+          "UserGroup V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/userGroupRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The user group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userGroupFullResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/user-groups/{groupId}": {
+      "parameters": [
+        {
+          "description": "The user group id",
+          "name": "groupId",
+          "in": "path",
+          "schema": {
+            "type": "string",
+            "format": "uuid",
+            "example": "c3e56c4f-9eb3-4397-99be-ac598ca02bdc"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get user group",
+        "description": "Get the request user group",
+        "tags": [
+          "UserGroup V1"
+        ],
+        "responses": {
+          "200": {
+            "description": "The user group full information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userGroupFullResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The user group does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update user group",
+        "description": "Updates the user group name",
+        "tags": [
+          "UserGroup V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/userGroupRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The user group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userGroupFullResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The user group does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete user group",
+        "description": "Deletes an user group",
+        "tags": [
+          "UserGroup V1"
+        ],
+        "responses": {
+          "204": {
+            "description": "If the group was deleted successfully"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The user group does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/user-groups/{groupId}/members": {
+      "parameters": [
+        {
+          "description": "The user group id",
+          "name": "groupId",
+          "in": "path",
+          "schema": {
+            "type": "string",
+            "format": "uuid",
+            "example": "c3e56c4f-9eb3-4397-99be-ac598ca02bdc"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Add member to user group",
+        "description": "Adds new members to the user group, this method works with bulking, allowing receive from 1 to N users to added, if one user is not added, a message will be returned informing which one was not added and the problem, the others will be added normally",
+        "tags": [
+          "UserGroup V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/userGroupMemberRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "If at least one member was added successfully"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The user group does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/user-groups/{groupId}/members/{memberId}": {
+      "parameters": [
+        {
+          "description": "The user group id",
+          "name": "groupId",
+          "in": "path",
+          "schema": {
+            "type": "string",
+            "format": "uuid",
+            "example": "c3e56c4f-9eb3-4397-99be-ac598ca02bdc"
+          }
+        },
+        {
+          "$ref": "#/components/parameters/pathMemberId"
+        }
+      ],
+      "delete": {
+        "summary": "Remove member from user group",
+        "description": "Removes a member from the user group",
+        "tags": [
+          "UserGroup V1"
+        ],
+        "responses": {
+          "204": {
+            "description": "If the member was removed successfully"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The user group does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/users/{memberId}/user-groups": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathMemberId"
+        }
+      ],
+      "get": {
+        "summary": "List all groups of a member",
+        "description": "Lists all the groups that a member is part of",
+        "tags": [
+          "Users V1"
+        ],
+        "responses": {
+          "200": {
+            "description": "All groups that the member is part of",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/userGroupsResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Disassociate member from all groups",
+        "description": "Disassociate a member from all groups that he is part of",
+        "tags": [
+          "Users V1"
+        ],
+        "responses": {
+          "204": {
+            "description": "If the member was disassociated from all groups successfully"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/circles/{circleId}/deployments": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "$ref": "#/components/parameters/pathCircleId"
+        }
+      ],
+      "post": {
+        "summary": "Deploy releases at circle",
+        "description": "Makes the deployment of the requested components at circle, if the circle already has an active release deployed, it will be overwritten",
+        "tags": [
+          "Deployment V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/deploymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The deployment request was made successfully and there isn't any active release deployed yet"
+          },
+          "204": {
+            "description": "The deployment request was made successfully and the the circle already has  an active deployment and it was overwrite"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "If the circle or some component does not exist"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/circles/{circleId}/deployments/increment": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "$ref": "#/components/parameters/pathCircleId"
+        }
+      ],
+      "post": {
+        "summary": "Increment release at circle",
+        "description": "Increments the circle with new components, if the circle already has a version of a requested component, this one will be overwritten, and the others added",
+        "tags": [
+          "Deployment V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/deploymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The deployment request was made successfully"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "If the circle or some component does not exist"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/circles/{circleId}/deployments/undeploy": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "$ref": "#/components/parameters/pathCircleId"
+        }
+      ],
+      "post": {
+        "summary": "Undeploy all releases at circle",
+        "description": "Makes the undeploy of all components at circle",
+        "tags": [
+          "Deployment V1"
+        ],
+        "responses": {
+          "204": {
+            "description": "The un-deployment request was made successfully"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "If the circle does not exist, or there aren't releases deployed"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/circles/{circleId}/deployments/undeploy/decrement": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "$ref": "#/components/parameters/pathCircleId"
+        }
+      ],
+      "post": {
+        "summary": "Undeploy selected components",
+        "description": "Makes the undeploy of selected components",
+        "tags": [
+          "Deployment V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/partialUnDeploymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The un-deployment request was made successfully"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "If the circle does not exist, or there aren't releases deployed"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/circles/{circleId}deployments/rollback": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "$ref": "#/components/parameters/pathCircleId"
+        }
+      ],
+      "post": {
+        "summary": "Execute rollback at circle",
+        "description": "Executes a rollback at circle, if no release is specified, it will make the rollback to the the release immediate before to the actual one",
+        "tags": [
+          "Deployment V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/releaseRollbackRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The rollback request was made successfully"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "If the circle does not exist or there aren't releases deployed"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/circles/{circleId}/deployments/open-sea": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "$ref": "#/components/parameters/pathCircleId"
+        }
+      ],
+      "post": {
+        "summary": "Increment release  at open sea",
+        "description": "Increments the open sea with new components, if already has a version of a requested component, this one will be overwritten, and the others added",
+        "tags": [
+          "Deployment V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/openSeaDeploymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The deployment request was made successfully"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "If open sea or the some component does not exist"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/histories/circles": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        }
+      ],
+      "get": {
+        "summary": "Circle history",
+        "description": "The circle history, shows every change to circles caused by an API call",
+        "tags": [
+          "History V1"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "ids",
+            "description": "The circles id",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "in": "query",
+            "name": "author",
+            "description": "The username of who made the change",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "in": "query",
+            "name": "date",
+            "description": "The when the changes were made ",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The history objects"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Token got by the login system and generated by an IDP, this token contains some basic user info, and is used for authorizing the use, or not, of the APIs by the user"
+      },
+      "app_key": {
+        "type": "apiKey",
+        "name": "x-app-key",
+        "in": "header",
+        "description": "Systemic token used by other applications to make calls to the APIs, this token is generated internally and should be stored as a secret by the client"
+      }
+    },
+    "schemas": {
+      "errorResponse": {
+        "description": "The error object, used to notify the client when an API fails",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "6510df42-1fb3-49c6-aeb8-6477e9d24a82",
+            "description": "The error unique id"
+          },
+          "message": {
+            "type": "string",
+            "example": "Error listing the resources",
+            "description": "The error summary"
+          },
+          "timestamp": {
+            "type": "integer",
+            "example": 1613654435
+          },
+          "meta": {
+            "type": "object",
+            "description": "The error meta info, used for inform the user relevant information for tracking the error, like the error code, or the fields of a failed input validation",
+            "example": {
+              "code": "123"
+            }
+          }
+        }
+      },
+      "pageResponse": {
+        "description": "The page response object, used for represent the paging for paginated lists",
+        "properties": {
+          "page": {
+            "description": "The page number",
+            "type": "integer",
+            "example": 3
+          },
+          "size": {
+            "description": "The page size",
+            "type": "integer",
+            "example": 20
+          },
+          "totalPages": {
+            "description": "The total number of pages",
+            "type": "integer",
+            "example": 5
+          },
+          "content": {
+            "type": "array"
+          }
+        }
+      },
+      "workspaceFullResponse": {
+        "description": "The workspace full content",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/workspaceResponse"
+          }
+        ],
+        "properties": {
+          "circleMatcherUrl": {
+            "type": "string",
+            "format": "url",
+            "example": "https://circle-matcher.charles.com"
+          },
+          "deployConfiguration": {
+            "type": "string",
+            "example": "Butler Sandbox"
+          },
+          "status": {
+            "type": "string",
+            "example": "COMPLETED",
+            "description": "Tells if the workspace has all it's requirements fulfilled"
+          },
+          "gitConfiguration": {
+            "type": "string",
+            "example": "ZupGithub"
+          },
+          "datasources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/datasourceResponse"
+            }
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/actionResponse"
+            }
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/userGroupWorkspaceResponse"
+            }
+          }
+        }
+      },
+      "workspaceResponse": {
+        "description": "The workspace basic information",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "f28e0b9a-cf9b-4eec-9243-28c568a4dc6b"
+          },
+          "name": {
+            "type": "string",
+            "format": "text",
+            "example": "Tortoise's Workspace"
+          }
+        }
+      },
+      "workspaceStatusResponse": {
+        "description": "The workspace basic information",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "COMPLETED"
+          },
+          "circleMatcherStatus": {
+            "type": "string",
+            "example": "OK"
+          },
+          "butlerStatus": {
+            "type": "string",
+            "example": "FAILED"
+          },
+          "datasourceStatus": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/workspaceItemStatusField"
+            }
+          },
+          "actionStatus": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/workspaceItemStatusField"
+            }
+          }
+        }
+      },
+      "workspaceRequest": {
+        "description": "The workspace request used to create or update a workspace",
+        "properties": {
+          "name": {
+            "type": "string",
+            "format": "text",
+            "maximum": 64,
+            "example": "Tortoise's workspace",
+            "required": true
+          }
+        }
+      },
+      "circleMatcherSchema": {
+        "description": "The circle matcher request object used to create a new matcher configuration",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "url",
+            "example": "https://circle-matcher.charles.com",
+            "required": true,
+            "maximum": 1048
+          }
+        }
+      },
+      "deploymentConfigSchema": {
+        "description": "The butler request object used to create a new butler configuration",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Butler sandbox",
+            "required": true,
+            "maximum": 100
+          },
+          "url": {
+            "type": "string",
+            "format": "url",
+            "example": "https://butler.cahrles.com",
+            "required": true,
+            "maximum": 1048
+          },
+          "namespace": {
+            "type": "string",
+            "example": "sandbox",
+            "required": true,
+            "maximum": 253
+          }
+        }
+      },
+      "gitConfigSchema": {
+        "description": "The git config request object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Zup GitHub",
+            "required": true,
+            "maximum": 100
+          },
+          "url": {
+            "type": "string",
+            "format": "url",
+            "example": "https://api.github.com",
+            "maximum": 1048
+          },
+          "type": {
+            "type": "string",
+            "required": true,
+            "enum": [
+              "GITHUB",
+              "GITLAB"
+            ]
+          },
+          "gitToken": {
+            "type": "string",
+            "example": "12389795abc98qu32",
+            "required": true,
+            "maximum": 255
+          }
+        }
+      },
+      "datasourceRequest": {
+        "description": "The datasource request object, used to create new configuration",
+        "properties": {
+          "name": {
+            "description": "The configuration name, used for easy look up after the registration",
+            "type": "string",
+            "example": "Prometheus",
+            "maximum": 64,
+            "required": true
+          },
+          "type": {
+            "description": "The plugin that will be used for the executions of this datasource",
+            "type": "string",
+            "example": "Prometheus",
+            "maximum": 30,
+            "required": true
+          },
+          "configuration": {
+            "description": "The specific configuration for that datasource works, like credentials and url, this filed is treated as an generic json object",
+            "type": "object",
+            "example": {
+              "url": "https://prometheus-server.com",
+              "key": "prom-api-key"
+            },
+            "required": true
+          }
+        }
+      },
+      "datasourceValidationRequest": {
+        "description": "The datasource validation request object, used to validate a configuration",
+        "properties": {
+          "type": {
+            "description": "The plugin that will be used for the executions of this datasource",
+            "type": "string",
+            "example": "Prometheus",
+            "maximum": 30,
+            "required": true
+          },
+          "configuration": {
+            "description": "The specific configuration for that datasource works, like credentials and url, this filed is treated as an generic json object",
+            "type": "object",
+            "example": {
+              "url": "https://prometheus-server.com",
+              "key": "prom-api-key"
+            },
+            "required": true
+          }
+        }
+      },
+      "datasourceResponse": {
+        "description": "The datasource configuration basic information",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "6510df42-1fb3-49c6-aeb8-6477e9d24a82",
+            "description": "The datasource unique id"
+          },
+          "name": {
+            "description": "The configuration name, used for easy look up after the registration",
+            "type": "string",
+            "example": "Prometheus",
+            "maximum": 64
+          }
+        }
+      },
+      "actionRequest": {
+        "description": "The rollout action request object, used to create new configuration",
+        "properties": {
+          "name": {
+            "description": "The configuration name, used for easy look up after the registration",
+            "type": "string",
+            "example": "Circle Promotion",
+            "maximum": 64,
+            "required": true
+          },
+          "description": {
+            "description": "Some description, used for describe the configuration",
+            "type": "string",
+            "example": "Circle Promotion to circle Abc",
+            "maximum": 100,
+            "required": false
+          },
+          "type": {
+            "description": "The plugin that will be used for the executions of this action",
+            "type": "string",
+            "example": "circle-promotion",
+            "maximum": 30,
+            "required": true
+          },
+          "configuration": {
+            "description": "The specific configuration for that action to works, like credentials and url, this filed is treated as an generic json object",
+            "type": "object",
+            "example": {
+              "destinationCircle": "f28e0b9a-cf9b-4eec-9243-28c568a4dc6b"
+            },
+            "required": true
+          }
+        }
+      },
+      "actionValidationRequest": {
+        "description": "The rollout action validation request object, used to validate a configuration",
+        "properties": {
+          "type": {
+            "description": "The plugin that will be used for the executions of this action",
+            "type": "string",
+            "example": "circle-promotion",
+            "maximum": 30,
+            "required": true
+          },
+          "configuration": {
+            "description": "The specific configuration for that action to works, like credentials and url, this filed is treated as an generic json object",
+            "type": "object",
+            "example": {
+              "destinationCircle": "f28e0b9a-cf9b-4eec-9243-28c568a4dc6b"
+            },
+            "required": true
+          }
+        }
+      },
+      "actionResponse": {
+        "description": "The action configuration basic information",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "6510df42-1fb3-49c6-aeb8-6477e9d24a82",
+            "description": "The action unique id"
+          },
+          "name": {
+            "description": "The configuration name, used for easy look up after the registration",
+            "type": "string",
+            "example": "Circle Promotion",
+            "maximum": 64
+          },
+          "description": {
+            "description": "Some description, used for describe the configuration",
+            "type": "string",
+            "example": "Circle Promotion to circle Abc",
+            "maximum": 100
+          }
+        }
+      },
+      "pluginResponse": {
+        "description": "The plugin full information",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "prometheus",
+            "description": "The plugin unique id"
+          },
+          "name": {
+            "description": "The plugin name",
+            "type": "string",
+            "example": "Prometheus"
+          },
+          "description": {
+            "description": "Some description for the plugin",
+            "type": "string",
+            "example": "Prometheus Default Plugin"
+          },
+          "parameters": {
+            "description": "The specific configuration the register of the plugin",
+            "type": "object",
+            "properties": {
+              "configurationProperties": {
+                "description": "The fields necessary at configuration time",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/genericPluginField"
+                }
+              },
+              "executionProperties": {
+                "description": "The specific configuration that the plugin needs to execute it's functions",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/genericPluginField"
+                }
+              }
+            }
+          }
+        }
+      },
+      "genericPluginField": {
+        "description": "Generic plugin field representation",
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "The field name, expected in the request JSON",
+            "type": "string",
+            "example": "url"
+          },
+          "label": {
+            "description": "The field label, if it's needed some user interaction in a frontend",
+            "type": "string",
+            "example": "Plugin URL"
+          },
+          "type": {
+            "description": "The field type",
+            "type": "string",
+            "example": "string"
+          },
+          "required": {
+            "description": "If the field is required",
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "workspaceItemStatusField": {
+        "description": "Generic workspace config field representation",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "f28e0b9a-cf9b-4eec-9243-28c568a4dc6b"
+          },
+          "name": {
+            "type": "string",
+            "example": "Config Name"
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          }
+        }
+      },
+      "circleRequest": {
+        "description": "Request object user for creating a new circle",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "example": "Circle Beagle",
+            "required": true
+          },
+          "rules": {
+            "description": "The segmentation rules for that circle",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/circleRuleSchema"
+            },
+            "required": true,
+            "minItems": 1
+          }
+        }
+      },
+      "circleCsvRequest": {
+        "description": "Request object user for creating a new circle using CSV as base for segmentation",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/circleCsvRuleRequest"
+          }
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "example": "Circle Beagle",
+            "required": true
+          }
+        }
+      },
+      "circleRuleRequest": {
+        "description": "Request object user for creating/updating circle segmentation rules",
+        "properties": {
+          "rules": {
+            "description": "The segmentation rules for that circle",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/circleRuleSchema"
+            },
+            "required": true,
+            "minItems": 1
+          }
+        }
+      },
+      "circleCsvRuleRequest": {
+        "description": "Request object user for creating/updating circle segmentation rules",
+        "properties": {
+          "key": {
+            "description": "The key that will be used as a rule matcher",
+            "type": "string",
+            "example": "username"
+          },
+          "file": {
+            "description": "The file containing the values to be used as truth in the matches",
+            "format": "binary",
+            "example": "some_file.csv"
+          }
+        }
+      },
+      "circleRuleSchema": {
+        "description": "The segmentation rule schema",
+        "properties": {
+          "type": {
+            "description": "The rule type",
+            "type": "string",
+            "enum": [
+              "CLAUSE",
+              "RULE"
+            ]
+          },
+          "logicalOperator": {
+            "description": "The logical operador for the rule",
+            "type": "string",
+            "enum": [
+              "AND",
+              "OR"
+            ]
+          },
+          "clauses": {
+            "description": "The sub-rules, if the type of this is CLAUSE",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/circleRuleSchema"
+            }
+          },
+          "rule": {
+            "description": "The rules, if the type of this is RULE",
+            "type": "object",
+            "properties": {
+              "key": {
+                "description": "The key to be used as rule matcher",
+                "type": "string",
+                "example": "username"
+              },
+              "condition": {
+                "description": "The conditional to be used for verify the values",
+                "type": "string",
+                "enum": [
+                  "EQUAL",
+                  "GREATER_THAN",
+                  "GREATER_THAN_OR_EQUAL",
+                  "LOWER_THAN",
+                  "LESS_THAN_OR_EQUAL",
+                  "STARTS_WITH",
+                  "NOT_EQUAL",
+                  "ENDS_WITH",
+                  "MATCHES",
+                  "CONTAINS"
+                ]
+              },
+              "values": {
+                "description": "The values to be used as truth",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "example": "darwin@zupit.com.br"
+                }
+              }
+            }
+          }
+        }
+      },
+      "circleResponse": {
+        "description": "The circle basic information",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "f28e0b9a-cf9b-4eec-9243-28c568a4dc6b"
+          },
+          "name": {
+            "type": "string",
+            "format": "text",
+            "example": "Circle Abc"
+          }
+        }
+      },
+      "circleFullResponse": {
+        "description": "The circle basic information",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/circleResponse"
+          }
+        ],
+        "properties": {
+          "rules": {
+            "$ref": "#/components/schemas/circleRuleSchema"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "If teh circle is active, the circle is active if and only if release is deployed on it"
+          },
+          "deployment": {
+            "$ref": "#/components/schemas/deploymentResponse"
+          }
+        }
+      },
+      "circleComponentStatusResponse": {
+        "description": "The component status",
+        "properties": {
+          "component": {
+            "type": "string",
+            "description": "The name of the component",
+            "example": "front-end"
+          },
+          "status": {
+            "type": "string",
+            "description": "The present status of the component",
+            "example": "RUNNING"
+          },
+          "pod": {
+            "description": "The pod name",
+            "type": "string",
+            "example": "front-end-abc-zhg4"
+          }
+        }
+      },
+      "deploymentResponse": {
+        "description": "The deployment object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "f28e0b9a-cf9b-4eec-9243-28c568a4dc6b"
+          },
+          "components": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/basicComponentDeploymentSchema"
+            }
+          }
+        }
+      },
+      "basicComponentDeploymentSchema": {
+        "description": "The component object",
+        "properties": {
+          "name": {
+            "description": "The component name",
+            "type": "string",
+            "example": "charles-frontend"
+          },
+          "version": {
+            "description": "The image tag",
+            "type": "string",
+            "example": "9.6-beta"
+          }
+        }
+      },
+      "openSeaResponse": {
+        "description": "The open sea information",
+        "properties": {
+          "releases": {
+            "$ref": "#/components/schemas/basicComponentDeploymentSchema"
+          }
+        }
+      },
+      "componentSchema": {
+        "description": "The component information",
+        "properties": {
+          "helmConfig": {
+            "$ref": "#/components/schemas/helmConfigSchema"
+          },
+          "name": {
+            "type": "string",
+            "required": true,
+            "example": "front-end"
+          }
+        }
+      },
+      "helmConfigSchema": {
+        "description": "The helm config schema object",
+        "properties": {
+          "organization": {
+            "type": "string",
+            "example": "zupit",
+            "required": true
+          },
+          "repository": {
+            "type": "string",
+            "example": "my-app-charts",
+            "required": true
+          },
+          "path": {
+            "type": "string",
+            "example": "content"
+          },
+          "reference": {
+            "type": "string",
+            "example": "some-ref",
+            "default": "main"
+          }
+        }
+      },
+      "componentFullResponse": {
+        "description": "The component information",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/componentSchema"
+          }
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "3598e61a-870d-4e09-8d7a-08be5d21a6d8"
+          }
+        }
+      },
+      "componentResponse": {
+        "description": "The component basic information",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "3598e61a-870d-4e09-8d7a-08be5d21a6d8"
+          },
+          "name": {
+            "type": "string",
+            "example": "backend"
+          }
+        }
+      },
+      "userGroupRequest": {
+        "description": "The request object used for creating a new user group",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Charles dev group",
+            "required": true,
+            "maximum": 64
+          }
+        }
+      },
+      "userGroupsResponse": {
+        "description": "The user group information",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "f28e0b9a-cf9b-4eec-9243-28c568a4dc6b"
+          },
+          "name": {
+            "type": "string",
+            "example": "Charles dev group"
+          }
+        }
+      },
+      "userGroupFullResponse": {
+        "description": "The user group information",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "f28e0b9a-cf9b-4eec-9243-28c568a4dc6b"
+          },
+          "name": {
+            "type": "string",
+            "example": "Charles dev group"
+          },
+          "users": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "charles@zup.com.br"
+                },
+                "memberId": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "userGroupMemberRequest": {
+        "description": "The request object used for add members to an user group",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "username": {
+              "type": "string",
+              "example": "charles@zup.com.br",
+              "required": true
+            }
+          }
+        }
+      },
+      "userGroupWorkspaceRequest": {
+        "description": "The request object used for adding an user group to a workspace",
+        "properties": {
+          "groupId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "c3e56c4f-9eb3-4397-99be-ac598ca02bdc",
+            "required": true
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "circle_read"
+            }
+          }
+        }
+      },
+      "userGroupWorkspaceResponse": {
+        "description": "The user group information when associated to a workspace",
+        "properties": {
+          "groupId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "c3e56c4f-9eb3-4397-99be-ac598ca02bdc"
+          },
+          "groupName": {
+            "type": "string",
+            "example": "Charles dev group"
+          }
+        }
+      },
+      "deploymentRequest": {
+        "description": "The object used for making a deployment request",
+        "properties": {
+          "components": {
+            "type": "array",
+            "required": true,
+            "items": {
+              "$ref": "#/components/schemas/basicComponentDeploymentSchema"
+            }
+          }
+        }
+      },
+      "partialUnDeploymentRequest": {
+        "description": "The request object for partial un-deployment",
+        "properties": {
+          "components": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "frontend"
+            },
+            "required": true
+          }
+        }
+      },
+      "openSeaDeploymentRequest": {
+        "description": "Request object used for requesting the deployment of components at open sea",
+        "properties": {
+          "components": {
+            "type": "array",
+            "required": true,
+            "items": {
+              "$ref": "#/components/schemas/basicComponentDeploymentSchema"
+            }
+          }
+        }
+      },
+      "releaseRollbackRequest": {
+        "description": "The request object used for requesting a rollback",
+        "properties": {
+          "deploymentId": {
+            "type": "string",
+            "format": "uuid",
+            "required": false,
+            "example": "3598e61a-870d-4e09-8d7a-08be5d21a6d8"
+          }
+        }
+      },
+      "identifyRequest": {
+        "description": "The request object used for calling the identify, it's a simple key value map",
+        "type": "object",
+        "example": {
+          "username": "charles@zup.com.br",
+          "location": "BR"
+        }
+      },
+      "identifyResponse": {
+        "description": "The identify response object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "de8fa547-ae35-4566-8a9d-a4731165bbaf"
+          },
+          "name": {
+            "type": "string",
+            "example": "Circle Abc"
+          }
+        }
+      }
+    },
+    "parameters": {
+      "pageSize": {
+        "description": "The page size parameter, used for listing paginated resources",
+        "name": "pageSize",
+        "in": "query",
+        "schema": {
+          "type": "integer",
+          "example": 50,
+          "default": 20
+        }
+      },
+      "pageNumber": {
+        "description": "The page number parameter, used for listing paginated resources",
+        "name": "pageNumber",
+        "in": "query",
+        "schema": {
+          "type": "integer",
+          "example": 2,
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "headerWorkspaceId": {
+        "description": "The workspace id sent in header to inform which workspace the operation in being applied",
+        "name": "x-workspace-id",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "pathWorkspaceId": {
+        "description": "The workspace id sent in path to inform which workspace the operation in being applied",
+        "name": "workspaceId",
+        "in": "path",
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "pathCircleId": {
+        "description": "The circle id sent in path to inform which circle the operation in being applied",
+        "name": "circleId",
+        "in": "path",
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "nameFilter": {
+        "description": "The name used for filtering the resources",
+        "name": "name",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "example": "charlinho"
+        }
+      },
+      "pathMemberId": {
+        "description": "The memberId",
+        "name": "memberId",
+        "in": "path",
+        "schema": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
