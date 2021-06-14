@@ -11,7 +11,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8080",
+      "url": "http://localhost:8080/v1",
       "description": "Default Server URL"
     }
   ],
@@ -27,13 +27,39 @@
       ]
     }
   ],
+  "tags": [
+    {
+      "name": "workspace"
+    },
+    {
+      "name": "metrics"
+    },
+    {
+      "name": "circle"
+    },
+    {
+      "name": "component"
+    },
+    {
+      "name": "deployment"
+    },
+    {
+      "name": "history"
+    },
+    {
+      "name": "users"
+    },
+    {
+      "name": "authorization"
+    }
+  ],
   "paths": {
-    "/v1/workspaces": {
+    "/workspaces": {
       "get": {
         "summary": "List workspaces",
         "description": "List all the workspaces the user has access to, sorted by the oldest to the newer",
         "tags": [
-          "Workspace V1"
+          "workspace"
         ],
         "parameters": [
           {
@@ -93,7 +119,7 @@
         "summary": "Create workspace",
         "description": "Create a new Workspace, the only required property is the name, the other one are optional for creation, but for the workspace to works needs the other configuration",
         "tags": [
-          "Workspace V1"
+          "workspace"
         ],
         "requestBody": {
           "content": {
@@ -161,7 +187,7 @@
         }
       }
     },
-    "/v1/workspaces/{workspaceId}": {
+    "/workspaces/{workspaceId}": {
       "parameters": [
         {
           "$ref": "#/components/parameters/pathWorkspaceId"
@@ -171,7 +197,7 @@
         "summary": "Get workspace by id",
         "description": "If the user has the permissions to see it, retrieve the requested workspace",
         "tags": [
-          "Workspace V1"
+          "workspace"
         ],
         "responses": {
           "200": {
@@ -209,7 +235,7 @@
         "summary": "Delete workspace",
         "description": "Deletes the workspace, this deletion is made in a logical manner",
         "tags": [
-          "Workspace V1"
+          "workspace"
         ],
         "responses": {
           "204": {
@@ -240,7 +266,7 @@
         "summary": "Update name",
         "description": "Updates the workspace name",
         "tags": [
-          "Workspace V1"
+          "workspace"
         ],
         "requestBody": {
           "content": {
@@ -277,7 +303,7 @@
         }
       }
     },
-    "/v1/workspaces/{workspaceId}/status": {
+    "/workspaces/{workspaceId}/status": {
       "parameters": [
         {
           "$ref": "#/components/parameters/pathWorkspaceId"
@@ -287,7 +313,7 @@
         "summary": "The workspace status",
         "description": "Verify the status of the workspace and all it's settings",
         "tags": [
-          "Workspace V1"
+          "workspace"
         ],
         "responses": {
           "200": {
@@ -322,7 +348,7 @@
         }
       }
     },
-    "/v1/workspaces/{workspaceId}/configurations/matcher": {
+    "/workspaces/{workspaceId}/configurations/matcher": {
       "parameters": [
         {
           "$ref": "#/components/parameters/pathWorkspaceId"
@@ -332,7 +358,7 @@
         "summary": "Set Matcher URL",
         "description": "Save the circle matcher URl for that workspace, if an URl already exists, it's value is updated",
         "tags": [
-          "Workspace V1"
+          "workspace"
         ],
         "requestBody": {
           "content": {
@@ -372,7 +398,7 @@
         "summary": "Deletes a matcher configuration",
         "description": "Deletes the matcher configuration from the specified workspace",
         "tags": [
-          "Workspace V1"
+          "workspace"
         ],
         "responses": {
           "204": {
@@ -400,7 +426,7 @@
         }
       }
     },
-    "/v1/workspaces/{workspaceId}/configurations/matcher/validate": {
+    "/workspaces/{workspaceId}/configurations/matcher/validate": {
       "parameters": [
         {
           "$ref": "#/components/parameters/pathWorkspaceId"
@@ -410,7 +436,7 @@
         "summary": "Validate circle matcher",
         "description": "Validate the circle matcher URl, and checks if it's reachable, this is recommended before it's creation",
         "tags": [
-          "Workspace V1"
+          "workspace"
         ],
         "requestBody": {
           "content": {
@@ -447,7 +473,7 @@
         }
       }
     },
-    "/v1/workspaces/{workspaceId}/configurations/deployment": {
+    "/workspaces/{workspaceId}/configurations/deployment": {
       "parameters": [
         {
           "$ref": "#/components/parameters/pathWorkspaceId"
@@ -457,7 +483,7 @@
         "summary": "Set deployment configuration",
         "description": "Save the deployment configuration for that workspace, if a configuration already exists, it's value is updated",
         "tags": [
-          "Workspace V1"
+          "workspace"
         ],
         "requestBody": {
           "content": {
@@ -497,7 +523,7 @@
         "summary": "Deletes a deployment configuration",
         "description": "Deletes the deployment configuration from the specified workspace",
         "tags": [
-          "Workspace V1"
+          "workspace"
         ],
         "responses": {
           "204": {
@@ -525,7 +551,7 @@
         }
       }
     },
-    "/v1/workspaces/{workspaceId}/configurations/deployment/validate": {
+    "/workspaces/{workspaceId}/configurations/deployment/validate": {
       "parameters": [
         {
           "$ref": "#/components/parameters/pathWorkspaceId"
@@ -535,7 +561,7 @@
         "summary": "Validate deployment config ",
         "description": "Validate the deployment configuration, and checks if it's reachable, this is recommended before it's creation",
         "tags": [
-          "Workspace V1"
+          "workspace"
         ],
         "requestBody": {
           "content": {
@@ -572,7 +598,7 @@
         }
       }
     },
-    "/v1/workspaces/{workspaceId}/configurations/git": {
+    "/workspaces/{workspaceId}/configurations/git": {
       "parameters": [
         {
           "$ref": "#/components/parameters/pathWorkspaceId"
@@ -582,7 +608,7 @@
         "summary": "Set git configuration",
         "description": "Save the git configuration for that workspace, if a configration already exists, it's value is updated",
         "tags": [
-          "Workspace V1"
+          "workspace"
         ],
         "requestBody": {
           "content": {
@@ -622,7 +648,7 @@
         "summary": "Deletes a git configuration",
         "description": "Deletes the git configuration from the specified workspace",
         "tags": [
-          "Workspace V1"
+          "workspace"
         ],
         "responses": {
           "204": {
@@ -650,7 +676,7 @@
         }
       }
     },
-    "/v1/workspaces/{workspaceId}/configurations/git/validate": {
+    "/workspaces/{workspaceId}/configurations/git/validate": {
       "parameters": [
         {
           "$ref": "#/components/parameters/pathWorkspaceId"
@@ -660,7 +686,7 @@
         "summary": "Validate git configuration",
         "description": "Validate the git configuration and checks if it's reachable, this is recommended before it's creation",
         "tags": [
-          "Workspace V1"
+          "workspace"
         ],
         "requestBody": {
           "content": {
@@ -697,7 +723,45 @@
         }
       }
     },
-    "/v1/workspaces/{workspaceId}/configurations/datasources": {
+    "/workspaces/{workspaceId}/routing": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathWorkspaceId"
+        }
+      ],
+      "get": {
+        "summary": "Workspace routing",
+        "description": "The present routing of the workspace, basically return the virtual service and the destination rules",
+        "tags": [
+          "workspace"
+        ],
+        "responses": {
+          "200": {
+            "description": "The routing information"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exist"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/metrics/workspaces/{workspaceId}/datasources": {
       "parameters": [
         {
           "$ref": "#/components/parameters/pathWorkspaceId"
@@ -707,7 +771,7 @@
         "summary": "Create new datasource configuration",
         "description": "Creates a new datasource configuration for the workspace",
         "tags": [
-          "Workspace V1"
+          "metrics"
         ],
         "requestBody": {
           "content": {
@@ -754,7 +818,7 @@
         "summary": "List all the datasources",
         "description": "List all the datasources registered for the workspace",
         "tags": [
-          "Workspace V1"
+          "metrics"
         ],
         "responses": {
           "200": {
@@ -792,7 +856,7 @@
         }
       }
     },
-    "/v1/workspaces/{workspaceId}/configurations/datasources/validate": {
+    "/metrics/workspaces/{workspaceId}/datasources/validate": {
       "parameters": [
         {
           "$ref": "#/components/parameters/pathWorkspaceId"
@@ -802,7 +866,7 @@
         "summary": "Validate datasource connection",
         "description": "Validate if the datasource is reachable, this is recommended before it's creation",
         "tags": [
-          "Workspace V1"
+          "metrics"
         ],
         "requestBody": {
           "content": {
@@ -839,7 +903,7 @@
         }
       }
     },
-    "/v1/workspaces/{workspaceId}/configurations/datasources/{datasourceId}": {
+    "/metrics/workspaces/{workspaceId}/datasources/{datasourceId}": {
       "parameters": [
         {
           "$ref": "#/components/parameters/pathWorkspaceId"
@@ -858,7 +922,7 @@
         "summary": "Delete datasource configuration",
         "description": "Deletes the datasource configuration from the workspace",
         "tags": [
-          "Workspace V1"
+          "metrics"
         ],
         "responses": {
           "204": {
@@ -886,7 +950,7 @@
         }
       }
     },
-    "/v1/workspaces/{workspaceId}/configurations/actions": {
+    "/metrics/workspaces/{workspaceId}/actions": {
       "parameters": [
         {
           "$ref": "#/components/parameters/pathWorkspaceId"
@@ -896,7 +960,7 @@
         "summary": "Create new action configuration",
         "description": "Creates a new action configuration for the workspace",
         "tags": [
-          "Workspace V1"
+          "metrics"
         ],
         "requestBody": {
           "content": {
@@ -943,7 +1007,7 @@
         "summary": "List all the actions",
         "description": "List all the actions registered for the workspace",
         "tags": [
-          "Workspace V1"
+          "metrics"
         ],
         "responses": {
           "200": {
@@ -981,7 +1045,7 @@
         }
       }
     },
-    "/v1/workspaces/{workspaceId}/configurations/actions/validate": {
+    "/metrics/workspaces/{workspaceId}/actions/validate": {
       "parameters": [
         {
           "$ref": "#/components/parameters/pathWorkspaceId"
@@ -991,7 +1055,7 @@
         "summary": "Validate action",
         "description": "Validate if the action works, and all its configurations are ok, this is recommended before it's creation",
         "tags": [
-          "Workspace V1"
+          "metrics"
         ],
         "requestBody": {
           "content": {
@@ -1028,7 +1092,7 @@
         }
       }
     },
-    "/v1/workspaces/{workspaceId}/configurations/actions/{actionId}": {
+    "/metrics/workspaces/{workspaceId}/actions/{actionId}": {
       "parameters": [
         {
           "$ref": "#/components/parameters/pathWorkspaceId"
@@ -1047,7 +1111,7 @@
         "summary": "Delete action configuration",
         "description": "Deletes the action configuration from the workspace",
         "tags": [
-          "Workspace V1"
+          "metrics"
         ],
         "responses": {
           "204": {
@@ -1075,177 +1139,7 @@
         }
       }
     },
-    "/v1/workspaces/{workspaceId}/user-groups": {
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/pathWorkspaceId"
-        }
-      ],
-      "post": {
-        "summary": "Associate user group to workspace",
-        "description": "Associates an user group to a workspace with it's permissions",
-        "tags": [
-          "Workspace V1"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/userGroupWorkspaceRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "If the group was associated to the workspace successfully"
-          },
-          "401": {
-            "description": "Token is not sent or is invalid"
-          },
-          "403": {
-            "description": "Client doesn't have permissions to call the API"
-          },
-          "404": {
-            "description": "The workspace or the group does not exist"
-          },
-          "5XX": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "get": {
-        "summary": "List user groups at workspace",
-        "description": "List all user groups registered at workspace",
-        "tags": [
-          "Workspace V1"
-        ],
-        "responses": {
-          "200": {
-            "description": "If the group was associated to the workspace successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/userGroupWorkspaceResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Token is not sent or is invalid"
-          },
-          "403": {
-            "description": "Client doesn't have permissions to call the API"
-          },
-          "404": {
-            "description": "The workspace does not exist"
-          },
-          "5XX": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/workspaces/{workspaceId}/user-groups/{groupId}": {
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/pathWorkspaceId"
-        },
-        {
-          "description": "The user group id",
-          "name": "groupId",
-          "in": "path",
-          "schema": {
-            "type": "string",
-            "format": "uuid"
-          }
-        }
-      ],
-      "delete": {
-        "summary": "Disassociate user group from workspace",
-        "description": "Disassociate an user group from a workspace",
-        "tags": [
-          "Workspace V1"
-        ],
-        "responses": {
-          "204": {
-            "description": "If the group was Disassociate from the workspace successfully"
-          },
-          "401": {
-            "description": "Token is not sent or is invalid"
-          },
-          "403": {
-            "description": "Client doesn't have permissions to call the API"
-          },
-          "404": {
-            "description": "The workspace or the group does not exist"
-          },
-          "5XX": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/workspaces/{workspaceId}/routing": {
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/pathWorkspaceId"
-        }
-      ],
-      "get": {
-        "summary": "Workspace routing",
-        "description": "The present routing of the workspace, basically return the virtual service and the destination rules",
-        "tags": [
-          "Workspace V1"
-        ],
-        "responses": {
-          "200": {
-            "description": "The routing information"
-          },
-          "401": {
-            "description": "Token is not sent or is invalid"
-          },
-          "403": {
-            "description": "Client doesn't have permissions to call the API"
-          },
-          "404": {
-            "description": "The workspace does not exist"
-          },
-          "5XX": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/plugins": {
+    "/metrics/plugins": {
       "parameters": [
         {
           "$ref": "#/components/parameters/headerWorkspaceId"
@@ -1255,7 +1149,7 @@
         "summary": "List available plugins",
         "description": "List all available plugins, and the API allow filtering for listing the plugins by type",
         "tags": [
-          "Plugin V1"
+          "metrics"
         ],
         "parameters": [
           {
@@ -1301,7 +1195,7 @@
         }
       }
     },
-    "/v1/circles": {
+    "/circles": {
       "parameters": [
         {
           "$ref": "#/components/parameters/headerWorkspaceId"
@@ -1311,7 +1205,7 @@
         "summary": "List circles",
         "description": "List all the circles in the workspace that the user has access to, the API can receive filters, like circle status (active, inactive), this API is paginated and sorted, the default sorting is the creation date descending, with the newer circles first",
         "tags": [
-          "Circle V1"
+          "circle"
         ],
         "parameters": [
           {
@@ -1379,7 +1273,7 @@
         "summary": "Create circle",
         "description": "Create a new circle with it's segmentation rules",
         "tags": [
-          "Circle V1"
+          "circle"
         ],
         "requestBody": {
           "content": {
@@ -1420,7 +1314,7 @@
         }
       }
     },
-    "/v1/circles/csv": {
+    "/circles/csv": {
       "parameters": [
         {
           "$ref": "#/components/parameters/headerWorkspaceId"
@@ -1430,7 +1324,7 @@
         "summary": "Create circle CSV",
         "description": "Create a new circle with a CSV file with the segmentation rules",
         "tags": [
-          "Circle V1"
+          "circle"
         ],
         "requestBody": {
           "content": {
@@ -1471,7 +1365,7 @@
         }
       }
     },
-    "/v1/circles/{circleId}": {
+    "/circles/{circleId}": {
       "parameters": [
         {
           "$ref": "#/components/parameters/pathCircleId"
@@ -1484,7 +1378,7 @@
         "summary": "Delete circle",
         "description": "Deletes the circle",
         "tags": [
-          "Circle V1"
+          "circle"
         ],
         "responses": {
           "204": {
@@ -1515,7 +1409,7 @@
         "summary": "Get circle",
         "description": "Get the requested circle, if the user has the permissions to",
         "tags": [
-          "Circle V1"
+          "circle"
         ],
         "responses": {
           "200": {
@@ -1553,7 +1447,7 @@
         "summary": "Update circle name",
         "description": "Updates circle's name",
         "tags": [
-          "Circle V1"
+          "circle"
         ],
         "requestBody": {
           "content": {
@@ -1597,7 +1491,7 @@
         }
       }
     },
-    "/v1/circles/{circleId}/status": {
+    "/circles/{circleId}/status": {
       "parameters": [
         {
           "$ref": "#/components/parameters/headerWorkspaceId"
@@ -1610,7 +1504,7 @@
         "summary": "Circle status",
         "description": "Show the status of the cluster and applications for each component",
         "tags": [
-          "Circle V1"
+          "circle"
         ],
         "responses": {
           "200": {
@@ -1648,7 +1542,7 @@
         }
       }
     },
-    "/v1/circles/{circleId}/segmentation": {
+    "/circles/{circleId}/segmentation": {
       "parameters": [
         {
           "$ref": "#/components/parameters/pathCircleId"
@@ -1661,7 +1555,7 @@
         "summary": "Update the circle segmentation",
         "description": "Updates the circle's segmentation rules",
         "tags": [
-          "Circle V1"
+          "circle"
         ],
         "requestBody": {
           "content": {
@@ -1698,7 +1592,7 @@
         }
       }
     },
-    "/v1/circles/{circleId}/segmentation/csv": {
+    "/circles/{circleId}/segmentation/csv": {
       "parameters": [
         {
           "$ref": "#/components/parameters/pathCircleId"
@@ -1711,7 +1605,7 @@
         "summary": "Update the circle segmentation with a csv",
         "description": "Updates the circle's segmentation rules with a csv file",
         "tags": [
-          "Circle V1"
+          "circle"
         ],
         "requestBody": {
           "content": {
@@ -1748,7 +1642,7 @@
         }
       }
     },
-    "/v1/circles/identify": {
+    "/circles/identify": {
       "parameters": [
         {
           "$ref": "#/components/parameters/headerWorkspaceId"
@@ -1758,7 +1652,7 @@
         "summary": "Identify",
         "description": "Call the circle matcher of the workspace with the passed identify payload to verify in which circles the possible user belongs",
         "tags": [
-          "Circle V1"
+          "circle"
         ],
         "requestBody": {
           "content": {
@@ -1802,7 +1696,7 @@
         }
       }
     },
-    "/v1/circles/open-sea": {
+    "/circles/open-sea": {
       "parameters": [
         {
           "$ref": "#/components/parameters/headerWorkspaceId"
@@ -1812,7 +1706,7 @@
         "summary": "Get open sea",
         "description": "Get open sea information",
         "tags": [
-          "Circle V1"
+          "circle"
         ],
         "responses": {
           "200": {
@@ -1847,7 +1741,7 @@
         }
       }
     },
-    "/v1/components": {
+    "/components": {
       "parameters": [
         {
           "$ref": "#/components/parameters/headerWorkspaceId"
@@ -1857,7 +1751,7 @@
         "summary": "Get components",
         "description": "Get all components in the workspace",
         "tags": [
-          "Component V1"
+          "component"
         ],
         "parameters": [
           {
@@ -1914,7 +1808,7 @@
         "summary": "Create components",
         "description": "Create the components in the workspace",
         "tags": [
-          "Component V1"
+          "component"
         ],
         "requestBody": {
           "content": {
@@ -1961,7 +1855,7 @@
         }
       }
     },
-    "/v1/components/{componentId}": {
+    "/components/{componentId}": {
       "parameters": [
         {
           "$ref": "#/components/parameters/headerWorkspaceId"
@@ -1979,7 +1873,7 @@
         "summary": "Delete components",
         "description": "Delete a component from workspace",
         "tags": [
-          "Component V1"
+          "component"
         ],
         "responses": {
           "204": {
@@ -2010,7 +1904,7 @@
         "summary": "Get component",
         "description": "Get component information",
         "tags": [
-          "Component V1"
+          "component"
         ],
         "responses": {
           "200": {
@@ -2055,7 +1949,7 @@
         "summary": "Update component",
         "description": "Updates the component",
         "tags": [
-          "Component V1"
+          "component"
         ],
         "requestBody": {
           "content": {
@@ -2099,12 +1993,447 @@
         }
       }
     },
-    "/v1/user-groups": {
+    "/users/{memberId}/user-groups": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathMemberId"
+        }
+      ],
+      "get": {
+        "summary": "List all groups of a member",
+        "description": "Lists all the groups that a member is part of",
+        "tags": [
+          "users"
+        ],
+        "responses": {
+          "200": {
+            "description": "All groups that the member is part of",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/userGroupsResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Disassociate member from all groups",
+        "description": "Disassociate a member from all groups that he is part of",
+        "tags": [
+          "users"
+        ],
+        "responses": {
+          "204": {
+            "description": "If the member was disassociated from all groups successfully"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/circles/{circleId}/deployments": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "$ref": "#/components/parameters/pathCircleId"
+        }
+      ],
+      "post": {
+        "summary": "Deploy releases at circle",
+        "description": "Makes the deployment of the requested components at circle, if the circle already has an active release deployed, it will be overwritten",
+        "tags": [
+          "deployment"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/deploymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The deployment request was made successfully and there isn't any active release deployed yet"
+          },
+          "204": {
+            "description": "The deployment request was made successfully and the the circle already has  an active deployment and it was overwrite"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "If the circle or some component does not exist"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/circles/{circleId}/deployments/increment": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "$ref": "#/components/parameters/pathCircleId"
+        }
+      ],
+      "post": {
+        "summary": "Increment release at circle",
+        "description": "Increments the circle with new components, if the circle already has a version of a requested component, this one will be overwritten, and the others added",
+        "tags": [
+          "deployment"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/deploymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The deployment request was made successfully"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "If the circle or some component does not exist"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/circles/{circleId}/deployments/undeploy": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "$ref": "#/components/parameters/pathCircleId"
+        }
+      ],
+      "post": {
+        "summary": "Undeploy all releases at circle",
+        "description": "Makes the undeploy of all components at circle",
+        "tags": [
+          "deployment"
+        ],
+        "responses": {
+          "204": {
+            "description": "The un-deployment request was made successfully"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "If the circle does not exist, or there aren't releases deployed"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/circles/{circleId}/deployments/undeploy/decrement": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "$ref": "#/components/parameters/pathCircleId"
+        }
+      ],
+      "post": {
+        "summary": "Undeploy selected components",
+        "description": "Makes the undeploy of selected components",
+        "tags": [
+          "deployment"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/partialUnDeploymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The un-deployment request was made successfully"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "If the circle does not exist, or there aren't releases deployed"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/circles/{circleId}deployments/rollback": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "$ref": "#/components/parameters/pathCircleId"
+        }
+      ],
+      "post": {
+        "summary": "Execute rollback at circle",
+        "description": "Executes a rollback at circle, if no release is specified, it will make the rollback to the the release immediate before to the actual one",
+        "tags": [
+          "deployment"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/releaseRollbackRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The rollback request was made successfully"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "If the circle does not exist or there aren't releases deployed"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/circles/{circleId}/deployments/open-sea": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "$ref": "#/components/parameters/pathCircleId"
+        }
+      ],
+      "post": {
+        "summary": "Increment release  at open sea",
+        "description": "Increments the open sea with new components, if already has a version of a requested component, this one will be overwritten, and the others added",
+        "tags": [
+          "deployment"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/openSeaDeploymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The deployment request was made successfully"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "If open sea or the some component does not exist"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/histories/circles": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        }
+      ],
+      "get": {
+        "summary": "Circle history",
+        "description": "The circle history, shows every change to circles caused by an API call",
+        "tags": [
+          "history"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "ids",
+            "description": "The circles id",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "in": "query",
+            "name": "author",
+            "description": "The username of who made the change",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "in": "query",
+            "name": "date",
+            "description": "The when the changes were made ",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The history objects"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/authorization/user-groups": {
       "get": {
         "summary": "List user groups",
         "description": "List all user groups registered",
         "tags": [
-          "UserGroup V1"
+          "authorization"
         ],
         "parameters": [
           {
@@ -2161,7 +2490,7 @@
         "summary": "Create user group",
         "description": "Creates a new user group",
         "tags": [
-          "UserGroup V1"
+          "authorization"
         ],
         "requestBody": {
           "content": {
@@ -2202,7 +2531,7 @@
         }
       }
     },
-    "/v1/user-groups/{groupId}": {
+    "/authorization/user-groups/{groupId}": {
       "parameters": [
         {
           "description": "The user group id",
@@ -2219,7 +2548,7 @@
         "summary": "Get user group",
         "description": "Get the request user group",
         "tags": [
-          "UserGroup V1"
+          "authorization"
         ],
         "responses": {
           "200": {
@@ -2257,7 +2586,7 @@
         "summary": "Update user group",
         "description": "Updates the user group name",
         "tags": [
-          "UserGroup V1"
+          "authorization"
         ],
         "requestBody": {
           "content": {
@@ -2304,7 +2633,7 @@
         "summary": "Delete user group",
         "description": "Deletes an user group",
         "tags": [
-          "UserGroup V1"
+          "authorization"
         ],
         "responses": {
           "204": {
@@ -2332,7 +2661,7 @@
         }
       }
     },
-    "/v1/user-groups/{groupId}/members": {
+    "/authorization/user-groups/{groupId}/members": {
       "parameters": [
         {
           "description": "The user group id",
@@ -2349,7 +2678,7 @@
         "summary": "Add member to user group",
         "description": "Adds new members to the user group, this method works with bulking, allowing receive from 1 to N users to added, if one user is not added, a message will be returned informing which one was not added and the problem, the others will be added normally",
         "tags": [
-          "UserGroup V1"
+          "authorization"
         ],
         "requestBody": {
           "content": {
@@ -2386,7 +2715,7 @@
         }
       }
     },
-    "/v1/user-groups/{groupId}/members/{memberId}": {
+    "/authorization/user-groups/{groupId}/members/{memberId}": {
       "parameters": [
         {
           "description": "The user group id",
@@ -2406,7 +2735,7 @@
         "summary": "Remove member from user group",
         "description": "Removes a member from the user group",
         "tags": [
-          "UserGroup V1"
+          "authorization"
         ],
         "responses": {
           "204": {
@@ -2434,37 +2763,39 @@
         }
       }
     },
-    "/v1/users/{memberId}/user-groups": {
+    "/authorization/user-groups-binding": {
       "parameters": [
         {
-          "$ref": "#/components/parameters/pathMemberId"
+          "$ref": "#/components/parameters/pathWorkspaceId"
         }
       ],
-      "get": {
-        "summary": "List all groups of a member",
-        "description": "Lists all the groups that a member is part of",
+      "post": {
+        "summary": "Associate user group to workspace",
+        "description": "Associates an user group to a workspace with it's permissions",
         "tags": [
-          "Users V1"
+          "authorization"
         ],
-        "responses": {
-          "200": {
-            "description": "All groups that the member is part of",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/userGroupsResponse"
-                  }
-                }
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/userGroupWorkspaceRequest"
               }
             }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "If the group was associated to the workspace successfully"
           },
           "401": {
             "description": "Token is not sent or is invalid"
           },
           "403": {
             "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace or the group does not exist"
           },
           "5XX": {
             "description": "Unexpected error",
@@ -2478,15 +2809,22 @@
           }
         }
       },
-      "delete": {
-        "summary": "Disassociate member from all groups",
-        "description": "Disassociate a member from all groups that he is part of",
+      "get": {
+        "summary": "List user groups at workspace",
+        "description": "List all user groups registered at workspace",
         "tags": [
-          "Users V1"
+          "authorization"
         ],
         "responses": {
-          "204": {
-            "description": "If the member was disassociated from all groups successfully"
+          "200": {
+            "description": "If the group was associated to the workspace successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userGroupWorkspaceResponse"
+                }
+              }
+            }
           },
           "401": {
             "description": "Token is not sent or is invalid"
@@ -2494,6 +2832,9 @@
           "403": {
             "description": "Client doesn't have permissions to call the API"
           },
+          "404": {
+            "description": "The workspace does not exist"
+          },
           "5XX": {
             "description": "Unexpected error",
             "content": {
@@ -2507,354 +2848,39 @@
         }
       }
     },
-    "/v1/circles/{circleId}/deployments": {
+    "/authorization/user-groups-binding/{bindingId}": {
       "parameters": [
         {
-          "$ref": "#/components/parameters/headerWorkspaceId"
+          "$ref": "#/components/parameters/pathWorkspaceId"
         },
         {
-          "$ref": "#/components/parameters/pathCircleId"
+          "description": "The user group id",
+          "name": "bindingId",
+          "in": "path",
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
         }
       ],
-      "post": {
-        "summary": "Deploy releases at circle",
-        "description": "Makes the deployment of the requested components at circle, if the circle already has an active release deployed, it will be overwritten",
+      "delete": {
+        "summary": "Disassociate user group from workspace",
+        "description": "Disassociate an user group from a workspace",
         "tags": [
-          "Deployment V1"
+          "authorization"
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/deploymentRequest"
-              }
-            }
-          }
-        },
         "responses": {
-          "201": {
-            "description": "The deployment request was made successfully and there isn't any active release deployed yet"
-          },
           "204": {
-            "description": "The deployment request was made successfully and the the circle already has  an active deployment and it was overwrite"
+            "description": "If the group was Disassociate from the workspace successfully"
           },
           "401": {
-            "description": "Token / workspace-id header is not sent or is invalid"
+            "description": "Token is not sent or is invalid"
           },
           "403": {
             "description": "Client doesn't have permissions to call the API"
           },
           "404": {
-            "description": "If the circle or some component does not exist"
-          },
-          "5XX": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/circles/{circleId}/deployments/increment": {
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/headerWorkspaceId"
-        },
-        {
-          "$ref": "#/components/parameters/pathCircleId"
-        }
-      ],
-      "post": {
-        "summary": "Increment release at circle",
-        "description": "Increments the circle with new components, if the circle already has a version of a requested component, this one will be overwritten, and the others added",
-        "tags": [
-          "Deployment V1"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/deploymentRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "The deployment request was made successfully"
-          },
-          "401": {
-            "description": "Token / workspace-id header is not sent or is invalid"
-          },
-          "403": {
-            "description": "Client doesn't have permissions to call the API"
-          },
-          "404": {
-            "description": "If the circle or some component does not exist"
-          },
-          "5XX": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/circles/{circleId}/deployments/undeploy": {
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/headerWorkspaceId"
-        },
-        {
-          "$ref": "#/components/parameters/pathCircleId"
-        }
-      ],
-      "post": {
-        "summary": "Undeploy all releases at circle",
-        "description": "Makes the undeploy of all components at circle",
-        "tags": [
-          "Deployment V1"
-        ],
-        "responses": {
-          "204": {
-            "description": "The un-deployment request was made successfully"
-          },
-          "401": {
-            "description": "Token / workspace-id header is not sent or is invalid"
-          },
-          "403": {
-            "description": "Client doesn't have permissions to call the API"
-          },
-          "404": {
-            "description": "If the circle does not exist, or there aren't releases deployed"
-          },
-          "5XX": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/circles/{circleId}/deployments/undeploy/decrement": {
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/headerWorkspaceId"
-        },
-        {
-          "$ref": "#/components/parameters/pathCircleId"
-        }
-      ],
-      "post": {
-        "summary": "Undeploy selected components",
-        "description": "Makes the undeploy of selected components",
-        "tags": [
-          "Deployment V1"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/partialUnDeploymentRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "The un-deployment request was made successfully"
-          },
-          "401": {
-            "description": "Token / workspace-id header is not sent or is invalid"
-          },
-          "403": {
-            "description": "Client doesn't have permissions to call the API"
-          },
-          "404": {
-            "description": "If the circle does not exist, or there aren't releases deployed"
-          },
-          "5XX": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/circles/{circleId}deployments/rollback": {
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/headerWorkspaceId"
-        },
-        {
-          "$ref": "#/components/parameters/pathCircleId"
-        }
-      ],
-      "post": {
-        "summary": "Execute rollback at circle",
-        "description": "Executes a rollback at circle, if no release is specified, it will make the rollback to the the release immediate before to the actual one",
-        "tags": [
-          "Deployment V1"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/releaseRollbackRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "The rollback request was made successfully"
-          },
-          "401": {
-            "description": "Token / workspace-id header is not sent or is invalid"
-          },
-          "403": {
-            "description": "Client doesn't have permissions to call the API"
-          },
-          "404": {
-            "description": "If the circle does not exist or there aren't releases deployed"
-          },
-          "5XX": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/circles/{circleId}/deployments/open-sea": {
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/headerWorkspaceId"
-        },
-        {
-          "$ref": "#/components/parameters/pathCircleId"
-        }
-      ],
-      "post": {
-        "summary": "Increment release  at open sea",
-        "description": "Increments the open sea with new components, if already has a version of a requested component, this one will be overwritten, and the others added",
-        "tags": [
-          "Deployment V1"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/openSeaDeploymentRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "The deployment request was made successfully"
-          },
-          "401": {
-            "description": "Token / workspace-id header is not sent or is invalid"
-          },
-          "403": {
-            "description": "Client doesn't have permissions to call the API"
-          },
-          "404": {
-            "description": "If open sea or the some component does not exist"
-          },
-          "5XX": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/histories/circles": {
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/headerWorkspaceId"
-        }
-      ],
-      "get": {
-        "summary": "Circle history",
-        "description": "The circle history, shows every change to circles caused by an API call",
-        "tags": [
-          "History V1"
-        ],
-        "parameters": [
-          {
-            "in": "query",
-            "name": "ids",
-            "description": "The circles id",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          {
-            "in": "query",
-            "name": "author",
-            "description": "The username of who made the change",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          {
-            "in": "query",
-            "name": "date",
-            "description": "The when the changes were made ",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The history objects"
-          },
-          "401": {
-            "description": "Token / workspace-id header is not sent or is invalid"
-          },
-          "403": {
-            "description": "Client doesn't have permissions to call the API"
+            "description": "The workspace or the group does not exist"
           },
           "5XX": {
             "description": "Unexpected error",
