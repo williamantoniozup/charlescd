@@ -67,7 +67,7 @@ class V2CircleController(
         return this.findAllCirclesInteractor.execute(name, active, workspaceId, pageRequest)
     }
 
-    @ApiOperation(value = "Find all simplifyed")
+    @ApiOperation(value = "Find all simplified")
     @GetMapping(path = ["/simple"])
     @ResponseStatus(HttpStatus.OK)
     fun findSimplyfied(
