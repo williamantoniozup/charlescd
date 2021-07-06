@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Charles",
-    "description": "Charles APIs remodeling proposal.",
+    "description": "Charles APIs",
     "license": {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0"
@@ -44,9 +44,6 @@
       "name": "deployment"
     },
     {
-      "name": "history"
-    },
-    {
       "name": "users"
     },
     {
@@ -57,7 +54,7 @@
     "/workspaces": {
       "get": {
         "summary": "List workspaces",
-        "description": "List all the workspaces the user has access to, sorted by the oldest to the newer",
+        "description": "List all the workspaces the user has access to, sorted by creation date descending",
         "tags": [
           "workspace"
         ],
@@ -108,7 +105,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -117,7 +114,7 @@
       },
       "post": {
         "summary": "Create workspace",
-        "description": "Create a new Workspace, the only required property is the name, the other one are optional for creation, but for the workspace to works needs the other configuration",
+        "description": "Create a new Workspace, the only required property is the name. The others are optional for creation, but for the workspace works, the other configuration is needed",
         "tags": [
           "workspace"
         ],
@@ -168,6 +165,16 @@
               }
             }
           },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token is not sent or is invalid"
           },
@@ -179,7 +186,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -224,7 +231,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -255,7 +262,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -281,6 +288,16 @@
           "204": {
             "description": "The updated workspace"
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token is not sent or is invalid"
           },
@@ -295,7 +312,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -311,7 +328,7 @@
       ],
       "get": {
         "summary": "The workspace status",
-        "description": "Verify the status of the workspace and all it's settings",
+        "description": "Retrieve the status of the workspace and all it's settings",
         "tags": [
           "workspace"
         ],
@@ -340,7 +357,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -373,6 +390,16 @@
           "204": {
             "description": "If the matcher URL was saved successfully"
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token is not sent or is invalid"
           },
@@ -387,7 +414,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -418,7 +445,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -451,6 +478,16 @@
           "204": {
             "description": "If the matcher is reachable"
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token is not sent or is invalid"
           },
@@ -465,7 +502,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -498,6 +535,16 @@
           "204": {
             "description": "If the deployment configuration was updated successfully"
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token is not sent or is invalid"
           },
@@ -512,7 +559,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -543,7 +590,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -558,7 +605,7 @@
         }
       ],
       "post": {
-        "summary": "Validate deployment config ",
+        "summary": "Validate deployment config",
         "description": "Validate the deployment configuration, and checks if it's reachable, this is recommended before it's creation",
         "tags": [
           "workspace"
@@ -576,6 +623,16 @@
           "204": {
             "description": "If deployment system is reachable"
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token is not sent or is invalid"
           },
@@ -590,7 +647,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -623,6 +680,16 @@
           "204": {
             "description": "If the git configuration was updated successfully"
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token is not sent or is invalid"
           },
@@ -637,7 +704,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -668,7 +735,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -701,6 +768,16 @@
           "204": {
             "description": "If butler is reachable"
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token is not sent or is invalid"
           },
@@ -715,7 +792,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -753,7 +830,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -793,6 +870,16 @@
               }
             }
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token is not sent or is invalid"
           },
@@ -807,7 +894,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -848,7 +935,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -881,6 +968,16 @@
           "204": {
             "description": "If the datasource is reachable"
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token is not sent or is invalid"
           },
@@ -895,7 +992,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -910,6 +1007,7 @@
         },
         {
           "description": "The datasource id",
+          "required": true,
           "name": "datasourceId",
           "in": "path",
           "schema": {
@@ -942,7 +1040,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -982,6 +1080,16 @@
               }
             }
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token is not sent or is invalid"
           },
@@ -996,7 +1104,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -1037,7 +1145,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -1070,6 +1178,16 @@
           "204": {
             "description": "If the action is working"
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token is not sent or is invalid"
           },
@@ -1084,7 +1202,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -1099,6 +1217,7 @@
         },
         {
           "description": "The action id",
+          "required": true,
           "name": "actionId",
           "in": "path",
           "schema": {
@@ -1131,7 +1250,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -1187,7 +1306,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -1251,6 +1370,16 @@
               }
             }
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token / workspace-id header is not sent or is invalid"
           },
@@ -1262,7 +1391,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -1295,6 +1424,16 @@
               }
             }
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token / workspace-id header is not sent or is invalid"
           },
@@ -1306,7 +1445,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -1321,7 +1460,7 @@
         }
       ],
       "post": {
-        "summary": "Create circle CSV",
+        "summary": "Create circle with CSV attached file",
         "description": "Create a new circle with a CSV file with the segmentation rules",
         "tags": [
           "circle"
@@ -1346,6 +1485,16 @@
               }
             }
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token / workspace-id header is not sent or is invalid"
           },
@@ -1357,7 +1506,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -1398,7 +1547,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -1436,7 +1585,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -1444,8 +1593,8 @@
         }
       },
       "patch": {
-        "summary": "Update circle name",
-        "description": "Updates circle's name",
+        "summary": "Update the circle segmentation (not csv) and/or name",
+        "description": "Updates the circle's segmentation (not csv) rules and/or name",
         "tags": [
           "circle"
         ],
@@ -1469,6 +1618,16 @@
               }
             }
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token / workspace-id header is not sent or is invalid"
           },
@@ -1483,7 +1642,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -1534,7 +1693,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -1542,33 +1701,57 @@
         }
       }
     },
-    "/circles/{circleId}/segmentation": {
+    "/circles/{circleId}/histories": {
       "parameters": [
         {
-          "$ref": "#/components/parameters/pathCircleId"
+          "$ref": "#/components/parameters/headerWorkspaceId"
         },
         {
-          "$ref": "#/components/parameters/headerWorkspaceId"
+          "$ref": "#/components/parameters/pathCircleId"
         }
       ],
-      "patch": {
-        "summary": "Update the circle segmentation",
-        "description": "Updates the circle's segmentation rules",
+      "get": {
+        "summary": "Circle deployment history",
+        "description": "The circle history, shows every change to circles caused by an API call",
         "tags": [
           "circle"
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/circleRuleRequest"
+        "parameters": [
+          {
+            "in": "query",
+            "name": "ids",
+            "description": "The circles id",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
               }
             }
+          },
+          {
+            "in": "query",
+            "name": "author",
+            "description": "The username of who made the change",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "in": "query",
+            "name": "date",
+            "description": "The when the changes were made ",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
           }
-        },
+        ],
         "responses": {
-          "204": {
-            "description": "The circle's rules was updated successfully"
+          "200": {
+            "description": "The history objects"
           },
           "401": {
             "description": "Token / workspace-id header is not sent or is invalid"
@@ -1576,15 +1759,12 @@
           "403": {
             "description": "Client doesn't have permissions to call the API"
           },
-          "404": {
-            "description": "The circle does not exists"
-          },
           "5XX": {
             "description": "Unexpected error",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -1592,7 +1772,7 @@
         }
       }
     },
-    "/circles/{circleId}/segmentation/csv": {
+    "/circles/{circleId}/csv": {
       "parameters": [
         {
           "$ref": "#/components/parameters/pathCircleId"
@@ -1620,6 +1800,16 @@
           "204": {
             "description": "The circle's rules was updated successfully"
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token / workspace-id header is not sent or is invalid"
           },
@@ -1634,7 +1824,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -1677,6 +1867,16 @@
               }
             }
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token / workspace-id header is not sent or is invalid"
           },
@@ -1688,7 +1888,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -1733,7 +1933,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -1797,7 +1997,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -1833,6 +2033,16 @@
               }
             }
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token / workspace-id header is not sent or is invalid"
           },
@@ -1847,7 +2057,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -1863,6 +2073,7 @@
         {
           "in": "path",
           "name": "componentId",
+          "required": true,
           "schema": {
             "type": "string",
             "format": "uuid"
@@ -1893,7 +2104,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -1938,7 +2149,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -1971,6 +2182,16 @@
               }
             }
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token / workspace-id header is not sent or is invalid"
           },
@@ -1985,7 +2206,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -2030,7 +2251,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -2058,7 +2279,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -2066,7 +2287,7 @@
         }
       }
     },
-    "/circles/{circleId}/deployments": {
+    "/circles/{circleId}/deployments/deploy": {
       "parameters": [
         {
           "$ref": "#/components/parameters/headerWorkspaceId"
@@ -2097,55 +2318,15 @@
           "204": {
             "description": "The deployment request was made successfully and the the circle already has  an active deployment and it was overwrite"
           },
-          "401": {
-            "description": "Token / workspace-id header is not sent or is invalid"
-          },
-          "403": {
-            "description": "Client doesn't have permissions to call the API"
-          },
-          "404": {
-            "description": "If the circle or some component does not exist"
-          },
-          "5XX": {
-            "description": "Unexpected error",
+          "400": {
+            "description": "Provided data is invalid",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse400"
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/circles/{circleId}/deployments/increment": {
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/headerWorkspaceId"
-        },
-        {
-          "$ref": "#/components/parameters/pathCircleId"
-        }
-      ],
-      "post": {
-        "summary": "Increment release at circle",
-        "description": "Increments the circle with new components, if the circle already has a version of a requested component, this one will be overwritten, and the others added",
-        "tags": [
-          "deployment"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/deploymentRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "The deployment request was made successfully"
           },
           "401": {
             "description": "Token / workspace-id header is not sent or is invalid"
@@ -2161,7 +2342,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -2179,49 +2360,8 @@
         }
       ],
       "post": {
-        "summary": "Undeploy all releases at circle",
+        "summary": "Undeploy releases at circle",
         "description": "Makes the undeploy of all components at circle",
-        "tags": [
-          "deployment"
-        ],
-        "responses": {
-          "204": {
-            "description": "The un-deployment request was made successfully"
-          },
-          "401": {
-            "description": "Token / workspace-id header is not sent or is invalid"
-          },
-          "403": {
-            "description": "Client doesn't have permissions to call the API"
-          },
-          "404": {
-            "description": "If the circle does not exist, or there aren't releases deployed"
-          },
-          "5XX": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/circles/{circleId}/deployments/undeploy/decrement": {
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/headerWorkspaceId"
-        },
-        {
-          "$ref": "#/components/parameters/pathCircleId"
-        }
-      ],
-      "post": {
-        "summary": "Undeploy selected components",
-        "description": "Makes the undeploy of selected components",
         "tags": [
           "deployment"
         ],
@@ -2238,6 +2378,16 @@
           "204": {
             "description": "The un-deployment request was made successfully"
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token / workspace-id header is not sent or is invalid"
           },
@@ -2252,7 +2402,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -2260,7 +2410,7 @@
         }
       }
     },
-    "/circles/{circleId}deployments/rollback": {
+    "/circles/{circleId}/deployments/rollback": {
       "parameters": [
         {
           "$ref": "#/components/parameters/headerWorkspaceId"
@@ -2288,6 +2438,16 @@
           "204": {
             "description": "The rollback request was made successfully"
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token / workspace-id header is not sent or is invalid"
           },
@@ -2302,7 +2462,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -2338,6 +2498,16 @@
           "204": {
             "description": "The deployment request was made successfully"
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token / workspace-id header is not sent or is invalid"
           },
@@ -2352,75 +2522,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/histories/circles": {
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/headerWorkspaceId"
-        }
-      ],
-      "get": {
-        "summary": "Circle history",
-        "description": "The circle history, shows every change to circles caused by an API call",
-        "tags": [
-          "history"
-        ],
-        "parameters": [
-          {
-            "in": "query",
-            "name": "ids",
-            "description": "The circles id",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          {
-            "in": "query",
-            "name": "author",
-            "description": "The username of who made the change",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          {
-            "in": "query",
-            "name": "date",
-            "description": "The when the changes were made ",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The history objects"
-          },
-          "401": {
-            "description": "Token / workspace-id header is not sent or is invalid"
-          },
-          "403": {
-            "description": "Client doesn't have permissions to call the API"
-          },
-          "5XX": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -2479,7 +2581,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -2512,6 +2614,16 @@
               }
             }
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token is not sent or is invalid"
           },
@@ -2523,7 +2635,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -2537,6 +2649,7 @@
           "description": "The user group id",
           "name": "groupId",
           "in": "path",
+          "required": true,
           "schema": {
             "type": "string",
             "format": "uuid",
@@ -2575,7 +2688,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -2608,6 +2721,16 @@
               }
             }
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token is not sent or is invalid"
           },
@@ -2622,7 +2745,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -2653,7 +2776,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -2667,6 +2790,7 @@
           "description": "The user group id",
           "name": "groupId",
           "in": "path",
+          "required": true,
           "schema": {
             "type": "string",
             "format": "uuid",
@@ -2693,6 +2817,16 @@
           "200": {
             "description": "If at least one member was added successfully"
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token is not sent or is invalid"
           },
@@ -2707,7 +2841,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -2721,6 +2855,7 @@
           "description": "The user group id",
           "name": "groupId",
           "in": "path",
+          "required": true,
           "schema": {
             "type": "string",
             "format": "uuid",
@@ -2755,7 +2890,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -2788,6 +2923,16 @@
           "204": {
             "description": "If the group was associated to the workspace successfully"
           },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Token is not sent or is invalid"
           },
@@ -2802,7 +2947,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -2840,7 +2985,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -2857,6 +3002,7 @@
           "description": "The user group id",
           "name": "bindingId",
           "in": "path",
+          "required": true,
           "schema": {
             "type": "string",
             "format": "uuid"
@@ -2887,7 +3033,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
+                  "$ref": "#/components/schemas/errorResponse500"
                 }
               }
             }
@@ -2912,32 +3058,130 @@
       }
     },
     "schemas": {
-      "errorResponse": {
-        "description": "The error object, used to notify the client when an API fails",
+      "errorObject": {
+        "description": "Basic error structure",
+        "required": [
+          "id",
+          "status",
+          "title"
+        ],
         "properties": {
           "id": {
             "type": "string",
             "format": "uuid",
             "example": "6510df42-1fb3-49c6-aeb8-6477e9d24a82",
-            "description": "The error unique id"
+            "description": "A unique identifier for this particular occurrence of the problem"
           },
-          "message": {
+          "status": {
             "type": "string",
-            "example": "Error listing the resources",
-            "description": "The error summary"
+            "example": "400",
+            "description": "The HTTP status code applicable to this problem, expressed as a string value"
           },
-          "timestamp": {
-            "type": "integer",
-            "example": 1613654435
+          "code": {
+            "type": "string",
+            "example": "CH0001",
+            "description": "An application-specific error code, expressed as a string value"
+          },
+          "title": {
+            "type": "string",
+            "example": "Invalid parameters",
+            "description": "A short, human-readable summary of the problem that SHOULD NOT change from occurrence to occurrence of the problem"
+          },
+          "detail": {
+            "type": "string",
+            "example": "The parameter 'name' must not be blank",
+            "description": "A human-readable explanation specific to this occurrence of the problem"
+          },
+          "source": {
+            "type": "object",
+            "description": "An object containing references to the source of the error, optionally including any of the following members",
+            "properties": {
+              "pointer": {
+                "type": "string",
+                "example": "/datasouces[1]/name",
+                "description": "A JSON Pointer RFC6901 to the associated entity in the request document"
+              },
+              "parameter": {
+                "type": "string",
+                "description": "A string indicating which URI query parameter caused the error"
+              }
+            }
           },
           "meta": {
             "type": "object",
-            "description": "The error meta info, used for inform the user relevant information for tracking the error, like the error code, or the fields of a failed input validation",
+            "description": "A meta object containing non-standard meta-information about the error",
             "example": {
-              "code": "123"
+              "component": "core",
+              "timestamp": 1593212343454
             }
           }
         }
+      },
+      "errorArray": {
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/errorObject"
+            }
+          }
+        }
+      },
+      "errorResponse400": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/errorArray"
+          },
+          {
+            "type": "object",
+            "example": {
+              "errors": [
+                {
+                  "id": "6510df42-1fb3-49c6-aeb8-6477e9d24a82",
+                  "status": "400",
+                  "title": "Invalid payload",
+                  "detail": "The 'name' attribute cannot be blank",
+                  "source": {
+                    "pointer": "/datasources/0/name"
+                  },
+                  "meta": {
+                    "component": "core",
+                    "workspaceId": "819fa39c-1fb3-49c6-aeb8-6477e9d24a93",
+                    "timestamp": "1593212343454"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "errorResponse500": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/errorArray"
+          },
+          {
+            "type": "object",
+            "example": {
+              "errors": [
+                {
+                  "id": "6510df42-1fb3-49c6-aeb8-6477e9d24a82",
+                  "status": "502",
+                  "code": "CH0002",
+                  "title": "Internal server error",
+                  "detail": "Bad gateway when calling the deployment service",
+                  "source": {
+                    "pointer": "/components/0"
+                  },
+                  "meta": {
+                    "component": "butler",
+                    "timestamp": "1593212343454"
+                  }
+                }
+              ]
+            }
+          }
+        ]
       },
       "pageResponse": {
         "description": "The page response object, used for represent the paging for paginated lists",
@@ -3054,13 +3298,15 @@
       },
       "workspaceRequest": {
         "description": "The workspace request used to create or update a workspace",
+        "required": [
+          "name"
+        ],
         "properties": {
           "name": {
             "type": "string",
             "format": "text",
             "maximum": 64,
-            "example": "Tortoise's workspace",
-            "required": true
+            "example": "Tortoise's workspace"
           }
         }
       },
@@ -3071,42 +3317,47 @@
             "type": "string",
             "format": "url",
             "example": "https://circle-matcher.charles.com",
-            "required": true,
             "maximum": 1048
           }
         }
       },
       "deploymentConfigSchema": {
         "description": "The butler request object used to create a new butler configuration",
+        "required": [
+          "name",
+          "url",
+          "namespace"
+        ],
         "properties": {
           "name": {
             "type": "string",
             "example": "Butler sandbox",
-            "required": true,
             "maximum": 100
           },
           "url": {
             "type": "string",
             "format": "url",
             "example": "https://butler.cahrles.com",
-            "required": true,
             "maximum": 1048
           },
           "namespace": {
             "type": "string",
             "example": "sandbox",
-            "required": true,
             "maximum": 253
           }
         }
       },
       "gitConfigSchema": {
         "description": "The git config request object",
+        "required": [
+          "name",
+          "type",
+          "gitToken"
+        ],
         "properties": {
           "name": {
             "type": "string",
             "example": "Zup GitHub",
-            "required": true,
             "maximum": 100
           },
           "url": {
@@ -3117,7 +3368,6 @@
           },
           "type": {
             "type": "string",
-            "required": true,
             "enum": [
               "GITHUB",
               "GITLAB"
@@ -3126,27 +3376,29 @@
           "gitToken": {
             "type": "string",
             "example": "12389795abc98qu32",
-            "required": true,
             "maximum": 255
           }
         }
       },
       "datasourceRequest": {
         "description": "The datasource request object, used to create new configuration",
+        "required": [
+          "name",
+          "type",
+          "configuration"
+        ],
         "properties": {
           "name": {
             "description": "The configuration name, used for easy look up after the registration",
             "type": "string",
             "example": "Prometheus",
-            "maximum": 64,
-            "required": true
+            "maximum": 64
           },
           "type": {
             "description": "The plugin that will be used for the executions of this datasource",
             "type": "string",
             "example": "Prometheus",
-            "maximum": 30,
-            "required": true
+            "maximum": 30
           },
           "configuration": {
             "description": "The specific configuration for that datasource works, like credentials and url, this filed is treated as an generic json object",
@@ -3154,20 +3406,22 @@
             "example": {
               "url": "https://prometheus-server.com",
               "key": "prom-api-key"
-            },
-            "required": true
+            }
           }
         }
       },
       "datasourceValidationRequest": {
         "description": "The datasource validation request object, used to validate a configuration",
+        "required": [
+          "type",
+          "configuration"
+        ],
         "properties": {
           "type": {
             "description": "The plugin that will be used for the executions of this datasource",
             "type": "string",
             "example": "Prometheus",
-            "maximum": 30,
-            "required": true
+            "maximum": 30
           },
           "configuration": {
             "description": "The specific configuration for that datasource works, like credentials and url, this filed is treated as an generic json object",
@@ -3175,8 +3429,7 @@
             "example": {
               "url": "https://prometheus-server.com",
               "key": "prom-api-key"
-            },
-            "required": true
+            }
           }
         }
       },
@@ -3199,55 +3452,59 @@
       },
       "actionRequest": {
         "description": "The rollout action request object, used to create new configuration",
+        "required": [
+          "name",
+          "description",
+          "type",
+          "configuration"
+        ],
         "properties": {
           "name": {
             "description": "The configuration name, used for easy look up after the registration",
             "type": "string",
             "example": "Circle Promotion",
-            "maximum": 64,
-            "required": true
+            "maximum": 64
           },
           "description": {
             "description": "Some description, used for describe the configuration",
             "type": "string",
             "example": "Circle Promotion to circle Abc",
-            "maximum": 100,
-            "required": false
+            "maximum": 100
           },
           "type": {
             "description": "The plugin that will be used for the executions of this action",
             "type": "string",
             "example": "circle-promotion",
-            "maximum": 30,
-            "required": true
+            "maximum": 30
           },
           "configuration": {
             "description": "The specific configuration for that action to works, like credentials and url, this filed is treated as an generic json object",
             "type": "object",
             "example": {
               "destinationCircle": "f28e0b9a-cf9b-4eec-9243-28c568a4dc6b"
-            },
-            "required": true
+            }
           }
         }
       },
       "actionValidationRequest": {
         "description": "The rollout action validation request object, used to validate a configuration",
+        "required": [
+          "type",
+          "configuration"
+        ],
         "properties": {
           "type": {
             "description": "The plugin that will be used for the executions of this action",
             "type": "string",
             "example": "circle-promotion",
-            "maximum": 30,
-            "required": true
+            "maximum": 30
           },
           "configuration": {
             "description": "The specific configuration for that action to works, like credentials and url, this filed is treated as an generic json object",
             "type": "object",
             "example": {
               "destinationCircle": "f28e0b9a-cf9b-4eec-9243-28c568a4dc6b"
-            },
-            "required": true
+            }
           }
         }
       },
@@ -3361,12 +3618,15 @@
       },
       "circleRequest": {
         "description": "Request object user for creating a new circle",
+        "required": [
+          "name",
+          "rules"
+        ],
         "properties": {
           "name": {
             "type": "string",
             "maxLength": 100,
-            "example": "Circle Beagle",
-            "required": true
+            "example": "Circle Beagle"
           },
           "rules": {
             "description": "The segmentation rules for that circle",
@@ -3374,13 +3634,15 @@
             "items": {
               "$ref": "#/components/schemas/circleRuleSchema"
             },
-            "required": true,
             "minItems": 1
           }
         }
       },
       "circleCsvRequest": {
         "description": "Request object user for creating a new circle using CSV as base for segmentation",
+        "required": [
+          "name"
+        ],
         "allOf": [
           {
             "$ref": "#/components/schemas/circleCsvRuleRequest"
@@ -3390,13 +3652,15 @@
           "name": {
             "type": "string",
             "maxLength": 100,
-            "example": "Circle Beagle",
-            "required": true
+            "example": "Circle Beagle"
           }
         }
       },
       "circleRuleRequest": {
         "description": "Request object user for creating/updating circle segmentation rules",
+        "required": [
+          "rules"
+        ],
         "properties": {
           "rules": {
             "description": "The segmentation rules for that circle",
@@ -3404,7 +3668,6 @@
             "items": {
               "$ref": "#/components/schemas/circleRuleSchema"
             },
-            "required": true,
             "minItems": 1
           }
         }
@@ -3583,29 +3846,33 @@
       },
       "componentSchema": {
         "description": "The component information",
+        "required": [
+          "name"
+        ],
         "properties": {
           "helmConfig": {
             "$ref": "#/components/schemas/helmConfigSchema"
           },
           "name": {
             "type": "string",
-            "required": true,
             "example": "front-end"
           }
         }
       },
       "helmConfigSchema": {
         "description": "The helm config schema object",
+        "required": [
+          "organization",
+          "repository"
+        ],
         "properties": {
           "organization": {
             "type": "string",
-            "example": "zupit",
-            "required": true
+            "example": "zupit"
           },
           "repository": {
             "type": "string",
-            "example": "my-app-charts",
-            "required": true
+            "example": "my-app-charts"
           },
           "path": {
             "type": "string",
@@ -3649,11 +3916,13 @@
       },
       "userGroupRequest": {
         "description": "The request object used for creating a new user group",
+        "required": [
+          "name"
+        ],
         "properties": {
           "name": {
             "type": "string",
             "example": "Charles dev group",
-            "required": true,
             "maximum": 64
           }
         }
@@ -3705,24 +3974,28 @@
         "description": "The request object used for add members to an user group",
         "type": "array",
         "items": {
+          "required": [
+            "username"
+          ],
           "type": "object",
           "properties": {
             "username": {
               "type": "string",
-              "example": "charles@zup.com.br",
-              "required": true
+              "example": "charles@zup.com.br"
             }
           }
         }
       },
       "userGroupWorkspaceRequest": {
         "description": "The request object used for adding an user group to a workspace",
+        "required": [
+          "groupId"
+        ],
         "properties": {
           "groupId": {
             "type": "string",
             "format": "uuid",
-            "example": "c3e56c4f-9eb3-4397-99be-ac598ca02bdc",
-            "required": true
+            "example": "c3e56c4f-9eb3-4397-99be-ac598ca02bdc"
           },
           "permissions": {
             "type": "array",
@@ -3749,10 +4022,17 @@
       },
       "deploymentRequest": {
         "description": "The object used for making a deployment request",
+        "required": [
+          "components"
+        ],
         "properties": {
+          "overrideAllDeployments": {
+            "type": "boolean",
+            "default": false,
+            "description": "Set to true if the deploy should remove all current components at circle and keep only the specified on the request"
+          },
           "components": {
             "type": "array",
-            "required": true,
             "items": {
               "$ref": "#/components/schemas/basicComponentDeploymentSchema"
             }
@@ -3762,22 +4042,28 @@
       "partialUnDeploymentRequest": {
         "description": "The request object for partial un-deployment",
         "properties": {
+          "undeployAll": {
+            "type": "boolean",
+            "default": false,
+            "description": "Optional. Set to true if the deploy should remove all current components at circle and keep only the specified in the 'components' property"
+          },
           "components": {
             "type": "array",
             "items": {
               "type": "string",
               "example": "frontend"
-            },
-            "required": true
+            }
           }
         }
       },
       "openSeaDeploymentRequest": {
         "description": "Request object used for requesting the deployment of components at open sea",
+        "required": [
+          "components"
+        ],
         "properties": {
           "components": {
             "type": "array",
-            "required": true,
             "items": {
               "$ref": "#/components/schemas/basicComponentDeploymentSchema"
             }
@@ -3790,7 +4076,6 @@
           "deploymentId": {
             "type": "string",
             "format": "uuid",
-            "required": false,
             "example": "3598e61a-870d-4e09-8d7a-08be5d21a6d8"
           }
         }
@@ -3854,6 +4139,7 @@
         "description": "The workspace id sent in path to inform which workspace the operation in being applied",
         "name": "workspaceId",
         "in": "path",
+        "required": true,
         "schema": {
           "type": "string",
           "format": "uuid"
@@ -3863,6 +4149,7 @@
         "description": "The circle id sent in path to inform which circle the operation in being applied",
         "name": "circleId",
         "in": "path",
+        "required": true,
         "schema": {
           "type": "string",
           "format": "uuid"
@@ -3881,6 +4168,7 @@
         "description": "The memberId",
         "name": "memberId",
         "in": "path",
+        "required": true,
         "schema": {
           "type": "string"
         }
