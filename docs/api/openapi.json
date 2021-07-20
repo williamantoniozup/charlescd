@@ -2214,28 +2214,97 @@
         }
       }
     },
-    "/users/{memberId}/user-groups": {
+    "/users": {
+      "post": {
+        "summary": "Create user locally",
+        "description": "Create a user locally in a context with no integration with an IDP or similar",
+        "tags": [
+          "users"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/userSchema"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{userId}": {
       "parameters": [
         {
-          "$ref": "#/components/parameters/pathMemberId"
+          "in": "path",
+          "name": "userId",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
         }
       ],
       "get": {
-        "summary": "List all groups of a member",
-        "description": "Lists all the groups that a member is part of",
+        "summary": "Get user",
+        "description": "Get all data about specified user",
         "tags": [
           "users"
         ],
         "responses": {
           "200": {
-            "description": "All groups that the member is part of",
+            "description": "User complete information",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/userGroupsResponse"
-                  }
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/userResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -2245,6 +2314,66 @@
           },
           "403": {
             "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse500"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update user",
+        "description": "Updates the specified user",
+        "tags": [
+          "users"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/userSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Provided data is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse400"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
           },
           "5XX": {
             "description": "Unexpected error",
@@ -2259,14 +2388,62 @@
         }
       },
       "delete": {
-        "summary": "Disassociate member from all groups",
-        "description": "Disassociate a member from all groups that he is part of",
+        "summary": "Delete specified user",
+        "description": "Performs a soft deletion on specified user and disassociate from all groups. Due to audit consistency, the user cannot be hard deleted",
         "tags": [
           "users"
         ],
         "responses": {
           "204": {
-            "description": "If the member was disassociated from all groups successfully"
+            "description": "The user was removed successfully"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace or the component does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{userId}/user-groups": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathUserId"
+        }
+      ],
+      "get": {
+        "summary": "List all groups of a User",
+        "description": "Lists all the groups that a user is part of",
+        "tags": [
+          "users"
+        ],
+        "responses": {
+          "200": {
+            "description": "All groups that the user is part of",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/userGroupsResponse"
+                  }
+                }
+              }
+            }
           },
           "401": {
             "description": "Token is not sent or is invalid"
@@ -2456,66 +2633,6 @@
           },
           "404": {
             "description": "If the circle does not exist or there aren't releases deployed"
-          },
-          "5XX": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/errorResponse500"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/circles/{circleId}/deployments/open-sea": {
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/headerWorkspaceId"
-        },
-        {
-          "$ref": "#/components/parameters/pathCircleId"
-        }
-      ],
-      "post": {
-        "summary": "Increment release  at open sea",
-        "description": "Increments the open sea with new components, if already has a version of a requested component, this one will be overwritten, and the others added",
-        "tags": [
-          "deployment"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/openSeaDeploymentRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "The deployment request was made successfully"
-          },
-          "400": {
-            "description": "Provided data is invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/errorResponse400"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Token / workspace-id header is not sent or is invalid"
-          },
-          "403": {
-            "description": "Client doesn't have permissions to call the API"
-          },
-          "404": {
-            "description": "If open sea or the some component does not exist"
           },
           "5XX": {
             "description": "Unexpected error",
@@ -2849,7 +2966,7 @@
         }
       }
     },
-    "/authorization/user-groups/{groupId}/members/{memberId}": {
+    "/authorization/user-groups/{groupId}/members/{userId}": {
       "parameters": [
         {
           "description": "The user group id",
@@ -2863,7 +2980,7 @@
           }
         },
         {
-          "$ref": "#/components/parameters/pathMemberId"
+          "$ref": "#/components/parameters/pathUserId"
         }
       ],
       "delete": {
@@ -3914,6 +4031,42 @@
           }
         }
       },
+      "userSchema": {
+        "description": "The local user schema object",
+        "required": [
+          "organization",
+          "repository"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Peter Parker"
+          },
+          "email": {
+            "type": "string",
+            "example": "spiderman@email.com"
+          },
+          "image": {
+            "description": "A base64 hash of the user's avatar",
+            "type": "string"
+          }
+        }
+      },
+      "userResponse": {
+        "description": "The user information",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/userSchema"
+          }
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "3598e61a-870d-4e09-8d7a-08be5d21a6d8"
+          }
+        }
+      },
       "userGroupRequest": {
         "description": "The request object used for creating a new user group",
         "required": [
@@ -4029,7 +4182,7 @@
           "overrideAllDeployments": {
             "type": "boolean",
             "default": false,
-            "description": "Set to true if the deploy should remove all current components at circle and keep only the specified on the request"
+            "description": "Set to true if the deploy should remove all current components at circle and keep only the specified on the request (relevant only for not default circle)"
           },
           "components": {
             "type": "array",
@@ -4052,20 +4205,6 @@
             "items": {
               "type": "string",
               "example": "frontend"
-            }
-          }
-        }
-      },
-      "openSeaDeploymentRequest": {
-        "description": "Request object used for requesting the deployment of components at open sea",
-        "required": [
-          "components"
-        ],
-        "properties": {
-          "components": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/basicComponentDeploymentSchema"
             }
           }
         }
@@ -4164,9 +4303,9 @@
           "example": "charlinho"
         }
       },
-      "pathMemberId": {
-        "description": "The memberId",
-        "name": "memberId",
+      "pathUserId": {
+        "description": "The userId",
+        "name": "userId",
         "in": "path",
         "required": true,
         "schema": {
