@@ -47,7 +47,6 @@ open class DeploymentCallbackInteractorImpl(
         if (request.isCallbackStatusSuccessful() && !deployment.circle.isDefaultCircle()) {
             updateStatusOfPreviousDeployment(deployment.circle.id)
         }
-        updateStatusInCircleMatcher(deployment.circle, request)
         deploymentService.update(deployment)
         notifyEvent(request, deployment)
     }
