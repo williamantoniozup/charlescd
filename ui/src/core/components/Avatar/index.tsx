@@ -25,7 +25,9 @@ export interface Props {
 const Avatar = ({ name, size = 40 }: Props) => (
   <Styled.Avatar data-testid="avatar">
     <Styled.Initials data-testid="avatar-initials" size={size}>
-      {getInitials(name)}
+      <span>
+        {getInitials(name)}
+      </span>
     </Styled.Initials>
   </Styled.Avatar>
 );
