@@ -34,7 +34,7 @@ export class ConsoleLoggerService {
 
     return winston.createLogger({
       format: winston.format.combine(
-        winston.format.timestamp(),
+        winston.format.colorize(),
         this.jsonFormat(),
       ),
       transports: [
@@ -45,14 +45,12 @@ export class ConsoleLoggerService {
 
   private static jsonFormat() {
     return winston.format.printf(({ timestamp, level, message, ...data }) => {
-
-      return JSON.stringify({
+      const date = new Date().toISOString()
+      return `${date}-${level}: ${JSON.stringify({
         requestId: rTracer.id(),
-        timestamp,
-        level,
         message,
         ...data,
-      })
+      })} \n`
     })
   }
 
