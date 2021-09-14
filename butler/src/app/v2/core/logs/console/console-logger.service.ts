@@ -36,10 +36,11 @@ export class ConsoleLoggerService {
       format: winston.format.combine(
         winston.format.colorize(),
         this.jsonFormat(),
+        winston.format.prettyPrint()
       ),
       transports: [
         new winston.transports.Console()
-      ]
+      ],
     })
   }
 
