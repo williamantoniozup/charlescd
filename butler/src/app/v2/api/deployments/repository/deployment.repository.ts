@@ -57,8 +57,14 @@ export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
 
   public async findCurrentsByCirclesIds(circlesIds: string[]): Promise<DeploymentEntityV2[]> {
     return await this.createQueryBuilder('v2deployments')
-      .where( { circleId: In(circlesIds) })
+      .where({ circleId: In(circlesIds) })
       .andWhere('v2deployments.current = true')
       .getMany()
   }
+  public async findByCircleId(circleId: string): Promise<DeploymentEntityV2> {
+    return await this.createQueryBuilder('v2deployments')
+      .where({ circleId: circleId, current: true })
+      .getOneOrFail()
+  }
+
 }
