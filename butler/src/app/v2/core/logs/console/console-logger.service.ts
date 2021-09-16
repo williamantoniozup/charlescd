@@ -47,11 +47,12 @@ export class ConsoleLoggerService {
   private static jsonFormat() {
     return winston.format.printf(({ timestamp, level, message, ...data }) => {
       const date = new Date().toISOString()
-      return `${date}-${level}: ${JSON.stringify({
+      return `${JSON.stringify({
         requestId: rTracer.id(),
         message,
         ...data,
-      })} \n`
+        date,
+      })}`
     })
   }
 
