@@ -74,7 +74,7 @@ export class EventsLogsAggregator {
 
 
     if (!deploymentId) {
-      this.consoleLoggerService.log(`Resource ${involvedObject.kind}/${involvedObject.name}  does not have deploymentId label`, event)
+      this.consoleLoggerService.log(`Resource ${involvedObject.kind}/${involvedObject.name}  does not have deploymentId label`)
       await this.checkResourceAnnotation(resource, event)
       return
     }
@@ -96,10 +96,13 @@ export class EventsLogsAggregator {
 
     if (this.isCharlesRoutingResource(resource)) {
       const  spec = this.getResourceSpec(resource)
+      this.consoleLoggerService.log('Spec: ', spec)
       const circlesIds = spec ? spec.circles as string[] : null
+      this.consoleLoggerService.log('Ids: ', circlesIds)
       if(circlesIds?.length){
         const currentDeployments = await this.deploymentsRepository
           .findCurrentsByCirclesIds(circlesIds)
+        this.consoleLoggerService.log('currentDeployments: ',currentDeployments)
         const currentDeploymentsIds = currentDeployments
           .map(it => it.id)
         const log = this.createLogFromEvent(event)
