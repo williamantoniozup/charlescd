@@ -19,6 +19,7 @@ import org.springframework.util.StreamUtils
 class ButlerErrorDecoder : ErrorDecoder {
     private val logger = LoggerFactory.getLogger(this.javaClass)
     override fun decode(methodKey: String?, response: Response?): Exception {
+        println(response?.body())
         val responseMessage: String = getMessage(response)
         println(responseMessage)
         return when (response?.status()) {
