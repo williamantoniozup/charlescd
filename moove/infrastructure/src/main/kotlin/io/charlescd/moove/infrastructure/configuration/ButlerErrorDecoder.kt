@@ -20,6 +20,7 @@ class ButlerErrorDecoder : ErrorDecoder {
     private val logger = LoggerFactory.getLogger(this.javaClass)
     override fun decode(methodKey: String?, response: Response?): Exception {
         val responseMessage: String = getMessage(response)
+        println(responseMessage)
         return when (response?.status()) {
             400 -> IllegalArgumentException(responseMessage)
             404 -> NotFoundException(responseMessage, null)
