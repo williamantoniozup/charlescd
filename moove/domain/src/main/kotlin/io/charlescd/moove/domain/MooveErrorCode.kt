@@ -37,6 +37,7 @@ enum class MooveErrorCode(val key: String) {
     INVALID_BUILD_STATUS("invalid.build.status"),
     INVALID_PAYLOAD("invalid.payload"),
     CONFLICT("conflict"),
+    UNAUTHORIZED("unauthorized"),
     MISSING_PARAMETER("missing.parameter"),
     MOVE_BUILD_INVALID_COLUMN("move.build.invalid.column"),
     FORBIDDEN("forbidden"),
