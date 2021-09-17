@@ -51,6 +51,10 @@ class ButlerErrorDecoder : ErrorDecoder {
     }
     private fun getResponseAsObject(message: String): String {
         val objectResponse = jacksonObjectMapper().readValue(message, ErrorDetailed::class.java)
+        println(objectResponse)
+        println (objectResponse.errors.map {
+                error -> StringBuilder().appendln(error.title).appendln(error.detail)
+        })
         return objectResponse.errors.map {
             error -> StringBuilder().appendln(error.title).appendln(error.detail)
         }.reduce {
