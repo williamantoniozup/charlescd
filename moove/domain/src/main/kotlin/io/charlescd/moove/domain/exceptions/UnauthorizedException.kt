@@ -18,6 +18,9 @@
 
 package io.charlescd.moove.domain.exceptions
 
-data class UnauthorizedException(
-    val details: String
-): RuntimeException("Unauthorized!!")
+ class UnauthorizedException: RuntimeException {
+     val details: String
+    constructor(details: String){
+        this.details = details
+    }
+}
