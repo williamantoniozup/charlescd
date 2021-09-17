@@ -19,9 +19,9 @@ import org.springframework.util.StreamUtils
 class ButlerErrorDecoder : ErrorDecoder {
     private val logger = LoggerFactory.getLogger(this.javaClass)
     override fun decode(methodKey: String?, response: Response?): Exception {
-        println(response?.body())
+        println("Resposta:"+response?.body())
         val responseMessage: String = getMessage(response)
-        println(responseMessage)
+        println("Mensagem"+responseMessage)
         return when (response?.status()) {
             400 -> IllegalArgumentException(responseMessage)
             404 -> NotFoundException(responseMessage, null)
