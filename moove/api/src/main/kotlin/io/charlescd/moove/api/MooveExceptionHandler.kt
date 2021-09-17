@@ -63,7 +63,7 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     }
 
     @ExceptionHandler(UnauthorizedException::class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
     fun handleUnauthorized(ex: UnauthorizedException): ErrorMessageResponse {
         this.logger.error(ex.details, ex)

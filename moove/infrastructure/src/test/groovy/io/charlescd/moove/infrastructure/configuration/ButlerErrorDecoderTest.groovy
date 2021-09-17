@@ -50,12 +50,12 @@ class ButlerErrorDecoderTest extends Specification {
         def exception = errorDecoder.decode("methodkey", response)
 
         then:
-        body.asInputStream() >> this.getReturnAsInputStream()
+        body.asReader() >> this.getReturnAsReader()
         assert exception instanceof UnauthorizedException
         assert exception.details.contains( "Unable to fetch resource from github url: https://api.github.com/repos/zupit/charlescd-automation-releases/contents/dragonboarding?ref=release-dev-v-21")
 
     }
-    private InputStream getReturnAsInputStream() {
+    private Reader getReturnAsReader() {
         String response = "{\n" +
                 "    \"errors\": [\n" +
                 "        {\n" +
@@ -72,7 +72,7 @@ class ButlerErrorDecoderTest extends Specification {
                 "        }\n" +
                 "    ]\n" +
                 "}"
-        return new ByteArrayInputStream(response.getBytes())
+        return new InputStreamReader(new ByteArrayInputStream(response.getBytes()));
     }
 
 }

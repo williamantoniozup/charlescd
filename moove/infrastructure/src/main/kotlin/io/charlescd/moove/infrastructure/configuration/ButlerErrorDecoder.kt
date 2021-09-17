@@ -10,12 +10,14 @@ import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.exceptions.UnauthorizedException
 import org.slf4j.LoggerFactory
+import java.io.IOException
 
 class ButlerErrorDecoder : ErrorDecoder {
+
     private val logger = LoggerFactory.getLogger(this.javaClass)
+
     override fun decode(methodKey: String?, response: Response?): Exception {
         val responseMessage: String = getMessage(response)
-        println("Mensagem"+responseMessage)
         return when (response?.status()) {
             400 -> IllegalArgumentException(responseMessage)
             404 -> NotFoundException(responseMessage, null)
@@ -36,21 +38,24 @@ class ButlerErrorDecoder : ErrorDecoder {
         }
     }
     private fun readBody(response: Response): String {
-        val bodyReader = response.body().asReader()
-        return bodyReader.use {
-            val responseBody: String = Util.toString(bodyReader)
-             extractErrorMessages(jacksonObjectMapper().readValue(responseBody, ErrorAggregator::class.java))
+        try {
+            val bodyReader = response.body().asReader()
+            return bodyReader.use {
+                val responseBody: String = Util.toString(bodyReader)
+                extractErrorMessages(jacksonObjectMapper().readValue(responseBody, ErrorAggregator::class.java))
+            }
+        } catch (ex: IOException) {
+            logger.error(ex.message, ex)
+            return "Error reading response of request"
         }
     }
 
     private fun extractErrorMessages(errorAggregator: ErrorAggregator): String {
-       return errorAggregator.let{
-            it.errors.map {
-                error -> StringBuilder().appendln(error.title).appendln(error.detail)
-            }.reduce {
-                acc, error -> acc.appendln(error)
-            }.toString()
-        }
+       return errorAggregator.let {
+           it.errors.joinToString("\n") { error ->
+               String.format("${error.title} [${error.detail}]")
+           }
+       }
     }
 }
 
