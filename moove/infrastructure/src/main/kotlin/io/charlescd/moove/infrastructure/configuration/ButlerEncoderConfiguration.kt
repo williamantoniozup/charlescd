@@ -16,10 +16,12 @@
 
 package io.charlescd.moove.infrastructure.configuration
 
+import feign.Client
 import feign.Logger
 import feign.codec.Encoder
 import feign.codec.ErrorDecoder
 import feign.form.FormEncoder
+import feign.okhttp.OkHttpClient
 import org.springframework.beans.factory.ObjectFactory
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters
 import org.springframework.cloud.openfeign.support.SpringEncoder
@@ -35,5 +37,10 @@ class ButlerEncoderConfiguration(
     @Bean
     fun butlerErrorDecoder(): ButlerErrorDecoder {
         return ButlerErrorDecoder()
+    }
+
+    @Bean
+    fun butlerOkHttpClient(): Client {
+        return OkHttpClient();
     }
 }
